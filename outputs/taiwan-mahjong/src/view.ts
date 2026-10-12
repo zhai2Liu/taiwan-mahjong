@@ -123,6 +123,7 @@ function home(model: ViewModel, send: Send): HTMLElement {
   if (model.hasSave) actions.append(button('繼續上次牌局', 'resume', () => send({ type: 'resume' }), 'button button-primary button-large', model.busy));
   actions.append(button(model.hasSave ? '開始新的一將' : '開始一將', 'start', () => send({ type: 'start' }), `button ${model.hasSave ? 'button-secondary' : 'button-primary'} button-large`, model.busy));
   actions.append(button('純練習模式', 'practice', () => send({ type: 'practice' }), 'button button-secondary button-large'));
+  const trial = node('a', 'button button-secondary button-large', '決策題試讀'); trial.href = './training.html'; actions.append(trial);
   copy.append(actions, node('p', 'welcome-footnote', '無需登入 · 自動續存 · 真人操作不限時'));
   const art = node('div', 'welcome-art'); art.setAttribute('aria-hidden', 'true');
   const ring = node('div', 'table-ring'); ring.append(node('span', 'ring-north', '北'), node('span', 'ring-east', '東'), node('span', 'ring-south', '南'), node('span', 'ring-west', '西'));

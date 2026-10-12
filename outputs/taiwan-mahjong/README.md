@@ -6,6 +6,8 @@
 
 ## 入口
 
+- [決策題試讀](https://zhai2liu.github.io/taiwan-mahjong/training.html)：9題草案先作答再看推導，不計牌技總分；[驗收與限制](L3B0-TRIAL-VALIDATION.md)。
+
 - [L3-A3題目模型複核](L3A3-MODEL-REVIEW.md)：13題草案、4能力候選與難度限制，下一步為內容試讀。
 
 - [L2-B局後檢討畫面](L2B2-REVIEW-UI-VALIDATION.md)：結算內回看最多三筆決策；本輪發布狀態見HANDOFF。
