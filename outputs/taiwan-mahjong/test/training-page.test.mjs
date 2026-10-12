@@ -13,8 +13,8 @@ test('試讀包只有九道已複核訓練題，保留候選與額外資料不�
  assert.ok(all.filter(q=>q.purpose!=='training').every(q=>!JSON.stringify(trainingQuestions).includes(q.prompt)));
 });
 
-test('試讀實際控制流程：提交前无答案，空答不揭示，多選混入錯項不算符合，切題保留理由',()=>{
- let focused;
+test('試讀控制與回饋：揭示界線、草稿保留、只匯出意見及下載失敗回退',async()=>{
+ let focused, downloaded, blob, downloadFailure=false;
  class Element {
   children=[]; listeners={}; textContent='';
   constructor(tag){this.tag=tag;}
@@ -23,6 +23,7 @@ test('試讀實際控制流程：提交前无答案，空答不揭示，多選�
   setAttribute(){}
   addEventListener(type,fn){this.listeners[type]=fn;}
   focus(){focused=this;}
+  click(){downloaded=this;}
   querySelector(selector){return all(this).find(x=>'#'+x.id===selector);}
  }
  const root=new Element('root');
@@ -31,12 +32,24 @@ test('試讀實際控制流程：提交前无答案，空答不揭示，多選�
  const click=text=>find('button',text).listeners.click();
  const submit=()=>find('form').listeners.submit({preventDefault(){}});
  const source=ts.transpileModule(fs.readFileSync(new URL('../src/training.ts',import.meta.url),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
- vm.runInNewContext(source,{exports:{},require:()=>({trainingQuestions}),document:{querySelector:()=>root,createElement:tag=>new Element(tag)}});
+ vm.runInNewContext(source,{exports:{},require:()=>({trainingQuestions}),Blob,
+  URL:{createObjectURL(value){if(downloadFailure)throw Error('blocked');blob=value;return 'blob:trial';},revokeObjectURL(){}},
+  setTimeout:fn=>fn(),document:{querySelector:()=>root,createElement:tag=>new Element(tag)}});
+ click('下載全部試讀回饋');assert.equal(downloaded,undefined);
  assert.equal(find('h3'),undefined);submit();assert.equal(find('h3'),undefined);
  for(const input of all().filter(x=>x.tag==='input')){input.checked=true;input.listeners.change();}
  const reason=find('textarea');reason.value='<script>測試</script>';reason.listeners.input();
- click('下一題');assert.equal(find('h3'),undefined);click('上一題');assert.equal(find('textarea').value,reason.value);
+ const firstFeedback=root.querySelector('#trial-feedback');firstFeedback.value='第一題的措辭不清楚';firstFeedback.listeners.input();
+ click('下一題');assert.equal(find('h3'),undefined);
+ const secondFeedback=root.querySelector('#trial-feedback');secondFeedback.value='第二題按鈕太遠';secondFeedback.listeners.input();
+ click('上一題');assert.equal(find('textarea').value,reason.value);assert.equal(root.querySelector('#trial-feedback').value,firstFeedback.value);
  submit();assert.equal(find('h3').textContent,'有選項需要再核對');assert.equal(focused.id,'answer');
  assert.ok(all().filter(x=>x.tag==='input').every(x=>x.disabled));assert.equal(find('textarea').readOnly,true);
  click('下一題');click('上一題');assert.equal(find('h3').textContent,'有選項需要再核對');
+ click('下載全部試讀回饋');assert.equal(downloaded.download,'taiwan-mahjong-trial-feedback.txt');
+ const report=await blob.text();assert.ok(report.includes('題號 E01\n第一題的措辭不清楚'));assert.ok(report.includes('題號 E02\n第二題按鈕太遠'));
+ assert.ok(!report.includes(reason.value));assert.ok(!report.includes(trainingQuestions[0].derivation));
+ assert.equal(root.querySelector('#feedback-export').value,report);
+ downloadFailure=true;click('下載全部試讀回饋');assert.ok(all().some(x=>x.textContent.includes('瀏覽器無法下載')));
+ assert.equal(root.querySelector('#trial-feedback').value,firstFeedback.value);
 });

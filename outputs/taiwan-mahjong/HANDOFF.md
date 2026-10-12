@@ -6,7 +6,9 @@
 
 2026-10-12。首頁連至獨立training.html：九題先答再揭示、理由未評閱、切題保留本頁草稿，離頁清除且不動對戰／練習存檔。四道保留候選不入試讀包。詳見[L3-B0驗收](L3B0-TRIAL-VALIDATION.md)。331全套測試、check／build通過，最後文句調整再建置及2項試讀測試通過。
 
-4198內建瀏覽器驗入口、空答、正答／錯答、焦點、理由保留、九題邊界、返回及390窄視窗；未驗手機實機／Safari。產物index-BjqaUbPB.js、training-DJ_axvds.js；多頁共用preload產物。提交／發布收尾另記。額度起始61%，檢查86%，非精確token；未重設或自動續跑。
+4198內建瀏覽器驗入口、空答、正答／錯答、焦點、理由保留、九題邊界、返回及390窄視窗；未驗手機實機／Safari。產物index-BjqaUbPB.js、training-DJ_axvds.js；多頁共用preload產物。原包1387fd0的Actions38190450639成功，正式training.html已用瀏覽器確認。額度起始61%，檢查86%，非精確token；未重設或自動續跑。
+
+本輪新增固定題號及本頁回饋下載／複製回退；331測試、check／build通過，work/l3b0-feedback-tests.log。4199真實下載及txt內容已核對，僅合成意見；沒有真人回饋。新試讀產物training-BJqf3_zf.js，發布收尾待補。新額度視窗起始1%，未使用重設。
 
 下一包先做題意／操作試讀回饋，再修訂和校準；不宣稱正式測驗或學習成效。主流程未改桌規、AI或存檔。src/training-data.ts由check/dev生成且Git忽略，維護題目改原JSON。
 
