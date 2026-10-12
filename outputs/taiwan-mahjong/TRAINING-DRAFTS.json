@@ -6,7 +6,7 @@
   "assessmentFamilies": [],
   "cases": [
     {
-      "id": "E01", "skill": "efficiency", "familyId": "five-meld-singleton", "purpose": "training", "reviewStatus": "model-reviewed-not-calibrated",
+      "id": "E01", "board": [{"label":"已公開副露","groups":[["1m","2m","3m"],["4m","5m","6m"],["1p","2p","3p"],["4p","5p","6p"],["7s","8s","9s"]]},{"label":"你的暗手","groups":[["1z","2z"]]},{"label":"另外已在牌河的東","groups":[["1z","1z"]]}], "skill": "efficiency", "familyId": "five-meld-singleton", "purpose": "training", "reviewStatus": "model-reviewed-not-calibrated",
       "difficulty": "基礎控制題", "scope": "公開張數下的局部牌效，不評估放槍或收益",
       "prompt": "已完成五副露123萬、456萬、123筒、456筒、789索，暗手東、南；另外兩張東已在牌河。除上述牌之外，沒有其他公開一般牌。若先維持較低向聽，再比較公開有效進張，哪些捨牌符合目標？選出全部。",
       "choices": [{"id":"east","text":"打東，留南單騎"},{"id":"south","text":"打南，留東單騎"}],
@@ -16,7 +16,7 @@
       "references": ["L1A-EVIDENCE-VALIDATION.md:C04", "test/evidence-boundaries.test.mjs:L1A-01"]
     },
     {
-      "id": "E02", "skill": "efficiency", "familyId": "four-meld-shanten-priority", "purpose": "training", "reviewStatus": "model-reviewed-not-calibrated",
+      "id": "E02", "board": [{"label":"已公開副露","groups":[["1m","2m","3m"],["4m","5m","6m"],["1p","2p","3p"],["7p","8p","9p"]]},{"label":"你的暗手","groups":[["3s","4s","1z","1z","2z"]]}], "skill": "efficiency", "familyId": "four-meld-shanten-priority", "purpose": "training", "reviewStatus": "model-reviewed-not-calibrated",
       "difficulty": "單一取捨題", "scope": "固定四副露後的局部牌效",
       "prompt": "四副露123萬、456萬、123筒、789筒；暗手三索、四索、東、東、南，沒有其他可見牌。目標先讓向聽較低，再比有效進張。選出全部符合此目標的捨牌。",
       "choices": [{"id":"south","text":"南"},{"id":"east","text":"東"},{"id":"three","text":"三索"},{"id":"four","text":"四索"}],
@@ -26,7 +26,7 @@
       "references": ["L1B-EVIDENCE-CONTRACT.md", "src/analysis.ts:bestDiscards"]
     },
     {
-      "id": "S01", "skill": "safety-scope", "familyId": "four-known-honor", "purpose": "training", "reviewStatus": "model-reviewed-not-calibrated",
+      "id": "S01", "board": [{"label":"你持有的東","groups":[["1z"]]},{"label":"另外三張已公開的東","groups":[["1z","1z","1z"]]}], "skill": "safety-scope", "familyId": "four-known-honor", "purpose": "training", "reviewStatus": "model-reviewed-not-calibrated",
       "difficulty": "基礎控制題", "scope": "本次普通放槍的局部容量證明",
       "prompt": "自己持有一張東，另外三張東都已公開。只就這一張東與普通胡牌成形路徑，可以證明哪一件事？",
       "choices": [{"id":"ron-safe","text":"本次打東可排除以東作將或刻的普通放槍路徑"},{"id":"dealer-stop","text":"一定可以阻止莊家連莊"},{"id":"all-safe","text":"從現在起整局零風險"}],
@@ -36,7 +36,7 @@
       "references": ["L1A-EVIDENCE-VALIDATION.md:C07", "test/safety.test.mjs"]
     },
     {
-      "id": "S02", "skill": "safety-scope", "familyId": "four-known-number-counterexample", "purpose": "training", "reviewStatus": "model-reviewed-not-calibrated",
+      "id": "S02", "board": [{"label":"你持有的四張三萬","groups":[["3m","3m","3m","3m"]]}], "skill": "safety-scope", "familyId": "four-known-number-counterexample", "purpose": "training", "reviewStatus": "model-reviewed-not-calibrated",
       "difficulty": "反例辨識題", "scope": "剩餘局部成形路徑，不是實際放槍概率",
       "prompt": "四張三萬都在自己手中，其他萬子沒有公開資訊。能因此證明打三萬不會普通放槍嗎？",
       "choices": [{"id":"safe","text":"能，因為對手沒有三萬"},{"id":"unknown","text":"不能；對手仍可能用12、24或45萬接成順子"},{"id":"certain","text":"不能，因此一定會放槍"}],
@@ -46,7 +46,7 @@
       "references": ["L1A-EVIDENCE-VALIDATION.md:C08", "test/safety.test.mjs"]
     },
     {
-      "id": "C01", "skill": "claim-cost", "familyId": "chi-134-2-and-ban", "purpose": "training", "reviewStatus": "model-reviewed-not-calibrated",
+      "id": "C01", "board": [{"label":"只顯示相關暗手（不是完整手牌）","groups":[["1m","3m","4m"]]},{"label":"上家打出","groups":[["2m"]]}], "skill": "claim-cost", "familyId": "chi-134-2-and-ban", "purpose": "training", "reviewStatus": "model-reviewed-not-calibrated",
       "difficulty": "基礎控制題", "scope": "組順子辨識，假設完整局況符合引擎吃牌前置條件",
       "prompt": "只看相關手牌134萬，上家打2萬，尾局與過水等限制都不阻止吃牌，且吃後有合法牌可捨。哪些自身兩張可以吃成順子？選出全部；不問是否值得吃。",
       "choices": [{"id":"13","text":"1與3萬"},{"id":"34","text":"3與4萬"},{"id":"14","text":"1與4萬"}],
@@ -56,7 +56,7 @@
       "references": ["L1A-EVIDENCE-VALIDATION.md:C05", "test/chi.test.mjs"]
     },
     {
-      "id": "C02", "skill": "claim-cost", "familyId": "chi-134-2-and-ban", "purpose": "training", "reviewStatus": "model-reviewed-not-calibrated",
+      "id": "C02", "board": [{"label":"本次拿去吃牌的兩張暗手","groups":[["3m","4m"]]},{"label":"本次吃入的上家捨牌","groups":[["2m"]]}], "skill": "claim-cost", "familyId": "chi-134-2-and-ban", "purpose": "training", "reviewStatus": "model-reviewed-not-calibrated",
       "difficulty": "單一取捨題", "scope": "本桌吃後禁捨；不是日麻振聽",
       "prompt": "已用手中34萬吃入上家的2萬。依本桌吃後禁捨規則，這次不能捨哪些牌種？選出全部。",
       "choices": [{"id":"2m","text":"二萬"},{"id":"5m","text":"五萬"},{"id":"1m","text":"一萬"},{"id":"4p","text":"四筒"}],

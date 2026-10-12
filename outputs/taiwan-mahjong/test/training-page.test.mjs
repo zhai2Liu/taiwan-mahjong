@@ -9,7 +9,7 @@ test('試讀包只有九道已複核訓練題，保留候選與額外資料不�
  const all=['TRAINING-DRAFTS.json','TRAINING-REVIEW-CANDIDATES.json'].flatMap(f=>JSON.parse(fs.readFileSync(new URL('../'+f,import.meta.url),'utf8')).cases);
  assert.equal(trainingQuestions.length,9);
  assert.deepEqual(trainingQuestions.map(q=>q.id),all.filter(q=>q.purpose==='training').map(q=>q.id));
- for(const q of trainingQuestions)assert.deepEqual(Object.keys(q).sort(),['accepted','choices','derivation','id','prompt']);
+ for(const q of trainingQuestions)assert.deepEqual(Object.keys(q).sort(),['accepted','board','choices','derivation','id','prompt']);
  assert.ok(all.filter(q=>q.purpose!=='training').every(q=>!JSON.stringify(trainingQuestions).includes(q.prompt)));
 });
 
@@ -32,7 +32,7 @@ test('試讀控制與回饋：揭示界線、草稿保留、只匯出意見及�
  const click=text=>find('button',text).listeners.click();
  const submit=()=>find('form').listeners.submit({preventDefault(){}});
  const source=ts.transpileModule(fs.readFileSync(new URL('../src/training.ts',import.meta.url),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
- vm.runInNewContext(source,{exports:{},require:()=>({trainingQuestions}),Blob,
+ vm.runInNewContext(source,{exports:{},require:name=>name==='./tile-face.js'?{tileFace:()=>new Element('svg')}:{trainingQuestions},Blob,
   URL:{createObjectURL(value){if(downloadFailure)throw Error('blocked');blob=value;return 'blob:trial';},revokeObjectURL(){}},
   setTimeout:fn=>fn(),document:{querySelector:()=>root,createElement:tag=>new Element(tag)}});
  click('下載全部試讀回饋');assert.equal(downloaded,undefined);
@@ -52,4 +52,16 @@ test('試讀控制與回饋：揭示界線、草稿保留、只匯出意見及�
  assert.equal(root.querySelector('#feedback-export').value,report);
  downloadFailure=true;click('下載全部試讀回饋');assert.ok(all().some(x=>x.textContent.includes('瀏覽器無法下載')));
  assert.equal(root.querySelector('#trial-feedback').value,firstFeedback.value);
+});
+
+test('題面圖示只重現題幹已知牌：完整與局部標示、張數及四張容量',()=>{
+ const expected={E01:'123456m123456p789s1211z',E02:'123456m123789p34s112z',S01:'1111z',S02:'3333m',C01:'1342m',C02:'342m',C03:'22s123456m123p11z3472s'};
+ const parse=t=>(t.match(/[1-9]+[mpsz]/g)||[]).flatMap(s=>[...s.slice(0,-1)].map(n=>n+s.at(-1))).sort();
+ for(const q of trainingQuestions){
+  const actual=q.board.flatMap(r=>r.groups.flat());
+  assert.deepEqual([...actual].sort(),expected[q.id]?parse(expected[q.id]):[],q.id);
+  for(const k of actual){assert.match(k,/^([1-9][mps]|[1-7]z)$/);assert.ok(actual.filter(t=>t===k).length<=4);}
+ }
+ assert.match(trainingQuestions.find(q=>q.id==='C01').board[0].label,/不是完整手牌/);
+ assert.match(trainingQuestions.find(q=>q.id==='C03').board[0].label,/尚未副露/);
 });

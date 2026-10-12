@@ -1,4 +1,6 @@
 import { trainingQuestions } from './training-data.js';
+import { tileFace } from './tile-face.js';
+import type { TileKind } from './model.js';
 
 // ponytail: page-local drafts only; persistence needs a separate retention/clear contract.
 const drafts = trainingQuestions.map(() => ({ selected: new Set<string>(), reason: '', feedback: '', revealed: false }));
@@ -12,6 +14,20 @@ function render(focus = true): void {
   root.replaceChildren();
   const heading = el('h2', `第 ${index + 1} / ${trainingQuestions.length} 題`); heading.tabIndex = -1;
   root.append(heading, el('p', `題號 ${q.id} · 回報問題時可附上此題號`), el('p', q.prompt), el('p', '請選出全部成立的敘述；理由可留空。'));
+  for (const row of q.board) {
+    const figure = el('figure'); figure.className = 'question-tiles'; figure.append(el('figcaption', row.label));
+    const tiles = el('div'); tiles.className = 'tile-row';
+    for (const group of row.groups) {
+      const set = el('div'); set.className = 'tile-group';
+      for (const kind of group) {
+        const name = kind[1] === 'z' ? ['東', '南', '西', '北', '中', '發', '白'][Number(kind[0]) - 1] : `${kind[0]}${({ m: '萬', p: '筒', s: '索' } as Record<string, string>)[kind[1]]}`;
+        const face = el('span'); face.className = 'question-tile'; face.setAttribute('role', 'img'); face.setAttribute('aria-label', name);
+        face.append(tileFace(kind as TileKind)); set.append(face);
+      }
+      tiles.append(set);
+    }
+    figure.append(tiles); root.append(figure);
+  }
   const form = el('form'), options = el('fieldset'); options.append(el('legend', '你的選擇'));
   for (const choice of q.choices) {
     const label = el('label'), input = el('input');

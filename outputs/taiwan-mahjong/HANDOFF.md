@@ -10,6 +10,8 @@
 
 本輪新增固定題號及本頁回饋下載／複製回退；331測試、check／build通過，work/l3b0-feedback-tests.log。4199真實下載及txt內容已核對，僅合成意見；沒有真人回饋。新試讀產物training-BJqf3_zf.js，已提交推送26ce2f0，Actions38209891377成功；正式試讀JS雜湊一致，瀏覽器已見固定題號與下載控制。4199測試伺服器及本輪本機頁已關閉，正式試讀頁保留供使用者。新額度視窗起始1%、收尾29%，非精確token，未使用重設。
 
+使用者表示先推可獨立進度：已加7題中立牌面區域、重用現有SVG；D01／D02不虛構牌型。332全套測試／build通過；E01桌面及C03窄畫面已驗。產物training-CFLzpfeU.js、training-CcqyaFRd.css、共用tile-face-CG76dTyt.js、主頁index-BWC_FWDQ.js；本包發布待補。
+
 下一包先做題意／操作試讀回饋，再修訂和校準；不宣稱正式測驗或學習成效。主流程未改桌規、AI或存檔。src/training-data.ts由check/dev生成且Git忽略，維護題目改原JSON。
 
 ## 前包：L3-A3分開模型複核完成，正式測驗未通關

@@ -4,7 +4,7 @@
   "status": "draft-not-in-runtime",
   "cases": [
     {
-      "id": "C03", "skill": "claim-cost", "familyId": "closed-pon-chi-shanten-tradeoff", "purpose": "training", "reviewStatus": "model-reviewed-not-calibrated",
+      "id": "C03", "board": [{"label":"你的完整暗手（尚未副露）","groups":[["2s","2s","1m","2m","3m","4m","5m","6m","1p","2p","3p","1z","1z","3s","4s","7s"]]},{"label":"上家打出","groups":[["2s"]]}], "skill": "claim-cost", "familyId": "closed-pon-chi-shanten-tradeoff", "purpose": "training", "reviewStatus": "model-reviewed-not-calibrated",
       "prompt": "你尚未副露，暗手為22索、123萬、456萬、123筒、東東、347索。上家打出2索，沒有其他公開一般牌；尾局、過水與禁碰都不限制回應。只比較用22索碰、用34索吃，且取得牌後都打7索。哪些敘述成立？選出全部；不判定全局最佳動作。",
       "choices": [
         {"id":"both-ready","text":"這兩種取得牌後的路線都能從1向聽成為聽牌"},
