@@ -39,6 +39,9 @@ test('試讀控制與回饋：揭示界線、草稿保留、只匯出意見及�
  assert.equal(find('h3'),undefined);submit();assert.equal(find('h3'),undefined);
  for(const input of all().filter(x=>x.tag==='input')){input.checked=true;input.listeners.change();}
  const reason=find('textarea');reason.value='<script>測試</script>';reason.listeners.input();
+ click('匯出作答紀錄（含理由與回饋）');
+ const draftReport=JSON.parse(await blob.text());assert.equal(draftReport.questions[0].status,'draft');
+ assert.equal(draftReport.questions[1].status,'unanswered');assert.equal(find('h3'),undefined);
  const firstFeedback=root.querySelector('#trial-feedback');firstFeedback.value='第一題的措辭不清楚';firstFeedback.listeners.input();
  click('下一題');assert.equal(find('h3'),undefined);
  const secondFeedback=root.querySelector('#trial-feedback');secondFeedback.value='第二題按鈕太遠';secondFeedback.listeners.input();
@@ -52,6 +55,17 @@ test('試讀控制與回饋：揭示界線、草稿保留、只匯出意見及�
  assert.equal(root.querySelector('#feedback-export').value,report);
  downloadFailure=true;click('下載全部試讀回饋');assert.ok(all().some(x=>x.textContent.includes('瀏覽器無法下載')));
  assert.equal(root.querySelector('#trial-feedback').value,firstFeedback.value);
+ downloadFailure=false;click('匯出作答紀錄（含理由與回饋）');
+ assert.equal(downloaded.download,'taiwan-mahjong-trial-answers.json');
+ const answers=JSON.parse(await blob.text());assert.equal(answers.schemaVersion,1);assert.equal(answers.questions.length,9);
+ assert.equal(answers.reasonAssessment,'not-reviewed');
+ assert.equal(answers.questions[0].status,'submitted-and-revealed');
+ assert.deepEqual(answers.questions[0].selected,trainingQuestions[0].choices);
+ assert.equal(answers.questions[0].reason,reason.value);assert.equal(answers.questions[1].feedback,secondFeedback.value);
+ assert.equal(answers.questions[1].status,'unanswered');
+ assert.equal(answers.questions[0].prompt,trainingQuestions[0].prompt);
+ assert.ok(!JSON.stringify(answers).includes(trainingQuestions[0].derivation));
+ assert.ok(answers.questions.every(q=>!('accepted' in q)&&!('score' in q)));
 });
 
 test('題面圖示只重現題幹已知牌：完整與局部標示、張數及四張容量',()=>{

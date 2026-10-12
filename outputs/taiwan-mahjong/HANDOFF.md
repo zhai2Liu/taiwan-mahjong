@@ -12,7 +12,9 @@
 
 使用者表示先推可獨立進度：已加7題中立牌面區域、重用現有SVG；D01／D02不虛構牌型。332全套測試／build通過；E01桌面及C03窄畫面已驗。產物training-CFLzpfeU.js、training-CcqyaFRd.css、共用tile-face-CG76dTyt.js、主頁index-BWC_FWDQ.js；已推送2e3c960，Actions38210221364成功；正式首頁與試讀頁JS／CSS及共用牌面產物雜湊相同，正式瀏覽器已見E01牌面。4200驗收伺服器與本機頁已關閉，正式試讀頁保留。
 
-下一包先做題意／操作試讀回饋，再修訂和校準；不宣稱正式測驗或學習成效。主流程未改桌規、AI或存檔。src/training-data.ts由check/dev生成且Git忽略，維護題目改原JSON。
+本輪追加作答JSON匯出（選項／理由／回饋＋題幹快照，區分未答／草稿／已提交揭示），原txt仍只含回饋，均不自動上傳。332全套測試／build通過，4201實際下載及讀回已驗。產物training-bbdO46e3.js／training-BooQQSia.css；發布收尾待記。額度起始73%，優先完成本包交接。
+
+下一包可接收使用者匯出的作答JSON或回饋txt整理進專案，再修訂和校準；不宣稱正式測驗或學習成效。主流程未改桌規、AI或存檔。src/training-data.ts由check/dev生成且Git忽略，維護題目改原JSON。
 
 ## 前包：L3-A3分開模型複核完成，正式測驗未通關
 

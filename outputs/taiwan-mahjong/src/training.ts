@@ -71,24 +71,37 @@ function render(focus = true): void {
   feedbackPanel.append(el('summary', '提供本題回饋（選填）'), feedbackLabel, feedback,
     el('p', '例如哪句看不懂、哪個操作卡住。切題會保留；離頁會清除，請先下載。'));
   const download = el('button', '下載全部試讀回饋'); download.type = 'button';
+  const answersDownload = el('button', '匯出作答紀錄（含理由與回饋）'); answersDownload.type = 'button';
   const exportStatus = el('p'); exportStatus.setAttribute('role', 'status');
   const previewLabel = el('label', '本次匯出內容（可自行複製）'), preview = el('textarea');
   preview.id = 'feedback-export'; previewLabel.htmlFor = preview.id; preview.readOnly = true; preview.rows = 5;
   const previewPanel = el('div'); previewPanel.hidden = true; previewPanel.append(previewLabel, preview);
-  download.addEventListener('click', () => {
+  const exportRecord = (includeAnswers: boolean): void => {
     const notes = drafts.flatMap((d, i) => d.feedback.trim() ? [`題號 ${trainingQuestions[i].id}\n${d.feedback.trim()}`] : []);
-    if (!notes.length) { exportStatus.textContent = '目前沒有回饋；可先展開「提供本題回饋」填寫。'; return; }
-    preview.value = `台灣十六張試讀回饋 · TW16-CLASSIC-v1 · L3-B0\n只包含自行填寫的回饋，不含作答與理由。\n\n${notes.join('\n\n')}`;
+    if (!includeAnswers && !notes.length) { exportStatus.textContent = '目前沒有回饋；可先展開「提供本題回饋」填寫。'; return; }
+    preview.value = includeAnswers ? JSON.stringify({
+      schemaVersion: 1, rulesVersion: 'TW16-CLASSIC-v1', mode: 'L3-B0-content-trial',
+      reasonAssessment: 'not-reviewed',
+      // Include the presented question snapshot so later edits cannot silently change the report's meaning.
+      questions: trainingQuestions.map((q, i) => ({ id: q.id, prompt: q.prompt,
+        status: drafts[i].revealed ? 'submitted-and-revealed' : drafts[i].selected.size || drafts[i].reason.trim() ? 'draft' : 'unanswered',
+        selected: q.choices.filter(c => drafts[i].selected.has(c.id)),
+        reason: drafts[i].reason, feedback: drafts[i].feedback,
+      })),
+    }, null, 2) : `台灣十六張試讀回饋 · TW16-CLASSIC-v1 · L3-B0\n只包含自行填寫的回饋，不含作答與理由。\n\n${notes.join('\n\n')}`;
     previewPanel.hidden = false;
     let url: string | undefined;
     try {
-      url = URL.createObjectURL(new Blob([preview.value], { type: 'text/plain;charset=utf-8' }));
-      const link = el('a'); link.href = url; link.download = 'taiwan-mahjong-trial-feedback.txt'; link.click();
+      url = URL.createObjectURL(new Blob([preview.value], { type: includeAnswers ? 'application/json;charset=utf-8' : 'text/plain;charset=utf-8' }));
+      const link = el('a'); link.href = url; link.download = includeAnswers ? 'taiwan-mahjong-trial-answers.json' : 'taiwan-mahjong-trial-feedback.txt'; link.click();
       exportStatus.textContent = '已交由瀏覽器下載。若未出現檔案，可複製下方文字；請自行提供回饋，不會自動上傳。';
     } catch { exportStatus.textContent = '瀏覽器無法下載，請複製下方回饋文字；原內容仍保留在本頁。'; }
     finally { if (url) { const objectUrl = url; setTimeout(() => URL.revokeObjectURL(objectUrl), 1000); } }
-  });
-  root.append(feedbackPanel, download, exportStatus, previewPanel);
+  };
+  download.addEventListener('click', () => exportRecord(false));
+  answersDownload.addEventListener('click', () => exportRecord(true));
+  const exports = el('nav'); exports.setAttribute('aria-label', '下載試讀內容'); exports.append(download, answersDownload);
+  root.append(feedbackPanel, el('p', '若要交回作答，請匯出紀錄並自行附到專案對話。檔案含選項、理由與回饋，不含標準答案；不會自動上傳。'), exports, exportStatus, previewPanel);
   if (focus) heading.focus();
 }
 render(false);

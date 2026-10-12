@@ -12,7 +12,7 @@ button { min-height: 44px; padding: 10px 18px; font: inherit; background: #195d4
 button:disabled { background: #d2d9d4; color: #495b53; cursor: default; }
 :focus-visible { outline: 3px solid #b7670b; outline-offset: 3px; }
 .answer { background: white; padding: 16px; border-left: 4px solid #195d49; margin: 20px 0; }
-nav { display: flex; gap: 12px; margin-top: 20px; }
+nav { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
 .question-tiles { margin: 12px 0; }
 .tile-row, .tile-group { display: flex; flex-wrap: wrap; gap: 4px; }
 .tile-row { gap: 12px; }
