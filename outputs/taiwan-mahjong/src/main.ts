@@ -4,9 +4,10 @@ import type { Session } from './session.js';
 import { render, updateReviewStatus, confirmReviewClear } from './view.js';
 import { createReviewRecorder } from './review-recorder.js';
 import { REVIEW_KEY, readReviewArchive } from './review-store.js';
-import { buildHandReview } from './hand-review.js';
+import { captureDecision } from './decision-snapshot.js';
+import { buildHandReview, buildDecisionReview } from './hand-review.js';
 import { showHandReview } from './hand-review-view.js';
-import type { UICommand } from './view.js';
+import type { UICommand, CoachMode } from './view.js';
 import { PRACTICE_KEY, createPractice, drawPractice, discardPractice, encodePractice, decodePractice } from './practice.js';
 import type { Practice } from './practice.js';
 import { renderPractice } from './practice-view.js';
@@ -19,9 +20,9 @@ let feedback: PlayFeedback | null = null;
 let progress: PlayProgress | null = null;
 
 const COACH_KEY = 'tw16:coach:v1';
-let coachEnabled = true;
+let coachMode: CoachMode = 'on';
 let coachNotice = '';
-try { coachEnabled = localStorage.getItem(COACH_KEY) !== 'off'; } catch { /* Preference stays in memory when storage is unavailable. */ }
+try { const value = localStorage.getItem(COACH_KEY); if (value === 'off' || value === 'after') coachMode = value; } catch { /* Preference stays in memory when storage is unavailable. */ }
 
 const SAVE_KEY = 'tw16:TW16-CLASSIC-v1:save';
 const root = document.querySelector<HTMLElement>('#app')!;
@@ -103,7 +104,7 @@ function paint(): void {
   const current = session?.game;
   render(root, {
     game, selectedTile, drawnTile: current?.turn === 0 && current.phase === 'awaitDiscard' ? current.drawContext.lastTile : null,
-    busy: needsAutomation() || failed, paused, speed, coachEnabled, coachNotice, feedback, status: message, notice, hasSave: saved !== null,
+    busy: needsAutomation() || failed, paused, speed, coachEnabled: coachMode === 'on', coachMode, coachNotice, feedback, status: message, notice, hasSave: saved !== null,
     canRetrySave: !!session && !failed && saveFailed,
     review: reviews.status(),
   }, command => { if (screen === rendered) send(command); });
@@ -163,9 +164,11 @@ function send(command: UICommand): void {
     if (mode === 'practice' ? !practiceBlocked && !persistPractice() : session && !failed && !persist()) { refresh(); return; }
     paused = true; stopTimer(); paint(); showTutorial(root); return;
   }
-  if (command.type === 'coach-toggle') {
-    coachEnabled = !coachEnabled; coachNotice = ''; feedback = null;
-    try { localStorage.setItem(COACH_KEY, coachEnabled ? 'on' : 'off'); }
+  if (command.type === 'coach-mode') {
+    if (!['on', 'off', 'after'].includes(command.value)) return;
+    coachMode = command.value;
+    coachNotice = ''; feedback = null;
+    try { localStorage.setItem(COACH_KEY, coachMode); }
     catch { coachNotice = '教練設定本次已套用，但無法保存；重新開啟可能恢復預設。'; }
     refresh(); return;
   }
@@ -219,17 +222,23 @@ function send(command: UICommand): void {
       session = advance(session, 0, command.intent, command.version);
       reviewInput = [before, command.intent, 'TW16-CLASSIC-v1'];
       feedback = null;
-      if (coachEnabled && command.intent.type === 'DISCARD') {
+      if (coachMode === 'on' && command.intent.type === 'DISCARD') {
         try {
           const result = discardFeedback(before, command.intent.tileId, progress);
           progress = result.progress; feedback = result.feedback;
         } catch (error) { console.warn('Optional feedback unavailable:', error); }
       }
     }
+    const explain = coachMode === 'after' && reviewInput?.[1].type === 'DISCARD';
+    if (explain) paused = true;
     selectedTile = null; status = ''; const gameSaved = persist(); refresh();
     if (reviewInput) {
       if (gameSaved) reviews.record(...reviewInput);
       else reviews.skipUnsavedGame();
+      if (explain) {
+        try { showHandReview(root, buildDecisionReview(captureDecision(...reviewInput)), 0, '', 'decision', gameSaved ? '' : '本次出牌尚未儲存。請保持頁面開啟，關閉解釋後按「重試儲存」。'); }
+        catch { coachNotice = '出牌已生效，但本次解釋無法產生。牌局保持暫停，可按繼續牌局。'; paint(); }
+      }
     }
   } catch {
     notice = '牌局已更新，這個操作未套用。請依畫面重新選擇。'; refresh();

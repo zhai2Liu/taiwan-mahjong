@@ -141,4 +141,7 @@ src/tutorial-view.ts只接root，不接Session、getObservation、localStorage�
 
 離線偏好比較：src/strategy-comparison.ts、test/strategy-comparison.test.mjs。共用scripts/research-risk.mjs生成RISK-EXAMPLES.json；限制與下一步見DEALER-STRATEGY-VALIDATION.md。未接正式入口，不要把偏好分數當危險機率。
 
-L2-B1：src/hand-review.ts只讀已驗證封套，挑最近三筆可比較決策並合併相同牌種實體候選。下一包畫面須守已結算本局入口，不把此函式直接當存檔驗證器；見L2B1-HAND-REVIEW.md。
+L2-B1：src/hand-review.ts只讀已驗證封套，挑最近三筆可比較決策並合併相同牌種實體候選。已發布的局後畫面守已結算本局入口，不把此函式直接當存檔驗證器；見L2B1-HAND-REVIEW.md。
+
+
+2026-10-13：對戰提示已分 on/off/after，偏好鍵不變。事後捨牌解釋只在成功提交後建立暫存快照並暫停；共用 hand-review.ts 的 buildDecisionReview 與 hand-review-view.ts decision 畫面。不可把此入口改為出牌前預覽；不得因分析失敗重新執行 advance。詳細範圍、保存失敗及驗收見 [AFTER-DISCARD-VALIDATION](AFTER-DISCARD-VALIDATION.md)。

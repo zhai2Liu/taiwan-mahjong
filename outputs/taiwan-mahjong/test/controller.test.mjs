@@ -35,8 +35,9 @@ function controller(raw = null, confirm = true, faults = {}) {
       if (name === './session.js') return sessions;
       if (name === './practice.js') return practices;
       if (name === './review-store.js') return reviewStore;
-      if (name === './hand-review.js') return handReview;
-      if (name === './hand-review-view.js') return { showHandReview: (_root, review, pending, error) => reviewViews.push({ review, pending, error }) };
+      if (name === './decision-snapshot.js') return { captureDecision };
+      if (name === './hand-review.js') return faults.explainError ? { ...handReview, buildDecisionReview: () => { throw Error('explain failed'); } } : handReview;
+      if (name === './hand-review-view.js') return { showHandReview: (_root, review, pending, error, context, saveWarning) => reviewViews.push({ review, pending, error, context, saveWarning }) };
       if (name === './review-recorder.js') return { createReviewRecorder: (storage, changed) => createReviewRecorder(storage, changed,
         Object.hasOwn(faults, 'locks') ? faults.locks : { request: async (_key, _options, callback) => callback({}) }) };
       if (name === './feedback.js') return faults.feedbackError ? { ...feedback, discardFeedback: () => { throw faults.feedbackError; } } : feedback;
@@ -401,7 +402,7 @@ test('教練開關保存獨立設定，不改牌局、不行牌，關閉可重�
   const raw = sessions.encodeSession(initial()), app = controller(raw);
   app.send({ type: 'resume' }); app.send({ type: 'pause' });
   const before = app.raw(), game = app.view.game;
-  app.send({ type: 'coach-toggle' });
+  app.send({ type: 'coach-mode', value: 'off' });
   assert.equal(app.view.coachEnabled, false); assert.equal(app.raw(), before);
   assert.deepEqual(app.view.game, game); assert.equal(app.timers.size, 0);
   assert.equal(controller(raw, true, { coachRaw: 'off' }).view.coachEnabled, false);
@@ -410,7 +411,7 @@ test('教練開關保存獨立設定，不改牌局、不行牌，關閉可重�
 
 test('教練設定寫入失敗仍可切換，原牌局存檔不變且提示未保存', () => {
   const raw = sessions.encodeSession(initial()), app = controller(raw, true, { write: new DOMException('full', 'QuotaExceededError') });
-  app.send({ type: 'coach-toggle' });
+  app.send({ type: 'coach-mode', value: 'off' });
   assert.equal(app.view.coachEnabled, false); assert.match(app.view.coachNotice, /無法保存/);
   assert.equal(app.raw(), raw); assert.equal(app.timers.size, 0);
 });
@@ -609,4 +610,51 @@ test('局後空檔、壞檔及未知分析版本只顯示說明，不重設原�
     else { assert.equal(app.reviewViews[0].review,null); assert.match(app.reviewViews[0].error,/原資料已保留/); }
     assert.equal(app.reviewRaw(),reviewRaw); assert.equal(app.raw(),raw); assert.equal(app.writeKeys.length,0);
   }
+});
+
+
+test('出牌後模式不提前提示，成功後只前進一步且暫停，過期動作不再出牌', () => {
+ const raw = sessions.encodeSession(readySession());
+ const app = controller(raw, true, {coachRaw:'after'});
+ app.send({type:'resume'});
+ assert.equal(app.view.coachMode,'after'); assert.equal(app.view.coachEnabled,false);
+ assert.equal(app.reviewViews.length,0);
+ const before = app.view.game, intent = before.legalActions.find(a=>a.type==='DISCARD');
+ app.send({type:'intent',intent,version:before.version});
+ assert.equal(app.view.game.version,before.version+1);
+ assert.equal(app.view.paused,true); assert.equal(app.timers.size,0);
+ assert.equal(app.reviewViews.length,1); assert.equal(app.reviewViews[0].context,'decision');
+ const card=app.reviewViews[0].review.cards[0];
+ assert.equal(card.snapshot.observation.version,before.version);
+ assert.equal(card.rows.filter(r=>r.chosen).length,1);
+ assert.equal(card.snapshot.observation.self.concealed.length,before.self.concealed.length);
+ const saved=app.raw(); app.send({type:'intent',intent,version:before.version});
+ assert.equal(app.raw(),saved); assert.equal(app.reviewViews.length,1);
+ app.send({type:'pause'}); assert.equal(app.view.paused,false); assert.equal(app.timers.size,1);
+});
+
+test('模式切換不改牌局；關閉與即時模式不開事後視窗，非法出牌不產生解釋', () => {
+ const raw=sessions.encodeSession(readySession());
+ for(const value of ['on','off']) {
+  const app=controller(raw); app.send({type:'resume'}); app.send({type:'coach-mode',value});
+  assert.equal(app.raw(),raw); assert.equal(app.view.coachMode,value);
+  const before=app.view.game;
+  app.send({type:'intent',intent:before.legalActions.find(a=>a.type==='DISCARD'),version:before.version});
+  assert.equal(app.reviewViews.length,0); assert.equal(app.view.paused,false);
+ }
+ const app=controller(raw,true,{coachRaw:'after'});app.send({type:'resume'});
+ app.send({type:'intent',intent:{type:'DISCARD',tileId:'invalid'},version:app.view.game.version});
+ assert.equal(app.raw(),raw);assert.equal(app.reviewViews.length,0);assert.equal(app.view.paused,false);
+});
+
+test('事後解釋或保存失敗不撤銷已生效出牌，也不自動行牌', () => {
+ const raw=sessions.encodeSession(readySession());
+ for(const faults of [{explainError:true},{gameWrite:Error('full')}]) {
+  const app=controller(raw,true,{...faults,coachRaw:'after'});app.send({type:'resume'});
+  const before=app.view.game;
+  app.send({type:'intent',intent:before.legalActions.find(a=>a.type==='DISCARD'),version:before.version});
+  assert.equal(app.view.game.version,before.version+1);assert.equal(app.view.paused,true);assert.equal(app.timers.size,0);
+  if(faults.explainError) {assert.match(app.view.coachNotice,/出牌已生效/);assert.notEqual(app.raw(),raw);}
+  else {assert.equal(app.raw(),raw);assert.equal(app.view.canRetrySave,true);assert.equal(app.reviewViews.length,1);assert.match(app.reviewViews[0].saveWarning,/尚未儲存/);}
+ }
 });

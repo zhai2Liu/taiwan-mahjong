@@ -17,12 +17,16 @@ function comparable(s: DecisionSnapshot) {
     || new Set(actions.filter(a => a.type === 'DISCARD').map(groupKey)).size > 1;
 }
 
-/** Read-only, completed-hand caller only. This is a recent sample, not a mistake ranking. */
+/** Read-only review of validated snapshots; never advances the game. */
 export function buildHandReview(records: readonly ReviewRecord[], matchId: string, handId: number, seat: Seat) {
   const hand = records.filter((s): s is DecisionSnapshot => s.schemaVersion === 2
     && s.observation.matchId === matchId && s.observation.handId === handId && s.observation.seat === seat);
   const selected = hand.filter(comparable).slice(-3);
-  const cards = selected.map(snapshot => {
+  const cards = selected.map(buildDecisionCard);
+  return { cards, retainedForHand: hand.length, shown: cards.length,
+    limitation: '僅含本瀏覽器仍保留的記錄，不是完整牌譜；只比较當時可見證據，不使用後續結果評判。' };
+}
+function buildDecisionCard(snapshot: DecisionSnapshot) {
     const evidence = reviewDecision(snapshot);
     const chosen = exact(snapshot.chosen);
     const rows = new Map<string, { candidate: typeof evidence.candidates[number]; chosen: boolean; efficiencyPreferred: boolean }>();
@@ -36,7 +40,10 @@ export function buildHandReview(records: readonly ReviewRecord[], matchId: strin
       selectionNote: '最近三筆可比較決策；不是錯誤排名。',
       claimNote: '吃碰是當時提出的選擇；取得牌與後捨仍受仲裁及合法性限制。',
     };
-  });
-  return { cards, retainedForHand: hand.length, shown: cards.length,
-    limitation: '僅含本瀏覽器仍保留的記錄，不是完整牌譜；只比较當時可見證據，不使用後續結果評判。' };
+}
+
+export function buildDecisionReview(snapshot: DecisionSnapshot) {
+  const card = buildDecisionCard(snapshot);
+  card.selectionNote = '這是剛才已送出的選擇，不能在此改牌或重做。';
+  return { cards: [card], retainedForHand: 1, shown: 1, limitation: '只使用出牌前可見資訊，不使用後續摸牌或他家暗手。' };
 }

@@ -68,20 +68,21 @@ function visibleContext(card: Card): HTMLElement {
   }
   return detail;
 }
-export function showHandReview(root: HTMLElement, review: Review | null, pending: number, error = ''): void {
+export function showHandReview(root: HTMLElement, review: Review | null, pending: number, error = '', context: 'hand' | 'decision' = 'hand', saveWarning = ''): void {
   if (document.querySelector('dialog[data-hand-review]')) return;
   const dialog = node('dialog', 'review-panel'); dialog.dataset.handReview = ''; dialog.setAttribute('aria-labelledby', 'hand-review-title');
   const top = node('div', 'review-top');
-  const title = node('h2', '', '本局決策檢討'); title.id = 'hand-review-title'; title.tabIndex = -1;
+  const title = node('h2', '', context === 'decision' ? '出牌後解釋' : '本局決策檢討'); title.id = 'hand-review-title'; title.tabIndex = -1;
   top.append(title, button('關閉檢討', 'review-close', () => dialog.close(), 'button button-secondary')); dialog.append(top);
-  dialog.append(node('p', '', '回看你當時知道的資訊。這裡比較候選差異，不以後來輸贏判定唯一正解。'));
+  dialog.append(node('p', '', context === 'decision' ? '出牌已生效，牌局已暫停。看完關閉後，按「繼續牌局」；關閉或 Escape 不會自動行牌。' : '回看你當時知道的資訊。這裡比較候選差異，不以後來輸贏判定唯一正解。'));
+  if (saveWarning) { const warning = node('p', 'notice', saveWarning); warning.setAttribute('role', 'alert'); dialog.append(warning); }
   if (pending) dialog.append(node('p', 'notice', `此頁有${pending}筆尚未保存，未納入本次檢討；關閉後可在「決策記錄與保存」重試。`));
   if (error) { const notice = node('p', 'notice', error); notice.setAttribute('role', 'alert'); dialog.append(notice); }
   else if (review) {
-    dialog.append(node('p', 'muted', `${review.limitation} 本局保留${review.retainedForHand}筆，顯示${review.shown}筆可比較決策。`));
+    dialog.append(node('p', 'muted', context === 'decision' ? review.limitation : `${review.limitation} 本局保留${review.retainedForHand}筆，顯示${review.shown}筆可比較決策。`));
     if (!review.cards.length) dialog.append(node('p', '', '本局尚無可比較的已保存決策。舊牌局、尚未存妥或只有「過」的記錄可能不會出現在這裡。'));
     const cards: HTMLElement[] = [];
-    if (review.cards.length) {
+    if (review.cards.length > 1) {
       const label = node('label', 'review-picker', '選擇要檢討的決策');
       const select = node('select'); select.setAttribute('aria-label', '選擇要檢討的決策');
       review.cards.forEach((card, index) => { const option = node('option', '', `${index + 1}／${review.cards.length} · ${reviewActionName(card.snapshot.chosen)}`); option.value = String(index); select.append(option); });
@@ -105,7 +106,7 @@ export function showHandReview(root: HTMLElement, review: Review | null, pending
       section.append(visibleContext(card)); dialog.append(section);
     }
   }
-  dialog.append(button('回到本局結算', 'review-done', () => dialog.close(), 'button button-primary'));
-  dialog.addEventListener('close', () => { dialog.remove(); root.querySelector<HTMLElement>('[data-focus="review-open"]')?.focus({ preventScroll: true }); }, { once: true });
+  dialog.append(button(context === 'decision' ? '關閉解釋，返回暫停牌桌' : '回到本局結算', 'review-done', () => dialog.close(), 'button button-primary'));
+  dialog.addEventListener('close', () => { dialog.remove(); root.querySelector<HTMLElement>(context === 'decision' ? '[data-focus="pause"]' : '[data-focus="review-open"]')?.focus({ preventScroll: true }); }, { once: true });
   document.body.append(dialog); dialog.showModal(); title.focus();
 }

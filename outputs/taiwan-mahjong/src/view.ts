@@ -7,8 +7,10 @@ import { tileFace } from './tile-face.js';
 import type { PlayFeedback } from './feedback.js';
 import type { ReviewStatus } from './review-recorder.js';
 
+export type CoachMode = 'on' | 'off' | 'after';
 export type UICommand =
-  | { type: 'start' | 'resume' | 'new' | 'next' | 'pause' | 'coach-toggle' | 'tutorial' | 'retry-save' | 'review-retry' | 'review-clear' | 'review-open' }
+  | { type: 'coach-mode'; value: CoachMode }
+  | { type: 'start' | 'resume' | 'new' | 'next' | 'pause' | 'tutorial' | 'retry-save' | 'review-retry' | 'review-clear' | 'review-open' }
   | { type: 'practice' | 'practice-start' | 'practice-resume' | 'practice-replay' | 'practice-draw' | 'game' }
   | { type: 'practice-discard'; tileId: string }
   | { type: 'speed'; value: 'normal' | 'fast' }
@@ -17,7 +19,7 @@ export type UICommand =
 export type ViewModel = {
   game: ReturnType<typeof getObservation> | null;
   selectedTile: string | null; drawnTile: string | null; busy: boolean; paused: boolean;
-  coachEnabled?: boolean; coachNotice?: string; canRetrySave?: boolean;
+  coachEnabled?: boolean; coachMode?: CoachMode; coachNotice?: string; canRetrySave?: boolean;
   feedback?: PlayFeedback | null;
   review?: ReviewStatus;
   speed: 'normal' | 'fast'; status: string; notice: string; hasSave: boolean;
@@ -98,8 +100,14 @@ function header(model: ViewModel, send: Send): HTMLElement {
   tools.append(pill('本地公平 AI', 'fair-pill'));
   tools.append(button('新手教學', 'tutorial', () => send({ type: 'tutorial' }), 'button button-quiet'));
   if (model.game) {
-    const coachToggle = button('教練提示', 'coach-toggle', () => send({ type: 'coach-toggle' }), 'button button-quiet');
-    coachToggle.setAttribute('aria-pressed', String(model.coachEnabled !== false)); tools.append(coachToggle);
+    const coachLabel = node('label', 'speed-label', '提示');
+    const coachSelect = node('select'); coachSelect.dataset.focus = 'coach-mode'; coachSelect.setAttribute('aria-label', '對戰提示模式');
+    for (const [value, label] of [['off', '不提示'], ['after', '出牌後解釋'], ['on', '即時輔助']]) {
+      const option = node('option', '', label); option.value = value; coachSelect.append(option);
+    }
+    coachSelect.value = model.coachMode ?? (model.coachEnabled === false ? 'off' : 'on');
+    coachSelect.addEventListener('change', () => send({ type: 'coach-mode', value: coachSelect.value as CoachMode }));
+    coachLabel.append(coachSelect); tools.append(coachLabel);
     tools.append(button('練習', 'practice', () => send({ type: 'practice' }), 'button button-quiet'));
     tools.append(button(model.paused ? '繼續牌局' : '暫停', 'pause', () => send({ type: 'pause' }), 'button button-quiet'));
     const speed = node('label', 'speed-label'); speed.append(node('span', '', '速度'));
