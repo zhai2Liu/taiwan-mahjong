@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { fixture, discard, resolve } from './fixtures.mjs';
+import { fixture, discard, resolve, run, W02 } from './fixtures.mjs';
 import { getObservation } from '../dist/engine.js';
 import { coachAnalysis } from '../dist/coach.js';
 import { analyzeObservation } from '../dist/analysis.js';
@@ -20,7 +20,7 @@ test('候選題仍為草案：識別與答案完整，保留候選題族不可�
   assert.equal(new Set(all.map(c => c.id)).size, all.length);
   const trainingFamilies = new Set(all.filter(c => c.purpose === 'training').map(c => c.familyId));
   for (const c of bank.cases) {
-    assert.equal(c.reviewStatus, 'pending-content-review');
+    assert.equal(c.reviewStatus, 'model-reviewed-not-calibrated');
     assert.ok(['training', 'assessment-candidate'].includes(c.purpose));
     if (c.purpose === 'assessment-candidate') assert.ok(!trainingFamilies.has(c.familyId));
     assert.equal(new Set(c.choices.map(x => x.id)).size, c.choices.length);
@@ -86,4 +86,54 @@ test('HS01五組只差將的容量證明不擴張到未副露兩家', () => {
   assert.equal(a.provenSafeAgainstAll, c.expected.provenSafeAgainstAll);
   assert.ok(a.opponents.filter(p => p.seat !== 1).every(p => p.possibleUses.some(u => u.type === 'sequence')));
   assert.deepEqual(c.accepted, ['one-safe', 'others-unknown']);
+});
+
+test('HC01合法碰未改善向聽，兩個後捨均由8張降3張；原已副露', () => {
+  const c = byId('HC01'), e = c.expected;
+  const s = discard(fixture({ turn: 3, hands: { 0: '22m34p', 3: '2m' },
+    melds: { 0: ['123s', '456s', '789s', '789m'].map(tiles => ({ kind: 'chi', tiles })) },
+  }), 3, '2m');
+  const a = coachAnalysis(getObservation(s, 0));
+  assert.equal(a.current.shanten, e.beforeShanten);
+  assert.equal(a.current.improving, e.beforeImproving);
+  assert.equal(a.canWin, false);
+  assert.equal(a.claims.length, 1);
+  const pon = a.claims[0];
+  assert.equal(pon.intent.type, 'PON');
+  assert.equal(pon.losesClosed, e.losesClosed);
+  assert.deepEqual(pon.discards.map(x => x.kind), e.discards);
+  for (const d of pon.discards) {
+    assert.equal(d.analysis.shanten, e.afterShanten);
+    assert.equal(d.analysis.improving, e.afterImproving);
+    const acquired = resolve(s, { 0: 'PON' });
+    const after = discard(acquired, 0, d.kind);
+    assert.equal(after.players[0].melds.length, 5);
+    assert.equal(after.players[0].concealed.length, 1);
+  }
+  assert.deepEqual(c.accepted, ['same-ready', 'fewer', 'no-new-closed-cost']);
+});
+
+test('HD01兩家合法胡由座位仲裁，真人先按不能攔莊；兩種提交順序結果一致', () => {
+  const c = byId('HD01'), e = c.expected;
+  for (const order of [[1, 0], [0, 1]]) {
+    let s = discard(fixture({ turn: 3, dealer: 0, streak: 2,
+      hands: { 0: W02, 1: W02, 3: '2m' },
+    }), 3, '2m');
+    for (const seat of [0, 1]) assert.ok(getObservation(s, seat).legalActions.some(a => a.type === 'WIN'));
+    for (const seat of order) {
+      if (getObservation(s, seat).legalActions.some(a => a.type === 'WIN')) s = run(s, seat, 'WIN');
+      else {
+        // Higher-priority WIN already settles priority; the engine no longer asks the blocked seat.
+        assert.deepEqual(order, [0, 1]);
+        assert.equal(seat, 1);
+      }
+    }
+    s = resolve(s);
+    assert.equal(s.settlement.winner, e.winner);
+    assert.equal(s.players[1].restrictions.passedWin, false, '被攔胡不視為自願過水');
+    s = run(s, 'engine', 'NEXT_HAND');
+    assert.equal(s.dealer, e.dealer);
+    assert.equal(s.streak, e.nextStreak);
+  }
+  assert.deepEqual(c.accepted, ['dealer-wins', 'streak-three', 'time-irrelevant']);
 });

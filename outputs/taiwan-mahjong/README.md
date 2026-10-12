@@ -6,7 +6,7 @@
 
 ## 入口
 
-- [L3-A2題目複核與候選](L3A2-CONTENT-REVIEW.md)：11題草案與理由規準，尚非正式能力測驗。
+- [L3-A3題目模型複核](L3A3-MODEL-REVIEW.md)：13題草案、4能力候選與難度限制，下一步為內容試讀。
 
 - [L2-B局後檢討畫面](L2B2-REVIEW-UI-VALIDATION.md)：結算內回看最多三筆決策；本輪發布狀態見HANDOFF。
 - [L2-A真人記錄與保存驗收](L2A3-RECORDING-VALIDATION.md)：已接本機對局，獨立快照／互斥／重試／清除；發布狀態見HANDOFF。

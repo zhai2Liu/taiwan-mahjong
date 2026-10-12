@@ -17,7 +17,7 @@ test('題庫草案識別、答案集合、來源與題族隔離：未審核不�
   assert.deepEqual(sorted(new Set(bank.cases.map(c=>c.skill))),['claim-cost','dealer-continuation','efficiency','safety-scope']);
   const trainingFamilies=new Set();
   for(const c of bank.cases){
-    assert.equal(c.purpose,'training'); assert.equal(c.reviewStatus,'pending-content-review'); trainingFamilies.add(c.familyId);
+    assert.equal(c.purpose,'training'); assert.equal(c.reviewStatus,'model-reviewed-not-calibrated'); trainingFamilies.add(c.familyId);
     assert.ok(c.prompt&&c.derivation&&c.scope&&c.difficulty&&c.references.length);
     assert.equal(new Set(c.choices.map(o=>o.id)).size,c.choices.length);
     assert.ok(c.accepted.length); assert.equal(new Set(c.accepted).size,c.accepted.length);

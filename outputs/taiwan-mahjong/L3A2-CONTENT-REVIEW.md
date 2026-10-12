@@ -1,5 +1,7 @@
 # L3-A2：內容複核與保留候選
 
+> 本文為前包紀錄。後續已完成分開模型複核並補至13題；現行狀態與限制見[L3-A3](L3A3-MODEL-REVIEW.md)。
+
 2026-10-12。這一包完成本輪內容自查與引擎交叉核對，**沒有不同人員的獨立內容審核，也沒有難度匹配或學習成效證據**。L3-A尚未通關。原8題在[TRAINING-DRAFTS.json](TRAINING-DRAFTS.json)，新增1訓練題、2保留候選在[TRAINING-REVIEW-CANDIDATES.json](TRAINING-REVIEW-CANDIDATES.json)；共11題、10題族。全部維持pending-content-review，不接正式遊戲或計分。
 
 ## 前次收尾確認

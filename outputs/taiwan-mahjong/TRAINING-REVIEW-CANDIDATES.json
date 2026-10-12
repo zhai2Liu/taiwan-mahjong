@@ -4,11 +4,11 @@
   "status": "draft-not-in-runtime",
   "cases": [
     {
-      "id": "C03", "skill": "claim-cost", "familyId": "closed-pon-chi-shanten-tradeoff", "purpose": "training", "reviewStatus": "pending-content-review",
+      "id": "C03", "skill": "claim-cost", "familyId": "closed-pon-chi-shanten-tradeoff", "purpose": "training", "reviewStatus": "model-reviewed-not-calibrated",
       "prompt": "你尚未副露，暗手為22索、123萬、456萬、123筒、東東、347索。上家打出2索，沒有其他公開一般牌；尾局、過水與禁碰都不限制回應。只比較用22索碰、用34索吃，且取得牌後都打7索。哪些敘述成立？選出全部；不判定全局最佳動作。",
       "choices": [
         {"id":"both-ready","text":"這兩種取得牌後的路線都能從1向聽成為聽牌"},
-        {"id":"pon-more","text":"此條件下，碰後的公開有效進張5張，比吃後3張多"},
+        {"id":"pon-more","text":"此條件下，碰後的依目前可見牌計的有效牌張數5張，比吃後3張多"},
         {"id":"closed-cost","text":"兩者都失去門清資格，不能只用進張數判定整體收益"},
         {"id":"always-pon","text":"因此碰牌必定是全局最佳，也一定能取得這張牌"}
       ],
@@ -19,7 +19,7 @@
       "references": ["../taiwan-mahjong-m0/RULES.md", "src/analysis.ts", "test/coach.test.mjs"]
     },
     {
-      "id": "HE01", "skill": "efficiency", "familyId": "exhausted-wait-current-ron", "purpose": "assessment-candidate", "reviewStatus": "pending-content-review",
+      "id": "HE01", "skill": "efficiency", "familyId": "exhausted-wait-current-ron", "purpose": "assessment-candidate", "reviewStatus": "model-reviewed-not-calibrated",
       "prompt": "你暗手111萬、222萬、333筒、444筒、555索、東，尚未副露。兩張東已在牌河，現在另一家打出最後一張東。你沒有過水或其他禁止胡牌的限制。哪些敘述成立？選出全部。",
       "choices": [
         {"id":"ready","text":"接牌前的牌型仍為0向聽，結構聽口是東"},
@@ -34,7 +34,7 @@
       "references": ["test/coach.test.mjs", "../taiwan-mahjong-m0/RULES.md"]
     },
     {
-      "id": "HS01", "skill": "safety-scope", "familyId": "five-declared-groups-opponent-scope", "purpose": "assessment-candidate", "reviewStatus": "pending-content-review",
+      "id": "HS01", "skill": "safety-scope", "familyId": "five-declared-groups-opponent-scope", "purpose": "assessment-candidate", "reviewStatus": "model-reviewed-not-calibrated",
       "prompt": "四張三萬全在你手中，現在可以合法打三萬。下家已公開五組面子，只剩一張暗牌；另兩家尚未副露，其他萬子沒有可用的公開排除資訊。只談本次普通放槍，哪些敘述成立？選出全部。",
       "choices": [
         {"id":"one-safe","text":"可排除這張三萬對下家的普通放槍路徑"},
@@ -47,6 +47,8 @@
       "derivation": "五組面子已固定，下家只可能以剩餘一張暗牌成將；自有全部三萬排除其持三萬。其他兩家尚可能用12、24或45萬接順，僅為未排除的路徑，不代表其暗手真的可胡。這裡增加了對手面子數與對象範圍，並非四見數牌題的花色替換。",
       "reasonRubric": {"sufficient":["五面子只差將","下家無三萬","另兩家仍可成順但不保證實際聽牌"],"partial":["知道只對下家安全，但未說明面子數或容量"],"conflict":["將單家安全擴張成全桌","把存在路徑說成必放槍"]},
       "references": ["test/risk-evidence.test.mjs", "src/risk-evidence.ts"]
-    }
+    },
+    {"id":"HC01","skill":"claim-cost","familyId":"ready-pon-reduces-waits","purpose":"assessment-candidate","reviewStatus":"model-reviewed-not-calibrated","prompt":"你已吃成123索、456索、789索、789萬，暗手22萬、34筒；上家剛打2萬，除此之外沒有其他公開一般牌，且不受尾局或禁碰限制。若以維持較低向聽、同向聽比較依目前可見牌計的有效牌張數為目標，哪些敘述成立？選出全部。","choices":[{"id":"same-ready","text":"原手已聽牌，碰後打3筒或4筒仍為0向聽"},{"id":"fewer","text":"原手有8張依目前可見牌計的有效牌張數；碰後任一路線只剩3張"},{"id":"no-new-closed-cost","text":"原本已副露，這次碰沒有新增失去門清的代價"},{"id":"always-pass","text":"因此過牌在任何安全與收益目標下都必定最佳"}],"accepted":["same-ready","fewer","no-new-closed-cost"],"expected":{"beforeShanten":0,"beforeImproving":8,"discards":["3p","4p"],"afterShanten":0,"afterImproving":3,"losesClosed":false},"derivation":"四面子固定，22萬作將，34筒等2或5各4張。碰成第五面子後必須捨牌，只能打3留4或打4留3；留下單張同種各還有3張。向聽沒有下降，容量由8降3，所以不能把合法碰都說成有效進張。原本已副露，但不表示碰牌沒有其他代價或過牌全局必佳。","reasonRubric":{"sufficient":["碰前後皆0向聽","8張兩面變3張單騎","已副露及局部目標限制"],"partial":["只注意仍聽牌，未比較容量"],"conflict":["每次碰都會降低向聽","把局部牌效偏好當全局保證"]},"references":["../taiwan-mahjong-m0/RULES.md","src/analysis.ts"]},
+    {"id":"HD01","skill":"dealer-continuation","familyId":"competing-ron-dealer-priority","purpose":"assessment-candidate","reviewStatus":"model-reviewed-not-calibrated","prompt":"座位依本桌逆時針次序為0→1→2→3→0，0是連2的莊家，你在1。3打出一張牌後，你與0都已提交合法胡牌回應，其他家沒有胡牌。你比較早按胡牌。依本桌仲裁及續莊規則，哪些敘述成立？選出全部。這是條件題，已給定雙方回應合法，不要求推測暗手。","choices":[{"id":"dealer-wins","text":"0距出牌者3較近，仲裁結果由莊家胡牌"},{"id":"streak-three","text":"下一局仍由0坐莊，連莊數變成3"},{"id":"time-irrelevant","text":"先按胡牌不能改變座位仲裁優先權"},{"id":"stop-guaranteed","text":"我有合法胡牌且先按，就一定能搶到胡牌並阻莊"}],"accepted":["dealer-wins","streak-three","time-irrelevant"],"expected":{"discarder":3,"dealer":0,"human":1,"streak":2,"winner":0,"nextStreak":3},"derivation":"從出牌者3沿逆時針先到0再到1。R07多家胡只取最近者，不看抵達時間；因此莊家0胡牌。R17莊胡留莊N加1。合法選擇不等於最後取得胡牌權，不能把自己的合法胡牌機會當阻莊保證。","reasonRubric":{"sufficient":["3之後先到0再到1","抵達時間不影響仲裁","莊胡續莊N2到N3"],"partial":["知道莊續莊但未說明優先權"],"conflict":["先按者先贏","多家合法胡都同時計為贏家"]},"references":["../taiwan-mahjong-m0/RULES.md","test/engine.test.mjs"]}
   ]
 }
