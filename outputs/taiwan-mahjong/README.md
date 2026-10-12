@@ -70,6 +70,8 @@ npm run preview -- --port 4173
 
 ## 開發與驗證
 
+決策題匯出檔的接收、格式檢查與人工審閱方式見 [試讀紀錄審閱](TRIAL-REVIEW.md)。本機工具不自動回傳 GitHub，也不將理由判分。
+
 ```powershell
 npm run dev -- --port 4183
 npm test
