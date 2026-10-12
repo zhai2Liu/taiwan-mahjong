@@ -6,9 +6,9 @@
 
 2026-10-12。前包7d618cc已推送，開工工作樹乾淨。由Sol主流程與唯讀Luna子代理l3_content_review分工，13題答案集合無誤；不是盲測、真人或領域專家驗證。詳見[L3-A3](L3A3-MODEL-REVIEW.md)。新增HC01已聽後碰牌8張降3張、HD01近家莊攔胡且續莊；總13題／12題族，9訓練、4保留候選。
 
-reviewStatus全改model-reviewed-not-calibrated；assessmentFamilies仍空。已補四能力難度矩陣，不能直接匹配前後測。329全套測試、check／build通過，work/l3a3-tests.log；JS／CSS仍index-BOSlEFW6.js／index-DcXzVABB.css。未改正式玩法、AI、桌規或存檔。提交與發布於收尾補記。
+reviewStatus全改model-reviewed-not-calibrated；assessmentFamilies仍空。已補四能力難度矩陣，不能直接匹配前後測。329全套測試、check／build通過，work/l3a3-tests.log；JS／CSS仍index-BOSlEFW6.js／index-DcXzVABB.css。未改正式玩法、AI、桌規或存檔。已推送aed9677，Actions38189985087成功；正式首頁及JS／CSS雜湊與本機相同。後續文件收尾不改產物。
 
-下一包L3-B0可做僅9訓練題的內容試讀：先作答再揭示，理由未評閱，不給牌技總分。保留4候選不上試讀題池；正式L3-A／G3仍等題意試讀、題族與難度驗證，不讓原型取代學習證據。人格／收益模型繼續離線。五小時起始32%，收尾另記；未重設或建立自動續跑。
+下一包L3-B0可做僅9訓練題的內容試讀：先作答再揭示，理由未評閱，不給牌技總分。保留4候選不上試讀題池；正式L3-A／G3仍等題意試讀、題族與難度驗證，不讓原型取代學習證據。人格／收益模型繼續離線。五小時起始32%，收尾檢查56%（帳戶比例，非精確token）；未重設或建立自動續跑。
 
 ## 前包：L3-A2內容自查與候選題（尚未通關）
 
