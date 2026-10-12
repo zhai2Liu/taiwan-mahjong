@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "rulesVersion": "TW16-CLASSIC-v1",
+  "status": "draft-not-in-runtime",
+  "cases": [
+    {
+      "id": "C03", "skill": "claim-cost", "familyId": "closed-pon-chi-shanten-tradeoff", "purpose": "training", "reviewStatus": "pending-content-review",
+      "prompt": "你尚未副露，暗手為22索、123萬、456萬、123筒、東東、347索。上家打出2索，沒有其他公開一般牌；尾局、過水與禁碰都不限制回應。只比較用22索碰、用34索吃，且取得牌後都打7索。哪些敘述成立？選出全部；不判定全局最佳動作。",
+      "choices": [
+        {"id":"both-ready","text":"這兩種取得牌後的路線都能從1向聽成為聽牌"},
+        {"id":"pon-more","text":"此條件下，碰後的公開有效進張5張，比吃後3張多"},
+        {"id":"closed-cost","text":"兩者都失去門清資格，不能只用進張數判定整體收益"},
+        {"id":"always-pon","text":"因此碰牌必定是全局最佳，也一定能取得這張牌"}
+      ],
+      "accepted": ["both-ready", "pon-more", "closed-cost"],
+      "expected": {"beforeShanten":1,"pon":{"discard":"7s","shanten":0,"improving":5,"waits":["2s","5s"]},"chi":{"discard":"7s","shanten":0,"improving":3,"waits":["2s","1z"]},"losesClosed":true},
+      "derivation": "原手三面子加兩對、34搭及7孤張，還差兩張成胡，為1向聽。碰後有四面子、34索與東對，等2索剩1張及5索4張；吃後四面子、22索與東東，對碰等2索1張及東2張。已公開的上家2索不得再算未知進張。兩路都先假設仲裁取得牌，且都打7；這是局部牌效比較，不是收益或取得牌的保證。",
+      "reasonRubric": {"sufficient":["兩路皆0向聽","碰5張與吃3張的剩餘容量","門清代價及仲裁成立條件"],"partial":["只辨識向聽下降而未比較容量或代價"],"conflict":["公開的2索重算為未知牌","把牌效偏好當唯一全局最佳"]},
+      "references": ["../taiwan-mahjong-m0/RULES.md", "src/analysis.ts", "test/coach.test.mjs"]
+    },
+    {
+      "id": "HE01", "skill": "efficiency", "familyId": "exhausted-wait-current-ron", "purpose": "assessment-candidate", "reviewStatus": "pending-content-review",
+      "prompt": "你暗手111萬、222萬、333筒、444筒、555索、東，尚未副露。兩張東已在牌河，現在另一家打出最後一張東。你沒有過水或其他禁止胡牌的限制。哪些敘述成立？選出全部。",
+      "choices": [
+        {"id":"ready","text":"接牌前的牌型仍為0向聽，結構聽口是東"},
+        {"id":"zero-unseen","text":"計入這張新捨出的東後，未知牌中的東剩0張"},
+        {"id":"can-win","text":"這張正在等待回應的東仍可以合法胡牌"},
+        {"id":"no-win","text":"未知東剩0張，所以當下也不能胡這張東"}
+      ],
+      "accepted": ["ready", "zero-unseen", "can-win"],
+      "expected": {"shanten":0,"improving":0,"effectiveKinds":["1z"],"canWin":true},
+      "derivation": "暗手五刻加單東，只差一東成對。三張他家捨牌加自有一張已知四東，未知池為0；最後捨出的牌已公開但仍是當次胡牌的來源，不能拿未來未知進張數取消合法胡牌。",
+      "reasonRubric": {"sufficient":["結構聽牌不因可見牌耗盡而消失","公開未知池與正在回應的捨牌不同","胡牌資格另依引擎限制"],"partial":["知道可以胡，但未區分未知池與當下捨牌"],"conflict":["0張代表不聽牌或不能胡當下捨牌"]},
+      "references": ["test/coach.test.mjs", "../taiwan-mahjong-m0/RULES.md"]
+    },
+    {
+      "id": "HS01", "skill": "safety-scope", "familyId": "five-declared-groups-opponent-scope", "purpose": "assessment-candidate", "reviewStatus": "pending-content-review",
+      "prompt": "四張三萬全在你手中，現在可以合法打三萬。下家已公開五組面子，只剩一張暗牌；另兩家尚未副露，其他萬子沒有可用的公開排除資訊。只談本次普通放槍，哪些敘述成立？選出全部。",
+      "choices": [
+        {"id":"one-safe","text":"可排除這張三萬對下家的普通放槍路徑"},
+        {"id":"others-unknown","text":"另兩家仍有順子路徑，不能據此證明全桌安全"},
+        {"id":"everyone-safe","text":"對下家安全，就代表對另外兩家也安全"},
+        {"id":"certain-ron","text":"另外兩家一定能胡三萬"}
+      ],
+      "accepted": ["one-safe", "others-unknown"],
+      "expected": {"kind":"3m","safeSeats":[1],"unknownSeats":[2,3],"provenSafeAgainstAll":false},
+      "derivation": "五組面子已固定，下家只可能以剩餘一張暗牌成將；自有全部三萬排除其持三萬。其他兩家尚可能用12、24或45萬接順，僅為未排除的路徑，不代表其暗手真的可胡。這裡增加了對手面子數與對象範圍，並非四見數牌題的花色替換。",
+      "reasonRubric": {"sufficient":["五面子只差將","下家無三萬","另兩家仍可成順但不保證實際聽牌"],"partial":["知道只對下家安全，但未說明面子數或容量"],"conflict":["將單家安全擴張成全桌","把存在路徑說成必放槍"]},
+      "references": ["test/risk-evidence.test.mjs", "src/risk-evidence.ts"]
+    }
+  ]
+}

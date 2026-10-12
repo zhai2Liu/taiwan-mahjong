@@ -8,7 +8,7 @@
     {
       "id": "E01", "skill": "efficiency", "familyId": "five-meld-singleton", "purpose": "training", "reviewStatus": "pending-content-review",
       "difficulty": "基礎控制題", "scope": "公開張數下的局部牌效，不評估放槍或收益",
-      "prompt": "已完成五副露123萬、456萬、123筒、456筒、789索，暗手東、南。連同自己的手牌，東已知3張、南已知1張；沒有其他可見牌。若先維持較低向聽，再比較公開有效進張，哪些捨牌符合目標？選出全部。",
+      "prompt": "已完成五副露123萬、456萬、123筒、456筒、789索，暗手東、南；另外兩張東已在牌河。除上述牌之外，沒有其他公開一般牌。若先維持較低向聽，再比較公開有效進張，哪些捨牌符合目標？選出全部。",
       "choices": [{"id":"east","text":"打東，留南單騎"},{"id":"south","text":"打南，留東單騎"}],
       "accepted": ["east"],
       "expected": {"east":{"shanten":0,"improving":3},"south":{"shanten":0,"improving":1},"publicPoolTotal":117},

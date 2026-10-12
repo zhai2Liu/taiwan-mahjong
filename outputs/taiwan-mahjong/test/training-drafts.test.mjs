@@ -29,8 +29,8 @@ test('題庫草案識別、答案集合、來源與題族隔離：未審核不�
 });
 
 test('E01五面子只差將：手算3對1與117分母，與分析器交叉核對',()=>{
-  const s=fixture({hands:{0:'12z'},melds:{0:['123m','456m','123p','456p','789s'].map(tiles=>({kind:'chi',tiles}))}});
-  const o=getObservation(s,0), pool=publicPool(o);pool.counts[KINDS.indexOf('1z')]-=2;
+  const s=fixture({hands:{0:'12z'},melds:{0:['123m','456m','123p','456p','789s'].map(tiles=>({kind:'chi',tiles}))},restrictions:{1:{lastDiscard:'1z'},2:{lastDiscard:'1z'}}});
+  const o=getObservation(s,0), pool=publicPool(o);
   const choices=createAnalyzer(pool).discards(o.self.concealed.map(kindOf),o.self.melds,['1z','2z'],false);
   const c=byId('E01');
   for(const [id,k] of [['east','1z'],['south','2z']]){
