@@ -16,7 +16,9 @@
 
 初始化／上傳時只明確加入上述專案來源、文件、lockfile及workflow；不加入node_modules、dist、site、work、其他專案檔案或個人資料。遊戲資料夾現有.gitignore排除三份生成目錄。若接到既有repository，先檢查內容及分支再整合，不覆寫既有歷史。
 
-流程在main推送遊戲來源／測試／建置設定／workflow修改或手動執行時啟動；專案根目錄Markdown、JPG截圖、*SIMULATION.json證據不觸發。src／public內素材仍觸發，勿把發布素材放在被排除的根目錄證據路徑。使用GitHub原生paths依序排除，不另加判定程式；符合[官方路徑篩選](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#onpushpull_requestpull_request_targetpathspaths-ignore)。執行內容：安裝lockfile指定依賴 → 全部現行測試（M5.3為226項） → build → 上傳site產物 → 部署。測試／建置失敗時deploy不執行。只給deploy job Pages及OIDC權限，不需自訂PAT秘密值。既有build／deploy已實際跑通；本輪paths修改的雲端觸發與純文件不新增run另以HANDOFF最新證據為準。
+流程在main推送遊戲來源／測試／建置設定／workflow修改、M0 cases.json／RULES.md變更或手動執行時啟動。遊戲根目錄Markdown、JPG截圖、*SIMULATION.json維護證據仍排除；M0 RULES.md是明確例外。src／public內素材仍觸發，勿把發布素材放在被排除路徑。使用GitHub原生paths，不另寫判定程式；符合[官方路徑篩選](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#onpushpull_requestpull_request_targetpathspaths-ignore)。執行：lockfile安裝 → npm test（已含型別檢查） → build → 上傳site → 部署；測試／建置失敗不發布。測試數與當輪來源依HANDOFF。
+
+S1.2a新增指向main的pull_request檢查，不設PR路徑排除，文件PR也取得build結果；此名稱供日後設定required status check。PR跳過Pages artifact／deploy，非main手動分支亦僅檢查。全域contents:read，checkout不保留憑證，只有受main條件保護的deploy取得Pages／OIDC權限。各PR的群組與main分開；PR新提交可取消過期檢查，main維持序列發布。見[S1.2a驗收](S12A-VALIDATION.md)。目前未配置分支保護，本包不改合併門檻。
 
 Vite保留`base: './'`與`outDir: 'site'`，建置資源使用相對路徑，支援帶repository子路徑的首頁；沒有前端路由或深層網址。dist是測試編譯，不能誤作發布產物。
 
@@ -31,7 +33,7 @@ Vite保留`base: './'`與`outDir: 'site'`，建置資源使用相對路徑，支
 
 ## 後續更新與回復
 
-修改src及相應文件／案例，驗證後推送main；不要直接改site產物。每次部署以提交SHA追蹤，正式驗收通過後記下該SHA。
+修改src及相應文件／案例，先驗證；以PR提交時檢查通過後再合併到main，main亦會重新驗證／發布。既有直接main推送仍依路徑規則執行，未由本包禁止；不要直接改site產物。每次部署以提交SHA追蹤，正式驗收後記下該SHA。
 
 回復先確認問題提交，使用Git revert建立反向提交、推送main並走相同驗證／部署流程；不要reset或強制推送抹掉歷史。workflow失敗時先查看失敗步驟，保持目前成功網站；不要以跳過測試修復發布。
 

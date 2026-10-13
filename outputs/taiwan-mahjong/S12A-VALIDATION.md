@@ -24,10 +24,12 @@ push 新增 `outputs/taiwan-mahjong-m0/cases.json` 與 `RULES.md`，前者被計
 
 - 本機重跑現有型別／342測試／正式建置，確認共用命令可執行且產物與前包一致。
 - 實際開一份本包 PR，確認 GitHub 能解析 workflow、build 成功、上傳步驟及 deploy 跳過。
-- 再推只有驗收文件更新的提交，確認 synchronize 仍跑檢查，不因文件被過濾而缺狀態。
+- 在功能合併後另開真正只有Markdown差異的文件PR，確認 opened 仍跑檢查，不因文件被過濾而缺狀態；原功能PR上追加文件不能獨立證明這點，因PR的路徑比較涵蓋整份差異。
 - 通過後合併到 main，確認 main 仍成功 build／deploy，正式首頁與試讀資源 SHA-256 相符。
 
 首次 fork 貢獻可能需要儲存庫擁有者准許執行，另有平台規範；本包不另建 fork 做真人／外部帳戶驗收，也不宣稱修改平台設定。本機未安裝 actionlint／YAML parser，不為此引入依賴；GitHub 實際解析和執行為本包 workflow 驗收依據。
+
+本機342測試、check／build通過，work/s12a-tests.log；產物與S1.1相同。功能 [PR #1](https://github.com/zhai2Liu/taiwan-mahjong/pull/1) 的 [38408610153](https://github.com/zhai2Liu/taiwan-mahjong/actions/runs/38408610153)已success：build含Typecheck and tests／正式建置成功，Upload Pages artifact與deploy均skipped，artifact_count=0。透過工具在檢查後合併，未要求或冒稱外部真人程式審查；main合併來源bc1758d。
 
 ## 合併門檻與限制
 

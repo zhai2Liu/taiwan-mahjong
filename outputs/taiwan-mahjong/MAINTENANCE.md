@@ -92,6 +92,8 @@ test/browser.html與test/runner.html為開發來源工具；browser-fixtures、c
 
 main推送後由GitHub Actions發布，正式網址與回復步驟見DEPLOYMENT；確認該次workflow成功。site/是發布產物，src/才是修改來源；不要直接編輯site/或dist/。
 
+S1.2a：所有指向main的PR（含純文件）共用build檢查，npm test已涵蓋TypeScript，不另加重複型別job。PR不上傳Pages artifact、不執行deploy；只有非PR的main能發布。PR按編號分組，main按ref序列。當輪雲端驗收見[S12A](S12A-VALIDATION.md)；未設定分支保護，不把CI存在等同強制合併門檻。M0 cases.json被scoring測試匯入，與RULES.md一起加入main的觸發覆蓋。
+
 
 ## 純練習模式（M5.2）
 
