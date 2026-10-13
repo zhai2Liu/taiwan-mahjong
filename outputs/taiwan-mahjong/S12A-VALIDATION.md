@@ -1,6 +1,6 @@
 # S1.2a：PR 檢查與 Pages 發布隔離
 
-2026-10-13。延伸現有 `.github/workflows/pages.yml`，共用同一個 build job；遊戲程式、桌規與資料格式不變。實際驗收記錄見本文後續更新及 [HANDOFF](HANDOFF.md)。
+2026-10-13。延伸現有 [pages.yml](../../.github/workflows/pages.yml)，共用同一個 build job；遊戲程式、桌規與資料格式不變。實際驗收記錄見本文及 [HANDOFF](HANDOFF.md)。
 
 ## 流程
 
@@ -31,9 +31,18 @@ push 新增 `outputs/taiwan-mahjong-m0/cases.json` 與 `RULES.md`，前者被計
 
 本機342測試、check／build通過，work/s12a-tests.log；產物與S1.1相同。功能 [PR #1](https://github.com/zhai2Liu/taiwan-mahjong/pull/1) 的 [38408610153](https://github.com/zhai2Liu/taiwan-mahjong/actions/runs/38408610153)已success：build含Typecheck and tests／正式建置成功，Upload Pages artifact與deploy均skipped，artifact_count=0。透過工具在檢查後合併，未要求或冒稱外部真人程式審查；main合併來源bc1758d。
 
+| 實際雲端情境 | 結果 |
+|---|---|
+| 功能 PR #1，03c55dd | Actions38408610153 success；build成功、Pages上傳與deploy skipped、0 artifact |
+| 純文件 [PR #2](https://github.com/zhai2Liu/taiwan-mahjong/pull/2)，961efee | [Actions38409667408](https://github.com/zhai2Liu/taiwan-mahjong/actions/runs/38409667408) success；API確認六份差異全部.md；build成功、Pages上傳與deploy skipped、0 artifact |
+| main合併功能，bc1758d | [Actions38409122067](https://github.com/zhai2Liu/taiwan-mahjong/actions/runs/38409122067)的build／deploy成功 |
+| main合併文件，d1bdbee | 未新增push run，符合維護文件路徑排除；兩份PR均已合併 |
+
+正式首頁及training.html HTTP200，各自引用JS／CSS／共用牌面SHA-256與本機相符。首頁index-D57TZ2GI.js、試讀training-CyxzesHo.js，UI與題庫未變，因此本輪不重做瀏覽器互動驗收。手動觸發情境與fork為設定／平台規範範圍，未額外建立外部帳戶或手動run做實測。
+
 ## 合併門檻與限制
 
-開工 GitHub main 查得 protected:false、required status checks 空。本包完成的是自動檢查及發布隔離，未新增分支保護／禁止直接推送。若未來要強制 merge gate，可要求 build；PR 不設路徑過濾，避免因 skipped workflow 導致 Pending。合併衝突、Actions 關閉、fork 等待批准或 GitHub 服務故障仍可使檢查等待，不能保證任何情況都能立即完成。
+開工 GitHub main 查得 protected:false、required status checks 空。本包完成的是自動檢查及發布隔離，未新增分支保護／禁止直接推送。若未來要強制 merge gate，可要求 build；PR 不設路徑過濾，避免因路徑跳過導致 Pending。合併衝突、Actions 關閉、提交訊息skip CI、fork 等待批准或 GitHub 服務故障仍可使檢查等待，不能保證任何情況都能立即完成。
 
 下一包 S1.2b：三條核心瀏覽器流程先重現再逐條自動化。本包沒有新增瀏覽器測試套件或修改玩家操作。
 

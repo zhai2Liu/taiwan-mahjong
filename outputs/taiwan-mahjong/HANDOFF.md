@@ -2,11 +2,17 @@
 
 2026-10-13。S0.1已採納「台灣十六張麻將學習與決策練習」兩路線，詳見[PRODUCT-DIRECTION](PRODUCT-DIRECTION.md)、[全面強化企畫](MASTER-IMPROVEMENT-PLAN.md)。既有進階證據／檢討保留，完整八課屬S2，正式評量與真人成效仍待；人格AI仍需另外啟動。
 
-## 最新工作包：S1.2a PR檢查（雲端驗收中）
+## 最新工作包：S1.2a PR檢查已完成
 
 2026-10-13。使用者續推，新增pull_request指向main的共同build，沒有PR路徑過濾；非PR且main才上傳Pages artifact／deploy。PR與main群組分開，PR可取消舊檢查，main仍序列；checkout不保留憑證。新增M0 cases.json／RULES.md的push觸發，未改遊戲、桌規、存檔或分支保護。
 
-本機342測試／check／build通過，work/s12a-tests.log，產物未變。功能PR#1（codex/pr-validation，03c55dd）已附本chat，Actions38408610153成功，build通過、Upload Pages artifact及deploy skipped、0 artifact；已合併main的bc1758d。正準備真正純Markdown差異的文件PR及main發布核對，記錄見[S12A](S12A-VALIDATION.md)。本輪開工五小時用量33%，不是精確token；無子代理／重設／自動續跑。完成後下一包S1.2b，不開始人格AI。
+本機342測試／check／build通過，work/s12a-tests.log，產物未變。功能PR#1（03c55dd）Actions38408610153成功，build通過、Upload Pages artifact及deploy skipped、0 artifact；合併main的bc1758d，Actions38409122067 build／deploy成功。真正純Markdown PR#2（961efee，六份.md）Actions38409667408同樣通過且上傳／部署skipped、0 artifact；已合併d1bdbee，未新增push run，證明PR／main文件觸發的區別。兩PR均已附本chat，沒有外部真人程式審查。
+
+正式首頁／training.html HTTP200，各自引用JS／CSS／共用牌面與本機SHA-256相符，首頁index-D57TZ2GI.js／index-DcXzVABB.css、試讀training-CyxzesHo.js／training-DnepUIbB.css。未改UI、桌規或資料，本輪沒有重做瀏覽器互動／實機，也未另驗fork／手動分支觸發。詳見[S12A](S12A-VALIDATION.md)。自動PR檢查已啟用，main仍無分支保護，強制merge gate未配置。
+
+下一包S1.2b：三條核心瀏覽器流程先重現、再逐條自動化，先看現有fixtures與工具，不預設大型套件。不開始新手八課或人格AI。本輪五小時開工33%、收尾45%，為帳戶比例非精確token；無子代理／重設／自動續跑，本輪無新增伺服器或瀏覽器分頁。
+
+已更新作品README、DEPLOYMENT、MAINTENANCE、ROADMAP及驗收；51個當時受影響文件連結存在，最後新增workflow直鏈亦已查，diff格式通過。本機已回main，兩份PR已合併並附本chat；保留已合併的工作分支作驗收追溯，不動其他分支。
 
 ## 前包：S0.1／S0.2／S1.1
 
