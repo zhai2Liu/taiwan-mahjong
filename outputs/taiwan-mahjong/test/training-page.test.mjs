@@ -133,9 +133,12 @@ test('返回牌室：空白與另開分頁不阻擋，取消保留內容，確�
  const source=ts.transpileModule(fs.readFileSync(new URL('../src/training.ts',import.meta.url),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
  vm.runInNewContext(source,{exports:{},require:name=>name==='./tile-face.js'?{tileFace:()=>new Element('svg')}:{trainingQuestions,trainingContentRevision},
   window:{addEventListener(type,fn){if(type==='pageshow')pageShow=fn;else handlers.add(fn);},removeEventListener(type,fn){handlers.delete(fn);},location:{assign(url){navigation=url;}}},
-  document:{querySelector:selector=>selector==='#training'?root:link,createElement:tag=>new Element(tag),body:{append(){}}}});
+  setTimeout:fn=>fn(),document:{querySelector:selector=>selector==='#training'?root:link,createElement:tag=>new Element(tag),body:{append(){}}}});
  const event=(extras={})=>({button:0,prevented:false,preventDefault(){this.prevented=true;},...extras});
  let click=event();link.listeners.click(click);assert.equal(click.prevented,false);assert.equal(made.filter(x=>x.tag==='dialog').length,0);
+ root.querySelector('#reason').value='瀏覽器自行還原，但不屬於目前題目的草稿';
+ made.find(x=>x.tag==='input').checked=true;
+ pageShow();assert.equal(root.querySelector('#reason').value,'');assert.equal(made.find(x=>x.tag==='input').checked,false);assert.equal(handlers.size,0);
  const reason=root.querySelector('#reason');reason.value='尚未匯出的理由';reason.listeners.input();assert.equal(handlers.size,1);
  click=event({ctrlKey:true});link.listeners.click(click);assert.equal(click.prevented,false);assert.equal(made.filter(x=>x.tag==='dialog').length,0);
  click=event();link.listeners.click(click);assert.equal(click.prevented,true);
@@ -145,7 +148,7 @@ test('返回牌室：空白與另開分頁不阻擋，取消保留內容，確�
  link.listeners.click(event());made.findLast(x=>x.textContent==='確認離開').listeners.click();
  assert.equal(navigation,link.href);assert.equal(handlers.size,0);
  pageShow();assert.equal(handlers.size,1,'快取還原含草稿的頁面後重新防護');pageShow();assert.equal(handlers.size,1);
- assert.equal(reason.value,'尚未匯出的理由');
+ assert.equal(root.querySelector('#reason').value,'尚未匯出的理由');
 });
 
 test('題面圖示只重現題幹已知牌：完整與局部標示、張數及四張容量',()=>{

@@ -30,8 +30,8 @@ function updateDraftStatus(): void {
     : '內容只留在本頁。離開前請匯出並確認檔案；交由瀏覽器下載後仍會提醒離頁。';
   if (status.textContent !== notice) status.textContent = notice;
 }
-// Re-arm after back/forward cache restores a page whose explicit return action removed the guard.
-window.addEventListener('pageshow', updateDraftStatus);
+// The browser may restore form fields after pageshow without restoring our drafts; redraw from owned state after that restoration.
+window.addEventListener('pageshow', () => { updateDraftStatus(); setTimeout(() => render(false), 0); });
 const returnLink = document.querySelector<HTMLAnchorElement>('#return-room');
 returnLink?.addEventListener('click', event => {
   if (!leaveGuardActive || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
