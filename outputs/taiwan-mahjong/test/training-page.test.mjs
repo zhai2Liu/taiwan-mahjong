@@ -35,7 +35,7 @@ test('試讀控制與回饋：揭示界線、草稿保留、只匯出意見及�
  const source=ts.transpileModule(fs.readFileSync(new URL('../src/training.ts',import.meta.url),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
  vm.runInNewContext(source,{exports:{},require:name=>name==='./tile-face.js'?{tileFace:()=>new Element('svg')}:{trainingQuestions,trainingContentRevision},Blob,
   URL:{createObjectURL(value){if(downloadFailure)throw Error('blocked');blob=value;return 'blob:trial';},revokeObjectURL(){}},
-  window:{addEventListener(type,fn){assert.equal(type,'beforeunload');leaveHandlers.add(fn);},removeEventListener(type,fn){assert.equal(type,'beforeunload');leaveHandlers.delete(fn);}},
+  window:{addEventListener(type,fn){if(type==='pageshow')return;assert.equal(type,'beforeunload');leaveHandlers.add(fn);},removeEventListener(type,fn){assert.equal(type,'beforeunload');leaveHandlers.delete(fn);}},
   setTimeout:fn=>fn(),document:{querySelector:()=>root,createElement:tag=>new Element(tag)}});
  assert.equal(leaveHandlers.size,0);
  click('下載全部試讀回饋');assert.equal(downloaded,undefined);
@@ -101,7 +101,7 @@ test('離頁防護：空白無提醒、只有回饋或理由也保護、取消�
  const source=ts.transpileModule(fs.readFileSync(new URL('../src/training.ts',import.meta.url),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
  vm.runInNewContext(source,{exports:{},require:name=>name==='./tile-face.js'?{tileFace:()=>new Element('svg')}:{trainingQuestions,trainingContentRevision},Blob,
   URL:{createObjectURL(){return 'blob:trial';},revokeObjectURL(){}},setTimeout:fn=>fn(),
-  window:{addEventListener(type,fn){assert.equal(type,'beforeunload');handlers.add(fn);},removeEventListener(type,fn){assert.equal(type,'beforeunload');handlers.delete(fn);}},
+  window:{addEventListener(type,fn){if(type==='pageshow')return;assert.equal(type,'beforeunload');handlers.add(fn);},removeEventListener(type,fn){assert.equal(type,'beforeunload');handlers.delete(fn);}},
   document:{querySelector:()=>root,createElement:tag=>new Element(tag)}});
  const field=id=>root.querySelector('#'+id);
  const input=(id,value)=>{field(id).value=value;field(id).listeners.input();};
@@ -120,7 +120,7 @@ test('離頁防護：空白無提醒、只有回饋或理由也保護、取消�
 });
 
 test('返回牌室：空白與另開分頁不阻擋，取消保留內容，確認才解除防護並離開',()=>{
- const made=[], handlers=new Set();let focused,navigation;
+ const made=[], handlers=new Set();let focused,navigation,pageShow;
  class Element {
   children=[];listeners={};textContent='';
   constructor(tag){this.tag=tag;made.push(this);}
@@ -132,7 +132,7 @@ test('返回牌室：空白與另開分頁不阻擋，取消保留內容，確�
  const root=new Element('root'), link=new Element('a');link.href='https://example.test/taiwan-mahjong/';
  const source=ts.transpileModule(fs.readFileSync(new URL('../src/training.ts',import.meta.url),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
  vm.runInNewContext(source,{exports:{},require:name=>name==='./tile-face.js'?{tileFace:()=>new Element('svg')}:{trainingQuestions,trainingContentRevision},
-  window:{addEventListener(type,fn){handlers.add(fn);},removeEventListener(type,fn){handlers.delete(fn);},location:{assign(url){navigation=url;}}},
+  window:{addEventListener(type,fn){if(type==='pageshow')pageShow=fn;else handlers.add(fn);},removeEventListener(type,fn){handlers.delete(fn);},location:{assign(url){navigation=url;}}},
   document:{querySelector:selector=>selector==='#training'?root:link,createElement:tag=>new Element(tag),body:{append(){}}}});
  const event=(extras={})=>({button:0,prevented:false,preventDefault(){this.prevented=true;},...extras});
  let click=event();link.listeners.click(click);assert.equal(click.prevented,false);assert.equal(made.filter(x=>x.tag==='dialog').length,0);
@@ -144,6 +144,8 @@ test('返回牌室：空白與另開分頁不阻擋，取消保留內容，確�
  assert.equal(dialog.removed,true);assert.equal(focused,link);assert.equal(reason.value,'尚未匯出的理由');assert.equal(handlers.size,1);assert.equal(navigation,undefined);
  link.listeners.click(event());made.findLast(x=>x.textContent==='確認離開').listeners.click();
  assert.equal(navigation,link.href);assert.equal(handlers.size,0);
+ pageShow();assert.equal(handlers.size,1,'快取還原含草稿的頁面後重新防護');pageShow();assert.equal(handlers.size,1);
+ assert.equal(reason.value,'尚未匯出的理由');
 });
 
 test('題面圖示只重現題幹已知牌：完整與局部標示、張數及四張容量',()=>{

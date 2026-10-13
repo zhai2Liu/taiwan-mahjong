@@ -30,6 +30,8 @@ function updateDraftStatus(): void {
     : '內容只留在本頁。離開前請匯出並確認檔案；交由瀏覽器下載後仍會提醒離頁。';
   if (status.textContent !== notice) status.textContent = notice;
 }
+// Re-arm after back/forward cache restores a page whose explicit return action removed the guard.
+window.addEventListener('pageshow', updateDraftStatus);
 const returnLink = document.querySelector<HTMLAnchorElement>('#return-room');
 returnLink?.addEventListener('click', event => {
   if (!leaveGuardActive || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
@@ -44,7 +46,7 @@ returnLink?.addEventListener('click', event => {
     window.location.assign(returnLink.href);
   });
   const actions = el('div'); actions.className = 'leave-actions'; actions.append(stay, leave);
-  dialog.append(title, el('p', '離開會清除本次選項、理由與回饋。若要保留，請先匯出或複製並確認內容；下載不會自動回傳。'), actions);
+  dialog.append(title, el('p', '離開後可能無法找回本次選項、理由與回饋。若要保留，請先匯出或複製並確認內容；下載不會自動回傳。'), actions);
   dialog.addEventListener('close', () => { dialog.remove(); returnLink.focus(); });
   document.body.append(dialog); dialog.showModal(); stay.focus();
 });
@@ -111,7 +113,7 @@ function render(focus = true): void {
   feedback.maxLength = 1000; feedback.rows = 3; feedback.value = draft.feedback;
   feedback.addEventListener('input', () => { draft.feedback = feedback.value; updateDraftStatus(); });
   feedbackPanel.append(el('summary', '提供本題回饋（選填）'), feedbackLabel, feedback,
-    el('p', '例如哪句看不懂、哪個操作卡住。切題會保留；離頁會清除，請先下載。'));
+    el('p', '例如哪句看不懂、哪個操作卡住。切題會保留；離頁前請先匯出並確認檔案。'));
   const download = el('button', '下載全部試讀回饋'); download.type = 'button';
   const answersDownload = el('button', '匯出作答紀錄（含理由與回饋）'); answersDownload.type = 'button';
   const exportStatus = el('p'); exportStatus.setAttribute('role', 'status');
