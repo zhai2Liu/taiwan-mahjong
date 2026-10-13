@@ -1,6 +1,10 @@
 name: Taiwan Mahjong Pages
 
 on:
+  # Always report the PR check, including docs-only changes, so a required check cannot remain pending due to path filters.
+  # ponytail: use the shared full build for every PR; split checks only if measured PR runtime becomes too slow.
+  pull_request:
+    branches: [main]
   push:
     branches: [main]
     paths:
@@ -9,6 +13,8 @@ on:
       - '!outputs/taiwan-mahjong/*.md'
       - '!outputs/taiwan-mahjong/*.jpg'
       - '!outputs/taiwan-mahjong/*SIMULATION.json'
+      - 'outputs/taiwan-mahjong-m0/cases.json'
+      - 'outputs/taiwan-mahjong-m0/RULES.md'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 
@@ -16,8 +22,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: pages
-  cancel-in-progress: false
+  group: pages-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build:
@@ -27,19 +33,25 @@ jobs:
         working-directory: outputs/taiwan-mahjong
     steps:
       - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@v7
         with:
           node-version: '24.12.0'
           cache: npm
           cache-dependency-path: outputs/taiwan-mahjong/package-lock.json
       - run: npm ci
-      - run: npm test
+      - name: Typecheck and tests
+        run: npm test
       - run: npm run build
-      - uses: actions/upload-pages-artifact@v4
+      - name: Upload Pages artifact
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v4
         with:
           path: outputs/taiwan-mahjong/site
 
   deploy:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-latest
     permissions:
