@@ -1,3 +1,4 @@
+import { listeningDistance } from './terms.js';
 import { button, node, tile, tileName } from './view.js';
 import type { buildHandReview } from './hand-review.js';
 import type { Intent } from './model.js';
@@ -20,9 +21,9 @@ export function reviewActionName(intent: Intent): string {
   }
 }
 export function reviewMetricsText(m: Metrics): string {
-  const shanten = m.shanten < 0 ? '已成胡牌形' : m.shanten === 0 ? '聽牌' : `${m.shanten} 向聽`;
-  if (m.improvementStatus !== 'supported') return `${shanten}；此時為17張，進張比例不適用。`;
-  return `${shanten}；公開有效進張 ${m.improving} 張／未知一般牌 ${m.publicPoolTotal} 張。`;
+  const shanten = listeningDistance(m.shanten);
+  if (m.improvementStatus !== 'supported') return `${shanten}；此時為17張，進牌比例不適用。`;
+  return `${shanten}；依可見牌計的有效進牌 ${m.improving} 張／尚未看見的一般牌 ${m.publicPoolTotal} 張。`;
 }
 /** Summary ordering is presentation only: chosen first, then at most two visible alternatives. */
 export function reviewSummaryRows(card: Card): Row[] {
@@ -35,16 +36,16 @@ function candidateView(row: Row, own: number): HTMLElement {
   section.append(node('h4', '', `${reviewActionName(c.intent)}${row.chosen ? ' · 你的原選擇' : ''}`));
   if (row.efficiencyPreferred) section.append(node('p', 'review-tag', '限定牌效候選（可並列）'));
   if (c.efficiency) {
-    section.append(node('p', '', `捨牌後｜${reviewMetricsText(c.efficiency)}`));
+    section.append(node('p', '', `打牌後｜${reviewMetricsText(c.efficiency)}`));
     const tiles = c.efficiency.effectiveTiles.filter(t => t.count > 0).map(t => `${tileName(t.kind)}×${t.count}`).join('、');
-    section.append(node('p', 'muted', tiles ? `有效進張：${tiles}` : '目前沒有可計入的公開有效進張。'));
+    section.append(node('p', 'muted', tiles ? `有效進牌：${tiles}` : '依目前可見牌，沒有剩餘的有效進牌。'));
   } else if (c.postClaim) {
-    section.append(node('p', '', c.postClaim.conditional), node('p', 'muted', c.postClaim.losesClosed ? '本次副露將失去門清。' : '此時已非門清。'));
-    const post = node('details'); post.append(node('summary', '', '取得吃碰後，查看合法後捨牌效'));
+    section.append(node('p', '', c.postClaim.conditional), node('p', 'muted', c.postClaim.losesClosed ? '這次吃碰會破門清。' : '此時已非門清。'));
+    const post = node('details'); post.append(node('summary', '', '取得吃碰後，查看合法後打牌效'));
     const choices = node('ul');
     for (const d of c.postClaim.discards) choices.append(node('li', '', `打${tileName(d.kind)}：${reviewMetricsText(d.efficiency)}${c.postClaim.preferredKinds.includes(d.kind) ? '（限定牌效並列候選）' : ''}`));
     post.append(choices, node('p', 'muted', c.postClaim.objective)); section.append(post);
-    section.append(node('p', 'muted', '尚未評估吃碰後捨牌的安全與整體收益。'));
+    section.append(node('p', 'muted', '尚未評估吃碰後打牌的安全與整體收益。'));
   } else section.append(node('p', 'muted', '此動作尚未提供牌效與安全比較；未提供數值不代表零風險。'));
   if (c.safety) {
     section.append(node('p', '', `普通放槍範圍｜${c.safety.opponents.map(p => `${seatName(p.seat, own)}：${p.status === 'proven' ? '有安全證明' : '未證明安全'}`).join('；')}`));
@@ -55,15 +56,15 @@ function visibleContext(card: Card): HTMLElement {
   const o = card.snapshot.observation, detail = node('details', 'review-context');
   detail.append(node('summary', '', '查看當時公開局況與自己的手牌'));
   detail.append(node('p', '', `${tileName(o.roundWind)}圈；莊家${seatName(o.dealer, o.seat)}，連莊${o.streak}；可用牌${o.available}張。`));
-  const hand = node('div', 'review-tiles'); hand.setAttribute('aria-label', '決策前自己的暗手');
+  const hand = node('div', 'review-tiles'); hand.setAttribute('aria-label', '決策前自己的手牌');
   o.self.concealed.forEach(t => hand.append(tile(t, 'tile-small'))); detail.append(hand);
   const offered = o.lastDiscard ?? o.offeredKong;
   if (offered) detail.append(node('p', '', `${seatName(offered.seat, o.seat)}${o.offeredKong ? '提出加槓' : '打出'}${tileName(offered.tileId)}。`));
   for (const [seat, p] of o.players.entries()) {
-    const box = node('section'); box.append(node('h4', '', `${seatName(seat, o.seat)} · 積分${o.scores[seat]} · 暗手${p.concealedCount}張`));
+    const box = node('section'); box.append(node('h4', '', `${seatName(seat, o.seat)} · 積分${o.scores[seat]} · 手牌${p.concealedCount}張`));
     const melds = p.melds.map(m => 'tiles' in m ? `${{chi:'吃',pon:'碰',exposedKong:'明槓',addedKong:'加槓',concealedKong:'暗槓'}[m.kind]} ${m.tiles.map(tileName).join('、')}` : '暗槓（牌種未知）');
-    box.append(node('p', '', `副露：${melds.join('；') || '無'}。花牌：${p.flowers.map(tileName).join('、') || '無'}。`));
-    box.append(node('p', '', `捨牌順序：${p.discardHistory.map(d => `${tileName(d.tileId)}${d.claimedBy === null ? '' : '（已被取走）'}`).join('、') || '尚無'}。`));
+    box.append(node('p', '', `桌上牌組：${melds.join('；') || '無'}。花牌：${p.flowers.map(tileName).join('、') || '無'}。`));
+    box.append(node('p', '', `打牌順序：${p.discardHistory.map(d => `${tileName(d.tileId)}${d.claimedBy === null ? '' : '（已被取走）'}`).join('、') || '尚無'}。`));
     detail.append(box);
   }
   return detail;
@@ -100,7 +101,7 @@ export function showHandReview(root: HTMLElement, review: Review | null, pending
         const more = node('details', 'review-more'); more.append(node('summary', '', `其他 ${rest.length} 個合法候選（同牌種副本已合併）`));
         rest.forEach(row => more.append(candidateView(row, card.snapshot.observation.seat))); section.append(more);
       }
-      section.append(node('p', 'review-limit', '公開有效進張／未知一般牌是可見資訊下的張數比，包含他家暗手與牌尾，並非實際摸牌率。安全證明只限當時對指定家普通放槍，不含未來自摸、花胡或續莊；未知不等於危險。'));
+      section.append(node('p', 'review-limit', '依可見牌計的有效進牌／尚未看見的一般牌是可見資訊下的張數比，包含他家手牌與牌尾，並非實際摸牌率。安全證明只限當時對指定家普通放槍，不含未來自摸、花胡或續莊；未知不等於危險。'));
       section.append(node('p', 'review-limit', card.evidence.discardPreference.objective), node('p', 'review-limit', card.evidence.overallStrategy.explanation));
       if (card.rows.some(r => r.candidate.postClaim)) section.append(node('p', 'review-limit', card.claimNote));
       section.append(visibleContext(card)); dialog.append(section);

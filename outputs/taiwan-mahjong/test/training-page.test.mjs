@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
 import ts from 'typescript';
-import {trainingQuestions} from '../dist/training-data.js';
+import {trainingQuestions,trainingContentRevision} from '../dist/training-data.js';
 
 test('試讀包只有九道已複核訓練題，保留候選與額外資料不進包',()=>{
  const all=['TRAINING-DRAFTS.json','TRAINING-REVIEW-CANDIDATES.json'].flatMap(f=>JSON.parse(fs.readFileSync(new URL('../'+f,import.meta.url),'utf8')).cases);
@@ -32,7 +32,7 @@ test('試讀控制與回饋：揭示界線、草稿保留、只匯出意見及�
  const click=text=>find('button',text).listeners.click();
  const submit=()=>find('form').listeners.submit({preventDefault(){}});
  const source=ts.transpileModule(fs.readFileSync(new URL('../src/training.ts',import.meta.url),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
- vm.runInNewContext(source,{exports:{},require:name=>name==='./tile-face.js'?{tileFace:()=>new Element('svg')}:{trainingQuestions},Blob,
+ vm.runInNewContext(source,{exports:{},require:name=>name==='./tile-face.js'?{tileFace:()=>new Element('svg')}:{trainingQuestions,trainingContentRevision},Blob,
   URL:{createObjectURL(value){if(downloadFailure)throw Error('blocked');blob=value;return 'blob:trial';},revokeObjectURL(){}},
   setTimeout:fn=>fn(),document:{querySelector:()=>root,createElement:tag=>new Element(tag)}});
  click('下載全部試讀回饋');assert.equal(downloaded,undefined);
@@ -57,8 +57,8 @@ test('試讀控制與回饋：揭示界線、草稿保留、只匯出意見及�
  assert.equal(root.querySelector('#trial-feedback').value,firstFeedback.value);
  downloadFailure=false;click('匯出作答紀錄（含理由與回饋）');
  assert.equal(downloaded.download,'taiwan-mahjong-trial-answers.json');
- const answers=JSON.parse(await blob.text());assert.equal(answers.schemaVersion,1);assert.equal(answers.questions.length,9);
- assert.equal(answers.reasonAssessment,'not-reviewed');
+ const answers=JSON.parse(await blob.text());assert.equal(answers.schemaVersion,2);assert.equal(answers.questions.length,9);
+ assert.equal(answers.reasonAssessment,'not-reviewed');assert.equal(answers.schemaVersion,2);assert.equal(answers.contentRevision,trainingContentRevision);
  assert.equal(answers.questions[0].status,'submitted-and-revealed');
  assert.deepEqual(answers.questions[0].selected,trainingQuestions[0].choices);
  assert.equal(answers.questions[0].reason,reason.value);assert.equal(answers.questions[1].feedback,secondFeedback.value);
@@ -77,5 +77,5 @@ test('題面圖示只重現題幹已知牌：完整與局部標示、張數及�
   for(const k of actual){assert.match(k,/^([1-9][mps]|[1-7]z)$/);assert.ok(actual.filter(t=>t===k).length<=4);}
  }
  assert.match(trainingQuestions.find(q=>q.id==='C01').board[0].label,/不是完整手牌/);
- assert.match(trainingQuestions.find(q=>q.id==='C03').board[0].label,/尚未副露/);
+ assert.match(trainingQuestions.find(q=>q.id==='C03').board[0].label,/尚未吃碰明槓/);
 });

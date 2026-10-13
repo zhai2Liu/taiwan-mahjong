@@ -1,3 +1,4 @@
+import { listeningDistance } from './terms.js';
 import type { getObservation } from './engine.js';
 import { coachAnalysis } from './coach.js';
 import { kindOf } from './tiles.js';
@@ -17,7 +18,7 @@ export function discardFeedback(o: Observation, tileId: string, previous: PlayPr
   // Do not praise a missed legal win, exhausted waits, or structural completion without win eligibility.
   if (!report.canWin && q.shanten >= 0 && q.improving > 0) {
     if (q.shanten === 0 && (!old || old.closest > 0)) feedback = make('牌型已聽！', `公開有效牌 ${q.improving} 張；實際胡牌以合法按鈕為準。`, 'ready');
-    else if (old && q.shanten < old.closest) feedback = make('更接近胡牌了', `${old.closest} → ${q.shanten} 向聽，這手牌又往前一步。`, 'progress');
+    else if (old && q.shanten < old.closest) feedback = make('更接近胡牌了', `${listeningDistance(old.closest)} → ${listeningDistance(q.shanten)}，這手牌又往前一步。`, 'progress');
     else if (!old?.praised && report.best.some(c => c.kind === choice.kind)) feedback = make('這步牌效不錯！', '與合法候選中的最佳一步牌效相同。', 'progress');
   }
   return { progress: { handId: o.handId, closest: Math.min(old?.closest ?? Infinity, q.shanten), praised: old?.praised || feedback !== null }, feedback };
@@ -27,5 +28,5 @@ export function meldFeedback(before: Observation, after: Observation): PlayFeedb
   if (before.handId !== after.handId || after.settlement || after.self.melds.length <= before.self.melds.length) return null;
   const meld = after.self.melds.at(-1)!;
   if (meld.kind !== 'chi' && meld.kind !== 'pon') return null;
-  return { key: `${after.handId}:${after.version}:meld`, title: meld.kind === 'chi' ? '吃牌成立' : '碰牌成立', detail: '一組面子到手，接著選一張合法手牌捨出。', kind: 'action' };
+  return { key: `${after.handId}:${after.version}:meld`, title: meld.kind === 'chi' ? '吃牌成立' : '碰牌成立', detail: '湊好一組牌，接著選一張合法手牌打出。', kind: 'action' };
 }

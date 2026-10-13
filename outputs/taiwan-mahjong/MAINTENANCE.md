@@ -145,3 +145,5 @@ L2-B1：src/hand-review.ts只讀已驗證封套，挑最近三筆可比較決策
 
 
 2026-10-13：對戰提示已分 on/off/after，偏好鍵不變。事後捨牌解釋只在成功提交後建立暫存快照並暫停；共用 hand-review.ts 的 buildDecisionReview 與 hand-review-view.ts decision 畫面。不可把此入口改為出牌前預覽；不得因分析失敗重新執行 advance。詳細範圍、保存失敗及驗收見 [AFTER-DISCARD-VALIDATION](AFTER-DISCARD-VALIDATION.md)。
+
+2026-10-13：玩家用詞依 [LOCAL-TERMS](LOCAL-TERMS.md)，白話聽牌距離由 src/terms.ts 共用；內部牌種/API不改名。題庫生成器加完整九題 contentRevision，試讀匯出 schema 2，本機 review-trial 仍讀 schema 1；改題或牌面會改版本，舊資料不靜默重評。

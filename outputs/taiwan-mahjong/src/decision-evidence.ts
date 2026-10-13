@@ -29,7 +29,7 @@ const metrics = (a: Analysis) => ({ level: 'E1' as const, status: 'supported' as
   improvementStatus: a.effective === 16 ? 'supported' as const : 'notApplicable' as const,
   publicPoolTotal: a.total, publicImprovingRatio: a.effective === 16 && a.total ? a.improving / a.total : null,
   effectiveTiles: a.effectiveTiles.map(t => ({ kind: t.kind, count: t.count })),
-  scope: '公開未知一般牌，含其他家暗手與牌尾；比例不是實際可摸牌牆機率。',
+  scope: '公開尚未看見的一般牌，含其他家手牌與牌尾；比例不是實際可摸牌牆機率。',
 });
 
 /** Internal engine Observation only. Not a saved-data/import validator or action authorization. */
@@ -55,14 +55,14 @@ export function decisionEvidence(o: Observation, rulesVersion: string) {
     const risk = discard ? risks.find(r => r.kind === discard.kind) : undefined;
     return { id, intent, legality: { level: 'E1' as const, status: 'supported' as const, scope: '本次引擎觀察的合法候選；執行前仍須重驗版本及合法性。' },
       efficiency: discard ? metrics(discard.analysis) : null,
-      postClaim: claim ? { conditional: '須先取得吃碰；仲裁後重新驗合法捨牌。', losesClosed: claim.losesClosed,
+      postClaim: claim ? { conditional: '須先取得吃碰；仲裁後重新驗合法打牌。', losesClosed: claim.losesClosed,
         discards: [...claim.discards].sort(kindOrder).map(d => ({ kind: d.kind, efficiency: metrics(d.analysis) })),
         preferredKinds: [...claim.best].sort(kindOrder).map(d => d.kind), level: 'E3' as const,
-        objective: '僅比較吃碰後向聽較低、再比較公開有效進張較多；未評估防守或整體收益。' } : null,
+        objective: '只比較吃碰後是否更接近聽牌，距離相同再比較依可見牌計的有效進牌張數；未評估防守或整體收益。' } : null,
       safety: risk ? { level: 'E2' as const, scope: '當時公開容量；本次對指定座位普通放槍，不涵蓋未來自摸、花胡或續莊。',
         opponents: risk.opponents.map(p => ({ seat: p.seat, status: p.provenSafe ? 'proven' as const : 'unknown' as const,
           remainingRoutes: p.possibleUses, explanation: p.provenSafe ? '已排除本模型涵蓋的成形路徑。' : '尚無充分安全證明；不表示必定危險。' })) } : null,
-      unknownReason: discard ? null : claim ? '尚無吃碰後捨牌安全與整體收益模型。' : '此動作未提供牌效／安全比較；null不表示零風險或不合法。',
+      unknownReason: discard ? null : claim ? '尚無吃碰後打牌安全與整體收益模型。' : '此動作未提供牌效／安全比較；null不表示零風險或不合法。',
     };
   });
   // ponytail: internal evidence only; L2 must validate a versioned snapshot DTO before reading saved data.
@@ -70,7 +70,7 @@ export function decisionEvidence(o: Observation, rulesVersion: string) {
     decision: { matchId: o.matchId, handId: o.handId, version: o.version, seat: o.seat },
     status: analysis ? 'available' as const : 'unavailable' as const, current: analysis ? metrics(analysis.current) : null,
     canWin: o.legalActions.some(a => a.type === 'WIN'), candidates,
-    discardPreference: { level: 'E3' as const, objective: '僅向聽較低優先，同向聽再比較公開有效進張；不是全局最佳。',
+    discardPreference: { level: 'E3' as const, objective: '只以更接近聽牌為優先，距離相同再比較依可見牌計的有效進牌張數；不是全局最佳。',
       kinds: analysis ? [...analysis.best].sort(kindOrder).map(d => d.kind) : [] },
     overallStrategy: { status: 'unknown' as const, explanation: '無校準放槍率或完整收益模型，不判定唯一整體最佳選擇。' },
   });

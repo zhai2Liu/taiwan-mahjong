@@ -5,12 +5,12 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
-import { reviewTrial, MAX_BYTES } from '../scripts/review-trial.mjs';
+import { CONTENT_REVISION, reviewTrial, MAX_BYTES } from '../scripts/review-trial.mjs';
 
 const bank = ['TRAINING-DRAFTS.json', 'TRAINING-REVIEW-CANDIDATES.json']
   .flatMap(file => JSON.parse(fs.readFileSync(new URL('../' + file, import.meta.url), 'utf8')).cases)
   .filter(q => q.purpose === 'training');
-const fixture = () => ({ schemaVersion: 1, rulesVersion: 'TW16-CLASSIC-v1', mode: 'L3-B0-content-trial', reasonAssessment: 'not-reviewed',
+const fixture = () => ({ schemaVersion: 2, contentRevision: CONTENT_REVISION, rulesVersion: 'TW16-CLASSIC-v1', mode: 'L3-B0-content-trial', reasonAssessment: 'not-reviewed',
   questions: bank.map(q => ({ id: q.id, prompt: q.prompt, status: 'unanswered', selected: [], reason: '', feedback: '' })) });
 const run = data => reviewTrial(JSON.stringify(data));
 function submit(data, index = 0) {
@@ -49,13 +49,13 @@ test('題幹或已選選項異動不默默重新判分，且揭露完整版本�
     const report = run(data);
     assert.equal(report.questions[0].comparison, '內容有異動，人工核對');
     assert.equal(report.questions[0].contentDifferences.length, 1);
-    assert.match(report.notice, /無法證明/);
+    assert.match(report.notice, /不證明檔案來源/);
   }
 });
 
 test('拒絕未知版本、缺題重題、額外欄位、過長資料與矛盾狀態', () => {
   const invalid = [
-    d => d.schemaVersion = 2, d => d.mode = 'assessment', d => d.rulesVersion = 'other', d => d.reasonAssessment = 'graded',
+    d => d.schemaVersion = 3, d => d.mode = 'assessment', d => d.rulesVersion = 'other', d => d.reasonAssessment = 'graded',
     d => d.questions.pop(), d => d.questions[1] = d.questions[0], d => d.questions[0].id = 'HE01',
     d => d.extra = true, d => d.questions[0].extra = true, d => d.questions[0].reason = 'x'.repeat(2001),
     d => d.questions[0].feedback = 'x'.repeat(1001), d => d.questions[0].prompt = null,
@@ -93,4 +93,17 @@ test('命令列可從其他目錄執行、保留原檔，錯誤不輸出部分�
       const result = cli(args); assert.equal(result.status, 1); assert.equal(result.stdout, '');
     }
   } finally { fs.rmSync(folder, { recursive: true, force: true }); }
+});
+
+
+test('新版標記涵蓋完整題庫；改版轉人工，schema 1舊檔仍可讀', async()=>{
+ const {trainingContentRevision}=await import('../dist/training-data.js');
+ assert.equal(CONTENT_REVISION,trainingContentRevision);
+ const d=fixture();submit(d);d.contentRevision='0'.repeat(64);
+ assert.equal(run(d).questions[0].comparison,'內容有異動，人工核對');
+ assert.match(run(d).questions[0].contentDifferences[0],/題庫版本/);
+ d.contentRevision='bad';assert.throws(()=>run(d));
+ d.schemaVersion=1;delete d.contentRevision;
+ assert.equal(run(d).questions[0].comparison,'選項集合符合目前答案');
+ assert.match(run(d).notice,/無法證明/);
 });

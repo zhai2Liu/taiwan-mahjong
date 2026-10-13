@@ -45,5 +45,5 @@ function buildDecisionCard(snapshot: DecisionSnapshot) {
 export function buildDecisionReview(snapshot: DecisionSnapshot) {
   const card = buildDecisionCard(snapshot);
   card.selectionNote = '這是剛才已送出的選擇，不能在此改牌或重做。';
-  return { cards: [card], retainedForHand: 1, shown: 1, limitation: '只使用出牌前可見資訊，不使用後續摸牌或他家暗手。' };
+  return { cards: [card], retainedForHand: 1, shown: 1, limitation: '只使用出牌前可見資訊，不使用後續摸牌或他家手牌。' };
 }

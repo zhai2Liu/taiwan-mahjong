@@ -1,4 +1,4 @@
-import { trainingQuestions } from './training-data.js';
+import { trainingQuestions, trainingContentRevision } from './training-data.js';
 import { tileFace } from './tile-face.js';
 import type { TileKind } from './model.js';
 
@@ -20,7 +20,7 @@ function render(focus = true): void {
     for (const group of row.groups) {
       const set = el('div'); set.className = 'tile-group';
       for (const kind of group) {
-        const name = kind[1] === 'z' ? ['東', '南', '西', '北', '中', '發', '白'][Number(kind[0]) - 1] : `${kind[0]}${({ m: '萬', p: '筒', s: '索' } as Record<string, string>)[kind[1]]}`;
+        const name = kind[1] === 'z' ? ['東', '南', '西', '北', '中', '發', '白'][Number(kind[0]) - 1] : `${kind[0]}${({ m: '萬', p: '筒', s: '條' } as Record<string, string>)[kind[1]]}`;
         const face = el('span'); face.className = 'question-tile'; face.setAttribute('role', 'img'); face.setAttribute('aria-label', name);
         face.append(tileFace(kind as TileKind)); set.append(face);
       }
@@ -80,7 +80,7 @@ function render(focus = true): void {
     const notes = drafts.flatMap((d, i) => d.feedback.trim() ? [`題號 ${trainingQuestions[i].id}\n${d.feedback.trim()}`] : []);
     if (!includeAnswers && !notes.length) { exportStatus.textContent = '目前沒有回饋；可先展開「提供本題回饋」填寫。'; return; }
     preview.value = includeAnswers ? JSON.stringify({
-      schemaVersion: 1, rulesVersion: 'TW16-CLASSIC-v1', mode: 'L3-B0-content-trial',
+      schemaVersion: 2, contentRevision: trainingContentRevision, rulesVersion: 'TW16-CLASSIC-v1', mode: 'L3-B0-content-trial',
       reasonAssessment: 'not-reviewed',
       // Include the presented question snapshot so later edits cannot silently change the report's meaning.
       questions: trainingQuestions.map((q, i) => ({ id: q.id, prompt: q.prompt,

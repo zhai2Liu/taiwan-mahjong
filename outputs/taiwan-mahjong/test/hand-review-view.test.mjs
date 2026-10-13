@@ -20,7 +20,7 @@ test('牌效格式區分E17不適用與E16公開張數，不生成概率或零�
   const {cards:[card]}=buildHandReview([captureDecision(o,a,'TW16-CLASSIC-v1')],o.matchId,o.handId,0);
   assert.match(reviewMetricsText(card.evidence.current),/17張.*不適用/);
   const m=card.rows.find(r=>r.candidate.efficiency).candidate.efficiency;
-  assert.match(reviewMetricsText(m),/公開有效進張.*未知一般牌/);
+  assert.match(reviewMetricsText(m),/依可見牌計的有效進牌.*尚未看見的一般牌/);
   assert.doesNotMatch(reviewMetricsText(m),/%|風險|最佳/);
 });
 

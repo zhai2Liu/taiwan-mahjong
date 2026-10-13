@@ -1,3 +1,4 @@
+import { listeningDistance } from './terms.js';
 import { coachAnalysis } from './coach.js';
 import type { Analysis } from './analysis.js';
 import type { Intent, Seat, ScoreResult } from './model.js';
@@ -49,7 +50,7 @@ export function tileName(id: string): string {
   const kind = kindOf(id);
   if (kind[0] === 'f') return `${flowers[Number(kind[1]) - 1]}花`;
   if (kind[1] === 'z') return honors[Number(kind[0]) - 1];
-  return `${numerals[Number(kind[0]) - 1]}${{ m: '萬', p: '筒', s: '索' }[kind[1]] ?? ''}`;
+  return `${numerals[Number(kind[0]) - 1]}${{ m: '萬', p: '筒', s: '條' }[kind[1]] ?? ''}`;
 }
 export function tile(id: string | null, size = '', selected = false): HTMLSpanElement {
   const kind = id === null ? '' : kindOf(id);
@@ -68,13 +69,13 @@ function rules(): HTMLDetailsElement {
   const detail = node('details', 'rules'); detail.dataset.persist = 'rules';
   const summary = node('summary', '', '桌規與操作'); summary.dataset.focus = 'rules';
   const body = node('div', 'rules-body');
-  body.append(node('p', 'eyebrow', 'TW16-CLASSIC-v1 · 本桌固定規則'), node('h3', '', '十六張，五面子一對將'));
+  body.append(node('p', 'eyebrow', 'TW16-CLASSIC-v1 · 本桌固定規則'), node('h3', '', '十六張，五組牌加一對眼睛'));
   const entries = [
     ['如何操作', '單擊選牌，快速連點同一張兩次即可打出。鍵盤可用 Tab 選牌，Enter 或空白鍵出牌。可吃、碰、槓、胡時會顯示合法選項，吃牌逐組列出；沒有真人倒數。結算自動彈出，可關閉查看牌桌再重新開啟。'],
     ['牌與座位', '144 張，含春夏秋冬、梅蘭菊竹。逆時針輪流；莊家為東，莊家起手 17 張，補花後直接出牌。'],
-    ['摸牌與尾局', '固定留 16 張；補花、補槓同樣消耗可用牌。剩 3 張起不能吃、碰、明槓；最後捨牌仍可胡。'],
+    ['摸牌與尾局', '固定留 16 張；補花、補槓同樣消耗可用牌。剩 3 張起不能吃、碰、明槓；最後打牌仍可胡。'],
     ['回應順序', '胡優先，再碰／明槓，最後下家吃；多家胡由離出牌者最近者胡。明槓不可取上家。'],
-    ['吃碰與過水', '吃後不可打回能和吃入兩張組成順子的牌；碰後不可打同種。放棄合法胡會過水，須捨出非自身聽口牌，或正式完成加槓才解除。過碰至自己下次出牌解除。'],
+    ['吃碰與過水', '吃後不可打回能和吃入兩張組成順子的牌；碰後不可打同種。放棄合法胡會過水，須打出非自身聽口牌，或正式完成加槓才解除。過碰至自己下次出牌解除。'],
     ['槓與花', '暗槓牌種對其他家隱藏；加槓可搶胡。明槓補牌後本次不可一般自摸。七搶一、八仙過海強制花胡，均為 8 台；依取得花牌的時點判斷是否先補完。'],
     ['計分', '純積分，底 30、每台 10，零台可胡、無封頂。放槍一人付、自摸三人付。每筆涉及莊家，加莊家 1 台及連莊 2N 台。'],
     ['莊與一將', '莊胡或流局連莊；閒家胡才移莊。每四次移莊換圈，16 次移莊結束一將。結算後由你決定何時繼續。'],
@@ -139,7 +140,7 @@ function home(model: ViewModel, send: Send): HTMLElement {
   art.append(ring, fan, node('span', 'art-caption', '底 30 / 台 10 · 純積分'));
   hero.append(copy, art); main.append(hero);
   const features = node('div', 'welcome-features');
-  for (const [number, title, text] of [['16', '道地十六張', '五面子一對將，吃碰槓胡完整呈現。'], ['3', '公平的電腦對手', '各自只看手牌與公開資訊，不偷看牌牆。'], ['∞', '照你的節奏', '雙擊出牌，隨時暫停、下次再續。']]) {
+  for (const [number, title, text] of [['16', '道地十六張', '五組牌加一對眼睛，吃碰槓胡完整呈現。'], ['3', '公平的電腦對手', '各自只看手牌與公開資訊，不偷看牌牆。'], ['∞', '照你的節奏', '雙擊出牌，隨時暫停、下次再續。']]) {
     const feature = node('section'); feature.append(node('span', 'feature-number', number), node('h3', '', title), node('p', '', text)); features.append(feature);
   }
   main.append(features); return main;
@@ -183,16 +184,16 @@ function publicPlayer(game: Game, seat: Seat): HTMLElement {
 
 function river(game: Game, seat: Seat): HTMLElement {
   const section = node('section', `river-area river-${['south', 'east', 'north', 'west'][seat]}`);
-  section.setAttribute('aria-label', `${names[seat]}的牌河`);
+  section.setAttribute('aria-label', `${names[seat]}的海底`);
   section.append(node('span', 'river-label', `${names[seat]} · ${wind(game, seat)}`));
   const river = node('div', 'river');
   const player = game.players[seat];
   const liveDiscards = player.discardHistory.filter(discard => discard.claimedBy === null);
-  if (!liveDiscards.length) river.append(node('span', 'river-empty', '尚無捨牌'));
+  if (!liveDiscards.length) river.append(node('span', 'river-empty', '還沒有人打牌'));
   for (const discard of liveDiscards) {
     const current = game.lastDiscard?.tileId === discard.tileId;
     const face = tile(discard.tileId, `tile-river ${current ? 'last-discard' : ''}`);
-    if (current) face.setAttribute('aria-label', `${tileName(discard.tileId)}，最新捨牌`);
+    if (current) face.setAttribute('aria-label', `${tileName(discard.tileId)}，剛打出的牌`);
     river.append(face);
   }
   section.append(river); return section;
@@ -230,21 +231,21 @@ function coachPanel(model: ViewModel) {
   if (!report) return null;
   const detail = node('details', 'coach-panel'); detail.dataset.persist = 'coach';
   const summary = node('summary'); summary.dataset.focus = 'coach';
-  const shape = (a: Analysis) => a.shanten < 0 ? '牌型已完成' : a.shanten === 0 ? '已聽牌' : `${a.shanten} 向聽`;
-  const distance = (a: Analysis) => `${shape(a)}${a.shanten > 0 ? `・距聽牌至少 ${a.shanten} 次進張` : ''}`;
+  const shape = (a: Analysis) => listeningDistance(a.shanten);
+  const distance = shape;
   detail.append(summary);
   const body = node('div', 'coach-body'), preview = node('div', 'coach-preview'); preview.setAttribute('aria-live', 'polite');
   const describe = (a: Analysis, label: string) => {
     const box = node('div'); box.append(node('strong', '', `${label}：${distance(a)}`));
-    if (a.shanten >= 0) box.append(node('p', '', `成胡還需至少 ${a.shanten + 1} 次有效進張（每次都使牌型更接近胡牌）；不代表實際回合數。`));
+    if (a.shanten >= 0) box.append(node('p', '', `成胡還需至少 ${a.shanten + 1} 次有效進牌（每次都使牌型更接近胡牌）；不代表實際回合數。`));
     box.append(node('p', '', `公開未知牌中，有效牌 ${a.improving}／${a.total} 張${a.probability === null ? '（無可估計牌）' : `（${(a.probability * 100).toFixed(1)}%）`}。`));
-    if (a.shanten >= 0 && a.effectiveTiles.length && a.improving === 0) box.append(node('p', 'action-note', '這份後續進張估計已沒有剩餘有效牌，需考慮換一組等待；若當下已有合法胡牌按鈕，仍可胡。'));
-    const list = node('div', 'coach-tiles'); list.tabIndex = 0; list.setAttribute('aria-label', '有效進張與剩餘張數，可左右捲動');
+    if (a.shanten >= 0 && a.effectiveTiles.length && a.improving === 0) box.append(node('p', 'action-note', '這份後續進牌估計已沒有剩餘有效牌，需考慮換一組等待；若當下已有合法胡牌按鈕，仍可胡。'));
+    const list = node('div', 'coach-tiles'); list.tabIndex = 0; list.setAttribute('aria-label', '有效進牌與剩餘張數，可左右捲動');
     a.effectiveTiles.forEach(t => { const item = node('span', t.count ? '' : 'exhausted'); item.append(tile(t.kind, 'tile-small'), node('span', '', `${t.count}張`)); list.append(item); });
     if (a.effectiveTiles.length) box.append(list);
     const e = a.example;
     if (e) {
-      box.append(node('p', '', `拆法示例：${e.completed.length} 組面子、${e.partials.length} 搭、${e.pair.length ? '1 對將' : '尚無將'}、${e.singles.length} 張散牌。`));
+      box.append(node('p', '', `拆法示例：${e.completed.length} 組完整牌組、${e.partials.length} 搭、${e.pair.length ? '1 對眼睛' : '尚無眼睛'}、${e.singles.length} 張孤張。`));
       const groups = node('div', 'coach-tiles');
       [...e.completed, ...e.partials, ...(e.pair.length ? [e.pair] : []), ...e.singles.map(k => [k])].forEach(g => { const row = node('span', 'coach-group'); g.forEach(k => row.append(tile(k, 'tile-small'))); groups.append(row); }); box.append(groups);
     }
@@ -252,17 +253,17 @@ function coachPanel(model: ViewModel) {
   };
   function select(id: string | null) {
     const choice = report!.discards.find(d => d.kind === (id ? kindOf(id) : ''));
-    summary.textContent = `教練 · ${report!.canWin ? '此刻可以胡牌' : choice ? `打出${tileName(choice.kind)}後：${shape(choice.analysis)}` : report!.best.length ? `捨牌後最佳 ${shape(report!.best[0].analysis)}` : shape(report!.current)}`;
+    summary.textContent = `教練 · ${report!.canWin ? '此刻可以胡牌' : choice ? `打出${tileName(choice.kind)}後：${shape(choice.analysis)}` : report!.best.length ? `打牌後最佳 ${shape(report!.best[0].analysis)}` : shape(report!.current)}`;
     preview.replaceChildren(choice ? describe(choice.analysis, `打出${tileName(choice.kind)}後`) : report!.discards.length ? node('p', '', '單擊手牌預覽，雙擊才打出。') : describe(report!.current, '目前牌型'));
   }
   select(model.selectedTile);
   if (report.canWin) body.append(node('p', 'coach-claim', '此刻有合法胡牌，先考慮胡牌；放棄會過水。以下吃碰比較是假設你放棄本次胡牌。'));
   else if (report.current.shanten < 0) body.append(node('p', '', '牌型已完成，但此刻沒有合法胡牌。吃碰後與明槓補牌不可自摸，過水亦會限制胡牌；請以合法胡牌按鈕為準。'));
-  if (report.best.length) body.append(node('p', 'coach-candidates', `牌效較佳候選：${report.best.map(d => tileName(d.kind)).join('、')}。先比較向聽，再比較有效牌張數；同分都保留。`));
-  const effects: Record<string, string> = { unavailable: '無合法捨牌', closer: '更接近聽牌：有效進張', worse: '牌效下降', moreOptions: '向聽相同，有效牌增加', same: '牌效相同' };
+  if (report.best.length) body.append(node('p', 'coach-candidates', `牌效較佳候選：${report.best.map(d => tileName(d.kind)).join('、')}。先看離聽牌多遠，再比較有效進牌張數；同分都保留。`));
+  const effects: Record<string, string> = { unavailable: '無合法打牌', closer: '更接近聽牌：有效進牌', worse: '牌效下降', moreOptions: '離聽牌一樣遠，有效進牌增加', same: '牌效相同' };
   for (const claim of report.claims) {
     const after = claim.best[0]?.analysis;
-    body.append(node('p', 'coach-claim', `${actionLabel(claim.intent)} → ${effects[claim.effect]}${after ? `；捨 ${claim.best.map(d => tileName(d.kind)).join('／')} 後 ${distance(after)}，有效 ${after.improving} 張` : ''}${claim.losesClosed ? '；會失去門清' : ''}。`));
+    body.append(node('p', 'coach-claim', `${actionLabel(claim.intent)} → ${effects[claim.effect]}${after ? `；打 ${claim.best.map(d => tileName(d.kind)).join('／')} 後 ${distance(after)}，有效 ${after.improving} 張` : ''}${claim.losesClosed ? '；會失去門清' : ''}。`));
   }
   body.append(preview);
   if (model.game!.self.restrictions.passedWin) body.append(node('p', '', '目前過水：牌型聽牌不代表此刻可胡，請以合法胡牌按鈕為準。'));
@@ -390,20 +391,20 @@ function result(model: ViewModel, send: Send): HTMLDialogElement {
   breakdown.append(node('summary', '', '查看胡牌拆法與胡入牌'));
   const decomposition = settlement.score?.decomposition;
   if (decomposition) {
-    const shape = node('section', 'winning-shape'); shape.setAttribute('aria-label', '胡牌拆法，五面子一對將');
-    shape.append(node('h3', '', '胡牌拆法 · 五面子一對將'));
+    const shape = node('section', 'winning-shape'); shape.setAttribute('aria-label', '胡牌拆法，五組牌加一對眼睛');
+    shape.append(node('h3', '', '胡牌拆法 · 五組牌加一對眼睛'));
     const groups = node('div', 'winning-groups');
     decomposition.groups.forEach((group, index) => {
       const meld = settlement.winner === null ? undefined : game.players[settlement.winner].melds[index];
-      const label = meld ? meldNames[meld.kind] : group.kind === 'sequence' ? '順子' : '刻子';
+      const label = meld ? meldNames[meld.kind] : group.kind === 'sequence' ? '連號三張' : '三張同牌';
       const cards = meld && !['chi', 'pon'].includes(meld.kind) ? [...group.tiles, group.tiles[0]] : group.tiles;
       const block = node('div', 'winning-group'); block.setAttribute('aria-label', label);
       const faces = node('div', 'meld-tiles'); cards.forEach(id => faces.append(tile(id, 'tile-small')));
       block.append(faces, node('span', '', label)); groups.append(block);
     });
-    const pair = node('div', 'winning-group'); pair.setAttribute('aria-label', '一對將');
+    const pair = node('div', 'winning-group'); pair.setAttribute('aria-label', '一對眼睛');
     const faces = node('div', 'meld-tiles'); faces.append(tile(decomposition.pair, 'tile-small'), tile(decomposition.pair, 'tile-small'));
-    pair.append(faces, node('span', '', '一對將')); groups.append(pair);
+    pair.append(faces, node('span', '', '一對眼睛')); groups.append(pair);
     shape.append(groups); breakdown.append(shape);
   }
   const details = node('div', 'result-body');
@@ -509,7 +510,7 @@ export function render(root: HTMLElement, model: ViewModel, send: Send): void {
     const heading = node('div', 'table-heading'); heading.append(node('p', 'eyebrow', '你的私人牌桌'), node('p', 'table-subtitle', model.game.phase === 'matchResult' ? `一將完成 · 最後莊家 ${names[tableDealer(model.game)]}` : `${tileName(model.game.roundWind)}圈 · 莊家 ${names[model.game.dealer]}${model.game.streak ? ` · 連 ${model.game.streak}` : ''}`));
     const table = node('div', 'table-grid');
     for (const seat of [2, 3, 1, 0] as Seat[]) table.append(publicPlayer(model.game, seat));
-    const sea = node('div', 'discard-table'); sea.setAttribute('aria-label', '中央牌河');
+    const sea = node('div', 'discard-table'); sea.setAttribute('aria-label', '中央海底');
     for (const seat of [2, 3, 1, 0] as Seat[]) sea.append(river(model.game, seat));
     sea.append(tableCenter(model)); table.append(sea); main.append(heading, table, handAndActions(model, send));
     if (model.game.settlement) {

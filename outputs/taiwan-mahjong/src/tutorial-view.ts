@@ -1,6 +1,6 @@
 import { button, node, tile, tileName } from './view.js';
 
-const titles = ['認識台灣十六張', '練一次選牌與出牌', '134 遇到 2，怎麼吃？', '碰、槓與按過', '五面子一對才是胡牌形', '看懂提示，再回牌桌'];
+const titles = ['認識台灣十六張', '練一次選牌與出牌', '134 遇到 2，怎麼吃？', '碰、槓與按過', '五組牌加一對眼睛才是胡牌形', '看懂提示，再回牌桌'];
 
 /** A local UI exercise: never receives a game, hidden tiles, save data or game commands. */
 export function showTutorial(root: HTMLElement): void {
@@ -15,9 +15,9 @@ export function showTutorial(root: HTMLElement): void {
     const text = (content: string) => body.append(node('p', '', content));
     const cards = (kinds: string[]) => { const row = node('div', 'tutorial-tiles'); kinds.forEach(k => row.append(tile(k, 'tile-small'))); body.append(row); };
     if (step === 0) {
-      text('本遊戲是台灣16張：平時16張，摸牌後17張，通常捨1張回16張。你與3位公平電腦輪流行牌，真人操作不限時。');
+      text('本遊戲是台灣16張：平時16張，摸牌後17張，通常打1張回16張。你與3位公平電腦輪流行牌，真人操作不限時。');
       cards(['1m', '5m', '9m', '1p', '5p', '9p', '1s', '5s', '9s']);
-      text('萬、筒、索各有1到9；同花色連續3張是順子，同牌3張是刻子。東南西北中發白不能組順子。花牌不放進一般胡牌形，亮出後通常自動補牌；花胡例外由遊戲判定，例如一家已有七花、別家亮出最後一花時立即結算，不再補牌。');
+      text('萬、筒（也叫餅）、條（也叫索）各有1到9；同花色連號3張叫順子，3張相同的牌也能湊成一組。東南西北中發白不能組順子。花牌不放進一般胡牌形，亮出後通常自動補牌；花胡例外由遊戲判定，例如一家已有七花、別家亮出最後一花時立即結算，不再補牌。');
       cards(['1z', '2z', '3z', '4z', '5z', '6z', '7z', 'f1']);
       text('以下是獨立示範，不改目前牌局或練習存檔。開啟教學會暫停對戰，關閉後需自行繼續。桌規以本遊戲TW16-CLASSIC-v1為準。');
     } else if (step === 1) {
@@ -55,31 +55,31 @@ export function showTutorial(root: HTMLElement): void {
       text('只看相關手牌134萬，上家打出2萬。可以用13吃成123，也可以用34吃成234；兩種選項都要保留。試選一種。');
       cards(['1m','3m','4m']);
       const choices = node('div', 'tutorial-choices'), example = node('div', 'tutorial-example');
-      const feedback = node('p', 'tutorial-feedback', '吃只能取上家捨牌；吃後仍要捨1張。'); feedback.setAttribute('role', 'status');
+      const feedback = node('p', 'tutorial-feedback', '吃只能取上家打牌；吃後仍要打1張。'); feedback.setAttribute('role', 'status');
       for (const [own, sequence, ban] of [[['1m','3m'],['1m','2m','3m'],'二萬'],[['3m','4m'],['2m','3m','4m'],'二萬、五萬']] as const) {
         const control = button(`吃 ${own.map(tileName).join('＋')}`, `tutorial-chi-${own.join('-')}`, () => {
           example.replaceChildren(node('p', '', '亮出的順子')); sequence.forEach(k => example.append(tile(k, 'tile-small')));
-          feedback.textContent = `本次吃後不可捨${ban}；從其餘合法手牌選1張。吃碰後不能立即槓或自摸。真正牌局只顯示合法操作。`;
+          feedback.textContent = `本次吃後不能打${ban}；從其餘合法手牌選1張。吃碰後不能立即槓或自摸。真正牌局只顯示合法操作。`;
         }, 'button button-secondary'); choices.append(control);
       } body.append(choices, example, feedback);
       text('有人胡牌時先處理胡，再碰或明槓，最後才是吃；回應選項不保證最後取得那張牌。');
     } else if (step === 3) {
       cards(['5p','5p','5p']);
-      text('碰：手中2張相同牌，加上別家捨出的1張。碰後要捨1張，本次不能捨碰牌同種，也不能立即槓或自摸。');
+      text('碰：手中2張相同牌，加上別家打出的1張。碰後要打1張，本次不能打碰牌同種，也不能立即槓或自摸。');
       text('槓：4張相同牌成槓，由遊戲補牌。暗槓用自己4張；加槓補已碰的第4張，先詢問搶槓；本桌明槓不能取上家，且補牌後本次不能一般自摸。操作以當下合法按鈕為準。');
       text('按「過」：放棄這次回應。放棄合法胡牌會過水，不是下一次摸牌就一定解除；放棄碰牌也有過碰限制。確定不胡再按過，規則詳解可在牌桌下方展開。');
     } else if (step === 4) {
-      text('一般胡牌形是5組面子加1對將，共17張等效牌。這就是台灣16張，不是13張的四面子一對。副露的吃碰各算1組，槓結構也算3張，實體仍有4張。');
+      text('一般胡牌形是5組牌加1對眼睛（兩張相同牌），共17張等效牌。這就是台灣16張，不是13張的四組牌加一對。亮出的吃碰各算1組，槓結構也算3張，實體仍有4張。');
       const groups = node('div', 'tutorial-groups');
       for (const group of [['1m','2m','3m'],['4m','5m','6m'],['2p','3p','4p'],['3s','4s','5s'],['7s','8s','9s'],['1z','1z']]) {
-        const block = node('div', 'tutorial-group'); group.forEach(k => block.append(tile(k, 'tile-small'))); block.append(node('span', '', group.length === 2 ? '一對將' : '一組面子')); groups.append(block);
+        const block = node('div', 'tutorial-group'); group.forEach(k => block.append(tile(k, 'tile-small'))); block.append(node('span', '', group.length === 2 ? '一對眼睛' : '一組牌')); groups.append(block);
       } body.append(groups);
       text('牌型完成也要符合當下胡牌資格；例如過水、吃碰後或明槓補牌可能不能一般胡。看到「胡牌／自摸」按鈕，才是此刻可以操作。特殊花胡由遊戲自動判定。');
       text('結算直接彈出，先看本局變動與總分，再展開拆法、計台明細；按「下一局」才繼續。結算重開不會再次扣分。');
     } else {
-      text('向聽是距離聽牌的結構下限：0向聽就是聽牌；1向聽至少再1次有效改善可聽牌。它不是還需摸幾次，也不是胡牌承諾。拆法示例是一種最近目標分配，不保證最多搭子。');
-      text('單擊手牌可比較捨牌後的向聽與有效牌。向聽相同再比較剩餘有效張數；0張表示後續未知牌估計中已無該牌，不能只看「已聽牌」；當下已有合法胡牌按鈕時仍可胡。吃碰的牌效建議也不包含台數、防守或槓後風險。');
-      text('對戰比例只用公開資訊，未知牌包含別家暗手及牌尾，不是實際摸牌機率。純練習沒有對手，使用136張一般牌的不放回牌池，顯示下一張改善機率。');
+      text('「聽牌」是再進一張合適的牌，就能湊成胡牌牌型。提示會說至少還需幾次有效進牌才可聽牌；這是牌型改善的下限，不是還需摸幾次，也不保證能胡。拆法示例只是一種湊牌方式，搭數不等於聽牌距離。');
+      text('單擊手牌可比較打牌後離聽牌多遠，以及哪些進牌有幫助。距離相同再比較剩餘有效張數；0張表示後續未知牌估計中已無該牌，不能只看「已聽牌」；當下已有合法胡牌按鈕時仍可胡。吃碰的牌效建議也不包含台數、防守或槓後風險。');
+      text('對戰比例只用公開資訊，未知牌包含別家手牌及牌尾，不是實際摸牌機率。純練習沒有對手，使用136張一般牌的不放回牌池，顯示下一張改善機率。');
       text('想慢慢熟悉操作，先進「純練習模式」；回對戰時先按「繼續牌局」。教練可收合或關閉，隨時從「新手教學」再看一遍。');
     }
     const footer = node('div', 'tutorial-footer');
