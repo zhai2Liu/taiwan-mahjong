@@ -48,7 +48,7 @@
 
 ![離開確認](S11-LEAVE-CONFIRM.jpg)
 
-本包最終產物：首頁 `index-D57TZ2GI.js`／`index-DcXzVABB.css`、試讀 `training-CyxzesHo.js`／`training-DnepUIbB.css`、共用 `tile-face-CG76dTyt.js`。正式發布需再次核對提交、CI 及線上資源；交接記最新結果。
+最終來源 `1ee7b64`，Actions [38399262115](https://github.com/zhai2Liu/taiwan-mahjong/actions/runs/38399262115)成功。首頁及試讀HTTP200、引用JS／CSS與本機SHA-256相符：首頁 `index-D57TZ2GI.js`／`index-DcXzVABB.css`、試讀 `training-CyxzesHo.js`／`training-DnepUIbB.css`、共用 `tile-face-CG76dTyt.js`。根目錄README已發布且Git blob相符。正式站用驗收query排除舊HTML快取並確認DOM引用最終JS，取消／確認離開與返回後表單一致已驗；截圖為正式站最終版本。測試分頁及伺服器均已關閉。
 
 ## 限制與下一包
 
