@@ -1,6 +1,6 @@
 # S1.2b：核心瀏覽器回歸
 
-2026-10-14（Asia/Taipei）。承接[S1.2a](S12A-VALIDATION.md)，將已有操作驗收整理成可重跑的三條流程。正式遊戲、TW16-CLASSIC-v1、AI策略、存檔及題庫版本未修改。本機已通過，PR／main驗證尚待本輪發布核對；完成狀態以[HANDOFF](HANDOFF.md)為準。
+2026-10-14（Asia/Taipei）。承接[S1.2a](S12A-VALIDATION.md)，將已有操作驗收整理成可重跑的三條流程。本機、PR／main驗證與發布核對已完成。正式遊戲、TW16-CLASSIC-v1、AI策略、存檔及題庫版本未修改；目前交接以[HANDOFF](HANDOFF.md)為準。
 
 ## 範圍與工具選擇
 
@@ -39,7 +39,8 @@ Linux首次安裝用`npx playwright install --with-deps chromium`。`test:browse
 
 - 本機Windows：342項Node測試通過、型別與正式建置成功；六項真實Chromium回歸通過，7.1秒（當次結果，不是效能基準）。
 - 正式產物仍為index-D57TZ2GI.js／index-DcXzVABB.css、training-CyxzesHo.js／training-DnepUIbB.css及tile-face-CG76dTyt.js，測試來源未進bundle。
-- PR與main均執行六項回歸；PR不部署、main通過後部署。遠端run與正式資源核對待補。
+- [PR#3](https://github.com/zhai2Liu/taiwan-mahjong/pull/3)來源8700ba9，[Actions38480202001](https://github.com/zhai2Liu/taiwan-mahjong/actions/runs/38480202001)成功；Linux日誌342測試及六項回歸（8.6秒）通過，Pages上傳／deploy skipped、0 artifact。已合併88ce2df，[main Actions38480378216](https://github.com/zhai2Liu/taiwan-mahjong/actions/runs/38480378216)的342測試、六項回歸（8.5秒）、build、Pages上傳及deploy全部成功；沒有外部真人程式審查。
+- 部署成功後正式首頁／training.html均HTTP200，各自引用三份JS／CSS的SHA-256與本機一致，證據work/s12b-live.log；正式site僅assets、index.html、training.html，測試範例未入產物。未改UI，本包真實操作證據為本機／Linux自動回歸，未再操作正式使用者存檔。
 - 不代表全流程／瀏覽器／手機、純練習、吃碰槓、壞檔／配額／跨頁故障都已由此六項覆蓋；既有引擎、控制器和手動證據仍必要。關頁／手機終止等beforeunload限制仍在。
 - 未取得真人試讀資料、未測學習成效，也未整合人格AI；main分支保護仍另待配置。
 

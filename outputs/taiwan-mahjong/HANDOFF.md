@@ -2,11 +2,15 @@
 
 2026-10-13。S0.1已採納「台灣十六張麻將學習與決策練習」兩路線，詳見[PRODUCT-DIRECTION](PRODUCT-DIRECTION.md)、[全面強化企畫](MASTER-IMPROVEMENT-PLAN.md)。既有進階證據／檢討保留，完整八課屬S2，正式評量與真人成效仍待；人格AI仍需另外啟動。
 
-## 最新工作包：S1.2b 本機通過，遠端驗證中
+## 最新工作包：S1.2b 已完成並驗證發布
 
 2026-10-14。使用者續推，新增Playwright 1.64.0開發依賴、三條核心回歸（1440×900／390×844各一次，共六項）、正式preview4226隔離測試、CI共同build的安裝／回歸及失敗證據七天。未改src、桌規、AI、存檔或題庫。本機342測試（work/s12b-unit.log）、check／build及六項瀏覽器通過；site只有兩入口與assets，無測試範例，產物雜湊名稱未變。詳見[S12B](S12B-VALIDATION.md)。
 
-當前工作分支codex/browser-regression，尚待PR／main Actions及正式資源核對，不先宣稱完成發布。preview由測試自動管理且已停止，沒有新增使用者瀏覽器分頁；下載是隔離context合成內容，未操作真人存檔／Downloads。開工五小時帳戶4%、本機完成檢查9%，非精確token；無子代理／重設／自動續跑。下一動作完成本包提交、PR驗證／合併及main核對，再更新本節與ROADMAP；下一包S1.3，不開S2／人格AI。
+已推送8700ba9，PR#3已附本chat。Actions38480202001成功，Linux日誌342／六項通過（8.6秒），Pages上傳／deploy skipped、0 artifact，已合併88ce2df並回main。main Actions38480378216的342測試、六項回歸（8.5秒）、build、Pages上傳／deploy均成功。部署後正式首頁／training.html各HTTP200，引用三份JS／CSS皆與本機SHA-256相同，work/s12b-live.log。沒有外部真人程式審查；main未設分支保護，CI不是強制merge gate。
+
+preview由測試自動管理且已停止，沒有新增使用者瀏覽器分頁；下載是隔離context合成內容，未操作真人存檔／Downloads。Windows／Linux Chromium與390窄畫面通過，不代表手機／Safari／全流程或真人學習成效；CI失敗artifact分支未刻意製造故障驗證。開工五小時帳戶4%、本機完成9%、發布檢查14%、收尾15%，非精確token；無子代理／重設／自動續跑。更新README／維護／部署／ROADMAP／驗收及交接，137個受影響文件連結存在、diff格式通過；收尾提交僅狀態Markdown、不觸發main建置。保留已合併分支codex/browser-regression作證據追溯。
+
+下一包S1.3：先重現對戰、練習、試讀在桌面／窄畫面的操作與焦點卡點，再修必要問題，記錄具名瀏覽器／裝置及首次載入、選牌／解釋基準；不預先承諾未驗的手機／Safari。完整八課S2、題目版本修訂S3.1另包，人格AI仍未授權實裝。現有C01「順子子」仍留S3.1版本化修訂，不把測試合成匯出當真人資料。
 
 ## 前包：S1.2a PR檢查已完成
 
