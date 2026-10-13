@@ -14,6 +14,8 @@ README是使用與開發總入口；HANDOFF只記目前進度、風險與下一�
 
 ## 修改位置
 
+S1.2b：`test/e2e/core.spec.js`與`playwright.config.js`管理三條真實瀏覽器核心路徑。改出牌解釋、結算／續局或試讀匯出／離頁時，用`npm run test:browser`核對正式建置；首次安裝Chromium，詳細步驟／隔離／未涵蓋範圍見[S12B](S12B-VALIDATION.md)。CI在既有build內執行，不改Pages權限；失敗證據保留七天。新合法動作／故障仍依原規則與控制器測試，不將六項端到端檢查當完整覆蓋。
+
 | 需求 | 先看位置 | 必要驗證 |
 |---|---|---|
 | 出牌、吃碰槓胡、過水、連莊、回合推進 | src/engine.ts、model.ts、validation.ts；先對照RULES | engine、chi、claims-integrity、validation相關案例；必要時補人工規則案例 |

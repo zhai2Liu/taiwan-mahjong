@@ -2,3 +2,5 @@ node_modules/
 dist/
 site/
 src/training-data.ts
+test-results/
+playwright-report/
