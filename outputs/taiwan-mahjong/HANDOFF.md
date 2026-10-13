@@ -2,7 +2,13 @@
 
 2026-10-13。S0.1已採納「台灣十六張麻將學習與決策練習」兩路線，詳見[PRODUCT-DIRECTION](PRODUCT-DIRECTION.md)、[全面強化企畫](MASTER-IMPROVEMENT-PLAN.md)。既有進階證據／檢討保留，完整八課屬S2，正式評量與真人成效仍待；人格AI仍需另外啟動。
 
-## 最新工作包：S0.1／S0.2／S1.1
+## 最新工作包：S1.2a PR檢查（雲端驗收中）
+
+2026-10-13。使用者續推，新增pull_request指向main的共同build，沒有PR路徑過濾；非PR且main才上傳Pages artifact／deploy。PR與main群組分開，PR可取消舊檢查，main仍序列；checkout不保留憑證。新增M0 cases.json／RULES.md的push觸發，未改遊戲、桌規、存檔或分支保護。
+
+本機342測試／check／build通過，work/s12a-tests.log，產物未變。功能PR#1（codex/pr-validation，03c55dd）已附本chat，Actions38408610153成功，build通過、Upload Pages artifact及deploy skipped、0 artifact；已合併main的bc1758d。正準備真正純Markdown差異的文件PR及main發布核對，記錄見[S12A](S12A-VALIDATION.md)。本輪開工五小時用量33%，不是精確token；無子代理／重設／自動續跑。完成後下一包S1.2b，不開始人格AI。
+
+## 前包：S0.1／S0.2／S1.1
 
 2026-10-13。方向／企畫／ROADMAP／AGENTS／遊戲README已同步；根目錄新增作品README、架構圖、三個實作案例、狀態、真實擁有者／AI角色及兩分鐘展示路徑。前兩輪企畫與作品集盤點一併保留入版，歷史文件不當現況。
 

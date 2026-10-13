@@ -100,7 +100,7 @@ npm run build
 npm run preview -- --port 4173
 ```
 
-開發可用 `npm run dev -- --port 4183`。測試使用 Node 內建執行器，涵蓋規則、牌效、牌權、存檔、計台、資訊邊界及控制器；CI 在 main 來源變更後測試、建置並發布。PR 專用檢查與精選瀏覽器自動回歸為後續 S1.2 工作。
+開發可用 `npm run dev -- --port 4183`。測試使用 Node 內建執行器，涵蓋規則、牌效、牌權、存檔、計台、資訊邊界及控制器；指向 main 的所有 PR 都執行型別／測試／建置，PR 不發布網站。main 來源變更通過後才發布；[S1.2a 驗收](outputs/taiwan-mahjong/S12A-VALIDATION.md)記錄範圍。精選瀏覽器自動回歸仍在 S1.2b。
 
 測試數與發布狀態以 [HANDOFF](outputs/taiwan-mahjong/HANDOFF.md) 為準。題庫模型複核與程式測試不等同真人理解或學習成效；目前尚未證實能普遍提升牌技。
 
