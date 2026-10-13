@@ -100,7 +100,9 @@ npm run build
 npm run preview -- --port 4173
 ```
 
-開發可用 `npm run dev -- --port 4183`。測試使用 Node 內建執行器，涵蓋規則、牌效、牌權、存檔、計台、資訊邊界及控制器；指向 main 的所有 PR 都執行型別／測試／建置，PR 不發布網站。main 來源變更通過後才發布；[S1.2a 驗收](outputs/taiwan-mahjong/S12A-VALIDATION.md)記錄範圍。精選瀏覽器自動回歸仍在 S1.2b。
+開發可用 `npm run dev -- --port 4183`。Node 內建測試涵蓋規則、牌效、牌權、存檔、計台、資訊邊界及控制器；Playwright 驗證三條核心操作在桌面與窄畫面的正式建置。首次執行先用 `npx playwright install chromium` 安裝測試瀏覽器，再用 `npm run test:browser`。測試使用隔離存檔與合成作答，不操作玩家資料。
+
+指向 main 的所有 PR 都執行型別／測試／建置與瀏覽器回歸，PR 不發布網站；main 來源變更通過後才發布。目前沒有分支保護強制合併門檻。[PR 檢查](outputs/taiwan-mahjong/S12A-VALIDATION.md) · [瀏覽器回歸與重現方式](outputs/taiwan-mahjong/S12B-VALIDATION.md)。
 
 測試數與發布狀態以 [HANDOFF](outputs/taiwan-mahjong/HANDOFF.md) 為準。題庫模型複核與程式測試不等同真人理解或學習成效；目前尚未證實能普遍提升牌技。
 

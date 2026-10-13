@@ -2,7 +2,13 @@
 
 2026-10-13。S0.1已採納「台灣十六張麻將學習與決策練習」兩路線，詳見[PRODUCT-DIRECTION](PRODUCT-DIRECTION.md)、[全面強化企畫](MASTER-IMPROVEMENT-PLAN.md)。既有進階證據／檢討保留，完整八課屬S2，正式評量與真人成效仍待；人格AI仍需另外啟動。
 
-## 最新工作包：S1.2a PR檢查已完成
+## 最新工作包：S1.2b 本機通過，遠端驗證中
+
+2026-10-14。使用者續推，新增Playwright 1.64.0開發依賴、三條核心回歸（1440×900／390×844各一次，共六項）、正式preview4226隔離測試、CI共同build的安裝／回歸及失敗證據七天。未改src、桌規、AI、存檔或題庫。本機342測試（work/s12b-unit.log）、check／build及六項瀏覽器通過；site只有兩入口與assets，無測試範例，產物雜湊名稱未變。詳見[S12B](S12B-VALIDATION.md)。
+
+當前工作分支codex/browser-regression，尚待PR／main Actions及正式資源核對，不先宣稱完成發布。preview由測試自動管理且已停止，沒有新增使用者瀏覽器分頁；下載是隔離context合成內容，未操作真人存檔／Downloads。開工五小時帳戶4%、本機完成檢查9%，非精確token；無子代理／重設／自動續跑。下一動作完成本包提交、PR驗證／合併及main核對，再更新本節與ROADMAP；下一包S1.3，不開S2／人格AI。
+
+## 前包：S1.2a PR檢查已完成
 
 2026-10-13。使用者續推，新增pull_request指向main的共同build，沒有PR路徑過濾；非PR且main才上傳Pages artifact／deploy。PR與main群組分開，PR可取消舊檢查，main仍序列；checkout不保留憑證。新增M0 cases.json／RULES.md的push觸發，未改遊戲、桌規、存檔或分支保護。
 

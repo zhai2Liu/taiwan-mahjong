@@ -9,10 +9,12 @@
     "build": "npm run check && vite build",
     "preview": "vite preview --host 127.0.0.1",
     "test": "npm run check && node --test test/*.test.mjs",
+    "test:browser": "npm run build && playwright test",
     "simulate": "npm run check && node scripts/simulate.mjs",
     "predev": "node scripts/prepare-training.mjs"
   },
   "devDependencies": {
+    "@playwright/test": "1.64.0",
     "typescript": "~5.9.3",
     "vite": "8.3.2"
   }
