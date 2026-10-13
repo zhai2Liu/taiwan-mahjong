@@ -147,3 +147,5 @@ L2-B1：src/hand-review.ts只讀已驗證封套，挑最近三筆可比較決策
 2026-10-13：對戰提示已分 on/off/after，偏好鍵不變。事後捨牌解釋只在成功提交後建立暫存快照並暫停；共用 hand-review.ts 的 buildDecisionReview 與 hand-review-view.ts decision 畫面。不可把此入口改為出牌前預覽；不得因分析失敗重新執行 advance。詳細範圍、保存失敗及驗收見 [AFTER-DISCARD-VALIDATION](AFTER-DISCARD-VALIDATION.md)。
 
 2026-10-13：玩家用詞依 [LOCAL-TERMS](LOCAL-TERMS.md)，白話聽牌距離由 src/terms.ts 共用；內部牌種/API不改名。題庫生成器加完整九題 contentRevision，試讀匯出 schema 2，本機 review-trial 仍讀 schema 1；改題或牌面會改版本，舊資料不靜默重評。
+
+2026-10-13 S1.1：src/training.ts 在有頁內內容時註冊 beforeunload、清空未提交內容時解除；返回牌室原生 dialog 的確認按鈕才解除並導航，取消／Escape回焦點且不改草稿。作答／回饋各存頁內最近下載快照，修改提示不重繪題目；下載失敗不更新快照，發起下載不代表落盤，不解除防護。無新的存檔鍵或匯出格式，測試在 training-page.test.mjs，證據見 [S0.1–S1.1](S01-S11-VALIDATION.md)。完整課程仍在S2；產品／排程改動先同步 PRODUCT-DIRECTION、ROADMAP 及根目錄作品 README。

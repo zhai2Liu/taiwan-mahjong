@@ -1,6 +1,6 @@
 # 台灣麻將專案的啟動入口
 
-開始本專案相關工作前，先讀 `outputs/taiwan-mahjong-m0/HANDOFF.md`，再接讀 `outputs/taiwan-mahjong/HANDOFF.md`（按需查歷史M1–M3.1交接）。M0–M5.4 已完成並發布；M6.0牌風研究與人性化AI設計已完成，使用者指定目前版本不實裝。2026-10-09依使用者報告改為進階玩家決策訓練主線；讀 PRODUCT-DIRECTION.md、L0-L1-PLAN.md及ROADMAP.md。原M6研究保留離線、人格正式整合暫緩；L1-A證據驗收及L1-B內部封裝已完成，L2-A快照／互斥／真人操作後記錄及通知清除已驗；L2-B1／B2局後比較已發布；L3-A3已完成13題分開模型複核與329測試，L3-B0九訓練題內容試讀、固定題號／回饋與作答紀錄下載／7題牌面圖示及332測試已完成，詳見L3B0-TRIAL-VALIDATION.md，下一包先收集／處理試讀回饋；正式測驗仍待題族／難度及真人理解驗證，詳見L3A3-MODEL-REVIEW.md，不沿歷史交接自動推進人格。按需讀 RULES.md、CONTRACTS.md 和 cases.json，避免重新研究或覆寫已凍結桌規。使用者只啟動哪一階段，就先完成該階段。
+開始本專案相關工作前，先讀 `outputs/taiwan-mahjong-m0/HANDOFF.md`，再讀 `outputs/taiwan-mahjong/HANDOFF.md`（歷史M1–M3.1按需）。2026-10-13使用者啟動S0.1–S1.1，已採納「台灣十六張麻將學習與決策練習」兩路線；讀 PRODUCT-DIRECTION.md、MASTER-IMPROVEMENT-PLAN.md及ROADMAP.md。完整八課屬S2，正式評量仍待題族／難度／曝光與真人驗證，不能以模型審核或程式測試代替。M0–M5.4、L1證據與L2局後檢討已發布，九題試讀可用；最新驗證／發布與下一包只依HANDOFF、ROADMAP，不沿歷史「下一步」自動開工。人性化AI研究保留離線，使用者指定目前不實裝，S6需另外啟動。按需讀RULES、CONTRACTS、cases，避免重新研究或覆寫凍結桌規。使用者只啟動哪一階段，就先完成該階段。
 
 使用者要求節省 token 並可靠交接：每個工作包完成後落盤，立即更新 HANDOFF；額度工具只能讀帳戶用量，不能宣稱可知精確對話剩餘 token。長工作開始及檢查點查額度，剩餘偏低時優先收斂與交接，不自行使用重設額度或新增自動續跑。
 

@@ -6,6 +6,48 @@ import type { TileKind } from './model.js';
 const drafts = trainingQuestions.map(() => ({ selected: new Set<string>(), reason: '', feedback: '', revealed: false }));
 const root = document.querySelector<HTMLElement>('#training')!;
 let index = 0;
+let leaveGuardActive = false;
+let answersExportSnapshot: string | undefined, feedbackExportSnapshot: string | undefined;
+const answersSnapshot = () => JSON.stringify(drafts.map(d => [[...d.selected].sort(), d.reason, d.feedback, d.revealed]));
+const feedbackSnapshot = () => JSON.stringify(drafts.map(d => d.feedback.trim()));
+// ponytail: native beforeunload is best effort (especially on mobile); durable drafts need a separate retention/clear contract.
+function warnBeforeLeave(event: BeforeUnloadEvent): void { event.preventDefault(); event.returnValue = 'true'; }
+function updateDraftStatus(): void {
+  const hasContent = drafts.some(d => d.selected.size || d.reason.length || d.feedback.length || d.revealed);
+  if (hasContent !== leaveGuardActive) {
+    if (hasContent) window.addEventListener('beforeunload', warnBeforeLeave);
+    else window.removeEventListener('beforeunload', warnBeforeLeave);
+    leaveGuardActive = hasContent;
+  }
+  const status = root.querySelector<HTMLElement>('#draft-status');
+  if (!status) return;
+  const changed = [];
+  if (answersExportSnapshot !== undefined && answersExportSnapshot !== answersSnapshot()) changed.push('作答紀錄');
+  if (feedbackExportSnapshot !== undefined && feedbackExportSnapshot !== feedbackSnapshot()) changed.push('試讀回饋');
+  status.hidden = !hasContent;
+  const notice = changed.length
+    ? `${changed.join('、')}在交由瀏覽器下載後有新修改，請再次匯出並確認檔案。原內容仍只留在本頁。`
+    : '內容只留在本頁。離開前請匯出並確認檔案；交由瀏覽器下載後仍會提醒離頁。';
+  if (status.textContent !== notice) status.textContent = notice;
+}
+const returnLink = document.querySelector<HTMLAnchorElement>('#return-room');
+returnLink?.addEventListener('click', event => {
+  if (!leaveGuardActive || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+  event.preventDefault();
+  const dialog = el('dialog'), title = el('h2', '離開決策題試讀？');
+  dialog.className = 'leave-dialog'; title.id = 'leave-title'; dialog.setAttribute('aria-labelledby', title.id);
+  const stay = el('button', '留在本頁'), leave = el('button', '確認離開');
+  stay.type = leave.type = 'button';
+  stay.addEventListener('click', () => dialog.close());
+  leave.addEventListener('click', () => {
+    window.removeEventListener('beforeunload', warnBeforeLeave); leaveGuardActive = false;
+    window.location.assign(returnLink.href);
+  });
+  const actions = el('div'); actions.className = 'leave-actions'; actions.append(stay, leave);
+  dialog.append(title, el('p', '離開會清除本次選項、理由與回饋。若要保留，請先匯出或複製並確認內容；下載不會自動回傳。'), actions);
+  dialog.addEventListener('close', () => { dialog.remove(); returnLink.focus(); });
+  document.body.append(dialog); dialog.showModal(); stay.focus();
+});
 const el = <K extends keyof HTMLElementTagNameMap>(tag: K, text = '') => {
   const item = document.createElement(tag); item.textContent = text; return item;
 };
@@ -32,13 +74,13 @@ function render(focus = true): void {
   for (const choice of q.choices) {
     const label = el('label'), input = el('input');
     input.type = 'checkbox'; input.value = choice.id; input.checked = draft.selected.has(choice.id); input.disabled = draft.revealed;
-    input.addEventListener('change', () => { if (input.checked) draft.selected.add(choice.id); else draft.selected.delete(choice.id); });
+    input.addEventListener('change', () => { if (input.checked) draft.selected.add(choice.id); else draft.selected.delete(choice.id); updateDraftStatus(); });
     label.append(input, el('span', choice.text)); options.append(label);
   }
   const reasonLabel = el('label', '我的理由（選填，不會自動評分）'), reason = el('textarea');
   reason.id = 'reason'; reasonLabel.htmlFor = reason.id; reason.maxLength = 2000; reason.rows = 3;
   reason.value = draft.reason; reason.readOnly = draft.revealed;
-  reason.addEventListener('input', () => { draft.reason = reason.value; });
+  reason.addEventListener('input', () => { draft.reason = reason.value; updateDraftStatus(); });
   const submit = el('button', '提交並看推導'); submit.type = 'submit'; submit.disabled = draft.revealed;
   const message = el('p'); message.setAttribute('role', 'status');
   form.append(options, reasonLabel, reason, submit, message);
@@ -67,13 +109,14 @@ function render(focus = true): void {
   const feedbackLabel = el('label', `題號 ${q.id} 的題意或操作回饋`), feedback = el('textarea');
   feedback.id = 'trial-feedback'; feedbackLabel.htmlFor = feedback.id;
   feedback.maxLength = 1000; feedback.rows = 3; feedback.value = draft.feedback;
-  feedback.addEventListener('input', () => { draft.feedback = feedback.value; });
+  feedback.addEventListener('input', () => { draft.feedback = feedback.value; updateDraftStatus(); });
   feedbackPanel.append(el('summary', '提供本題回饋（選填）'), feedbackLabel, feedback,
     el('p', '例如哪句看不懂、哪個操作卡住。切題會保留；離頁會清除，請先下載。'));
   const download = el('button', '下載全部試讀回饋'); download.type = 'button';
   const answersDownload = el('button', '匯出作答紀錄（含理由與回饋）'); answersDownload.type = 'button';
   const exportStatus = el('p'); exportStatus.setAttribute('role', 'status');
-  const previewLabel = el('label', '本次匯出內容（可自行複製）'), preview = el('textarea');
+  const draftStatus = el('p'); draftStatus.id = 'draft-status'; draftStatus.setAttribute('role', 'status');
+  const previewLabel = el('label', '最近一次匯出內容（可自行複製）'), preview = el('textarea');
   preview.id = 'feedback-export'; previewLabel.htmlFor = preview.id; preview.readOnly = true; preview.rows = 5;
   const previewPanel = el('div'); previewPanel.hidden = true; previewPanel.append(previewLabel, preview);
   const exportRecord = (includeAnswers: boolean): void => {
@@ -94,14 +137,17 @@ function render(focus = true): void {
     try {
       url = URL.createObjectURL(new Blob([preview.value], { type: includeAnswers ? 'application/json;charset=utf-8' : 'text/plain;charset=utf-8' }));
       const link = el('a'); link.href = url; link.download = includeAnswers ? 'taiwan-mahjong-trial-answers.json' : 'taiwan-mahjong-trial-feedback.txt'; link.click();
+      if (includeAnswers) answersExportSnapshot = answersSnapshot();
+      else feedbackExportSnapshot = feedbackSnapshot();
       exportStatus.textContent = '已交由瀏覽器下載。若未出現檔案，可複製下方文字；請自行提供回饋，不會自動上傳。';
     } catch { exportStatus.textContent = '瀏覽器無法下載，請複製下方回饋文字；原內容仍保留在本頁。'; }
-    finally { if (url) { const objectUrl = url; setTimeout(() => URL.revokeObjectURL(objectUrl), 1000); } }
+    finally { if (url) { const objectUrl = url; setTimeout(() => URL.revokeObjectURL(objectUrl), 1000); } updateDraftStatus(); }
   };
   download.addEventListener('click', () => exportRecord(false));
   answersDownload.addEventListener('click', () => exportRecord(true));
   const exports = el('nav'); exports.setAttribute('aria-label', '下載試讀內容'); exports.append(download, answersDownload);
-  root.append(feedbackPanel, el('p', '若要交回作答，請匯出紀錄並自行附到專案對話。檔案含選項、理由與回饋，不含標準答案；不會自動上傳。'), exports, exportStatus, previewPanel);
+  root.append(feedbackPanel, el('p', '若要交回作答，請匯出紀錄並自行附到專案對話。檔案含選項、理由與回饋，不含標準答案；不會自動上傳。'), exports, draftStatus, exportStatus, previewPanel);
+  updateDraftStatus();
   if (focus) heading.focus();
 }
 render(false);

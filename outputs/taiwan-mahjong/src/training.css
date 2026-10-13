@@ -18,4 +18,8 @@ nav { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
 .tile-row { gap: 12px; }
 .question-tile { display: inline-flex; width: 32px; height: 45px; background: #fffdf6; border: 1px solid #b6b7a6; border-bottom: 3px solid #8eab9a; border-radius: 3px; }
 figcaption { font-weight: 600; margin-bottom: 4px; }
+.leave-dialog { width: min(480px, calc(100vw - 64px)); border: 1px solid #9caca4; border-radius: 10px; padding: 24px; color: #173d33; background: #f4f0e6; }
+.leave-dialog::backdrop { background: #102f2ac0; }
+.leave-dialog h2 { margin-top: 0; }
+.leave-actions { display: flex; flex-wrap: wrap; gap: 12px; }
 @media (max-width: 440px) { main { padding: 16px; } }
