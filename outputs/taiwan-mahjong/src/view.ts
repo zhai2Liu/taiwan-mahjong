@@ -129,6 +129,7 @@ function home(model: ViewModel, send: Send): HTMLElement {
   const title = node('h2', '', '牌桌已備好，\n就等你入座。'); title.tabIndex = -1; title.dataset.focus = 'home-entry';
   copy.append(node('p', 'eyebrow', 'TAIWAN MAHJONG · 十六張'), title, node('p', 'welcome-description', '一位玩家，三位電腦。\n熟悉的台灣桌規，專心打一場好牌。'));
   const actions = node('div', 'welcome-actions');
+  const learn = node('a', 'button button-secondary button-large', '從零學台灣麻將（前三課）'); learn.href = './learn.html'; actions.append(learn);
   if (model.hasSave) actions.append(button('繼續上次牌局', 'resume', () => send({ type: 'resume' }), 'button button-primary button-large', model.busy));
   actions.append(button(model.hasSave ? '開始新的一將' : '開始一將', 'start', () => send({ type: 'start' }), `button ${model.hasSave ? 'button-secondary' : 'button-primary'} button-large`, model.busy));
   actions.append(button('純練習模式', 'practice', () => send({ type: 'practice' }), 'button button-secondary button-large'));
