@@ -1,0 +1,206 @@
+{
+  "date": "2026-10-14",
+  "scenario": "feedbackReady, white tile selection, after-discard explanation",
+  "results": [
+    {
+      "channel": "chrome",
+      "browser": "155.0.8059.40",
+      "os": "win32 10.0.26200",
+      "cpu": "AMD Ryzen 5 9600X 6-Core Processor             ",
+      "node": "v24.12.0",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "samples": 9,
+      "warmups": 1,
+      "network": "loopback, fresh contexts, no throttling",
+      "units": "ms",
+      "siteAssets": [
+        "index-BTGPI-3-.css",
+        "index-pavZUWLg.js",
+        "tile-face-CG76dTyt.js",
+        "training-CyxzesHo.js",
+        "training-DnepUIbB.css"
+      ],
+      "summary": {
+        "homeReady": {
+          "medianMs": 112.7,
+          "p90Ms": 121.9,
+          "maxMs": 121.9
+        },
+        "selection": {
+          "medianMs": 29.3,
+          "p90Ms": 29.7,
+          "maxMs": 29.7
+        },
+        "explanation": {
+          "medianMs": 64.3,
+          "p90Ms": 80.3,
+          "maxMs": 80.3
+        },
+        "analysis": {
+          "medianMs": 9.03,
+          "p90Ms": 12.12,
+          "maxMs": 12.12
+        }
+      },
+      "raw": [
+        {
+          "homeReady": 112.69999998807907,
+          "selection": 29.100000023841858,
+          "explanation": 64.30000001192093,
+          "analysis": 12.120400000000018
+        },
+        {
+          "homeReady": 113.30000001192093,
+          "selection": 28.600000023841858,
+          "explanation": 63.5,
+          "analysis": 9.785000000000082
+        },
+        {
+          "homeReady": 121.89999997615814,
+          "selection": 28.600000023841858,
+          "explanation": 80.30000001192093,
+          "analysis": 7.972199999999702
+        },
+        {
+          "homeReady": 112.39999997615814,
+          "selection": 29.5,
+          "explanation": 64.59999996423721,
+          "analysis": 8.052999999999884
+        },
+        {
+          "homeReady": 108.89999997615814,
+          "selection": 29.30000001192093,
+          "explanation": 64.30000001192093,
+          "analysis": 8.707499999999982
+        },
+        {
+          "homeReady": 112.69999998807907,
+          "selection": 29.30000001192093,
+          "explanation": 64.39999997615814,
+          "analysis": 11.536999999999807
+        },
+        {
+          "homeReady": 116.29999995231628,
+          "selection": 29.5,
+          "explanation": 64.20000004768372,
+          "analysis": 9.028599999999642
+        },
+        {
+          "homeReady": 112.20000004768372,
+          "selection": 29.69999998807907,
+          "explanation": 64.10000002384186,
+          "analysis": 7.879299999999603
+        },
+        {
+          "homeReady": 114.90000003576279,
+          "selection": 29.599999964237213,
+          "explanation": 64.5,
+          "analysis": 10.524700000000848
+        }
+      ]
+    },
+    {
+      "channel": "msedge",
+      "browser": "155.0.4283.45",
+      "os": "win32 10.0.26200",
+      "cpu": "AMD Ryzen 5 9600X 6-Core Processor             ",
+      "node": "v24.12.0",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "samples": 9,
+      "warmups": 1,
+      "network": "loopback, fresh contexts, no throttling",
+      "units": "ms",
+      "siteAssets": [
+        "index-BTGPI-3-.css",
+        "index-pavZUWLg.js",
+        "tile-face-CG76dTyt.js",
+        "training-CyxzesHo.js",
+        "training-DnepUIbB.css"
+      ],
+      "summary": {
+        "homeReady": {
+          "medianMs": 101.6,
+          "p90Ms": 107.2,
+          "maxMs": 107.2
+        },
+        "selection": {
+          "medianMs": 29.6,
+          "p90Ms": 29.9,
+          "maxMs": 29.9
+        },
+        "explanation": {
+          "medianMs": 64.6,
+          "p90Ms": 64.9,
+          "maxMs": 64.9
+        },
+        "analysis": {
+          "medianMs": 9.18,
+          "p90Ms": 12.6,
+          "maxMs": 12.6
+        }
+      },
+      "raw": [
+        {
+          "homeReady": 107.19999998807907,
+          "selection": 29.5,
+          "explanation": 64.5,
+          "analysis": 12.086599999999862
+        },
+        {
+          "homeReady": 99.40000003576279,
+          "selection": 29,
+          "explanation": 64.5,
+          "analysis": 10.006199999999808
+        },
+        {
+          "homeReady": 99,
+          "selection": 26.799999952316284,
+          "explanation": 64.5,
+          "analysis": 9.182800000000043
+        },
+        {
+          "homeReady": 103.19999998807907,
+          "selection": 29.599999964237213,
+          "explanation": 64.59999996423721,
+          "analysis": 7.784500000000207
+        },
+        {
+          "homeReady": 100.39999997615814,
+          "selection": 29.900000035762787,
+          "explanation": 64.70000004768372,
+          "analysis": 7.387299999999868
+        },
+        {
+          "homeReady": 105.90000003576279,
+          "selection": 29.899999976158142,
+          "explanation": 64.69999998807907,
+          "analysis": 12.60189999999966
+        },
+        {
+          "homeReady": 101.60000002384186,
+          "selection": 29.69999998807907,
+          "explanation": 64.80000001192093,
+          "analysis": 8.749900000000707
+        },
+        {
+          "homeReady": 104.30000001192093,
+          "selection": 29.69999998807907,
+          "explanation": 64.89999997615814,
+          "analysis": 8.036199999999553
+        },
+        {
+          "homeReady": 100.90000003576279,
+          "selection": 29.5,
+          "explanation": 64.5,
+          "analysis": 10.600499999999556
+        }
+      ]
+    }
+  ]
+}

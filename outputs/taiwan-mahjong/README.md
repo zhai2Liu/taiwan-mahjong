@@ -96,7 +96,7 @@ npm run build
 
 `npm test`編譯後執行Node內建測試；`npm run build`先編譯再產生正式site/。dist/供測試匯入，test/頁面與fixture不屬正式遊玩入口。依改動選擇驗證範圍，詳見維護指南，不為文件或CSS細節重跑長模擬。
 
-瀏覽器核心回歸：首次 `npx playwright install chromium`，再執行 `npm run test:browser`。三條路徑在桌面／390px 各驗一次，使用正式建置、隔離的本機4226來源與合成資料；不取代手機／Safari實機或真人試用。CI亦執行，重現與失敗證據見[S1.2b](S12B-VALIDATION.md)。
+瀏覽器核心回歸：首次 `npx playwright install chromium`，再執行 `npm run test:browser`。四條路徑在桌面／390px 各驗一次，結算與練習另驗320px，使用正式建置、隔離的本機4226來源與合成資料；不取代手機／Safari實機或真人試用。CI亦執行，失敗證據機制見[S1.2b](S12B-VALIDATION.md)；目前八項、Chrome／Edge實測與可重跑效能基準見[S1.3](S13-VALIDATION.md)。
 
 本輪[練習易用性驗收](M5.2-UX-VALIDATION.md)：集中手牌與預覽、清楚指標、候選點選及窄畫面流程。
 

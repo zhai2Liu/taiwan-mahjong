@@ -70,6 +70,8 @@
 .notice .button{margin:6px 0 0 10px;min-height:44px}
 
 /* Static post-hand comparisons share native dialog behavior with settlement. */
+/* ponytail: reserve 6rem for the current sticky result footer; split body/footer into grid rows if it gains more controls. */
+.result-panel { scroll-padding-block-end: 6rem; }
 .review-panel { width: min(880px, calc(100vw - 32px)); max-height: 88dvh; box-sizing: border-box; overflow-y: auto; background: #fbf7ee; color: #213d33; border: 1px solid #b9c9b9; border-radius: 18px; padding: 24px; }
 .review-panel::backdrop { background: rgb(7 22 19 / .72); }
 .review-top { display: flex; align-items: start; justify-content: space-between; gap: 16px; }

@@ -14,6 +14,8 @@ README是使用與開發總入口；HANDOFF只記目前進度、風險與下一�
 
 ## 修改位置
 
+S1.3：結算固定底部用scroll-padding保護焦點，新增控制時先重新驗高度；結算回歸含320px命中檢查。現有四條路徑共八項，可選已安裝Chrome／Edge；`npm run benchmark:browser -- chrome`／msedge只作同場景量測，方法與支援界線見[S13](S13-VALIDATION.md)。不為較慢單筆直接引入worker／全域快取。
+
 S1.2b：`test/e2e/core.spec.js`與`playwright.config.js`管理三條真實瀏覽器核心路徑。改出牌解釋、結算／續局或試讀匯出／離頁時，用`npm run test:browser`核對正式建置；首次安裝Chromium，詳細步驟／隔離／未涵蓋範圍見[S12B](S12B-VALIDATION.md)。CI在既有build內執行，不改Pages權限；失敗證據保留七天。新合法動作／故障仍依原規則與控制器測試，不將六項端到端檢查當完整覆蓋。
 
 | 需求 | 先看位置 | 必要驗證 |
