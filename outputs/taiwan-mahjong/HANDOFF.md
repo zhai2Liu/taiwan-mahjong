@@ -2,15 +2,17 @@
 
 2026-10-13。S0.1已採納「台灣十六張麻將學習與決策練習」兩路線，詳見[PRODUCT-DIRECTION](PRODUCT-DIRECTION.md)、[全面強化企畫](MASTER-IMPROVEMENT-PLAN.md)。既有進階證據／檢討保留，完整八課屬S2，正式評量與真人成效仍待；人格AI仍需另外啟動。
 
-## 最新工作包：S3.1 本機完成，發布待驗
+## 最新工作包：S3.1 已完成並驗證發布
 
 2026-10-14。九題增加原生四能力選單與目標／限制／每題範圍：牌效2、吃碰3、安全2、連莊2；切題保留草稿／揭示／回饋，匯出仍全部九題。修C01／S02／C02重字與白話範圍、補C03 scope，頁首資料提醒保留必要摘要並收合細節。scripts/training-content.mjs共用九題允許名單／四類／投影／雜湊，生成及review-trial同讀，畫面／匯出／審閱總數衍生；不任意開放題量。schema2仍同欄位，版本改為d55e09290cf4d933803aaa6ffef2666895465c021f5351ea1f8fd4f26fbdda49，涵蓋導引與scope；舊cb73cd35版本轉人工，schema1保留缺版本警告。規格／版本／驗收見[S31](S31-VALIDATION.md)。
 
 352 Node／check／build通過，Chromium十四項（19.0秒），Chrome／Edge受影響四項各通過；頁首收合後重驗兩瀏覽器四項。Chrome1440／390／320、原生200%無水平溢出，S31-GUIDANCE.jpg為空白合成畫面。work/s31-unit.log／browser.log／chrome-final.log／edge-final.log／visual.log／audit.log；來源對照確認13題答案ID／預期／牌面／題族不變、四候選完全不變，舊來源合成匯出轉人工。未改桌規、正式AI、分析或舊存檔，無新依賴。
 
-來源分支codex/training-guidance；尚未宣稱正式發布，下一動作建立PR→指定head CI→合併→main部署→三頁資源及正式分類匯出操作。4227本輪preview已停止；4226由測試管理已關、獨立Chrome／Edge與zoom profile已關。未觸日常分頁／存檔或Downloads。真人人數仍0；手機／Safari／螢幕閱讀器與正式評量待驗。
+S2.2準備提交b398e33，S3.1來源5275c43；[PR#6](https://github.com/zhai2Liu/taiwan-mahjong/pull/6)已附本chat，Actions38560552418指定head成功，352／十四項（Linux24.9秒）；Pages上傳／deploy skipped、0 artifact。已合併015ef8f並回本機main，[main Actions38560850276](https://github.com/zhai2Liu/taiwan-mahjong/actions/runs/38560850276)的352／十四項（23.8秒）、build及deploy成功。正式index／training／learn HTTP200，4／3／4份引用的JS／CSS SHA-256與本機全相符，work/s31-live.log；試讀training-CbQLU3RL.js／training-C64NK14t.css，對戰／學習及共用資源不變，site只有三HTML與JS／CSS，未含測試／文件。
 
-五小時開工51%、內容檢查56%、本機62%，帳戶快照非精確token；無子代理／重設／自動續跑。S2.2只有下述準備完成，S3.1發布後接獨立S3.2（先檢視局後下一步／必要吃碰事後解釋），第4–8課與人格AI不自動啟動。
+正式隔離Chrome390／320分類C01兩吃法正答、E01草稿、真實JSON下載→本機審閱（7未答／1草稿／1提交、1回饋、版本一致）、取消離頁保留、入門另開頁及原稿不變；0存檔寫入／pageerror，work/s31-production.log。全為合成資料，真人人數0。4227已停，4226由測試管理已關，獨立Chrome／Edge、正式驗收與zoom profile已關，work/合成檔與profile保留且忽略。未觸日常分頁／存檔或Downloads。沒有外部真人程式審查，未改分支保護；手機／Safari／螢幕閱讀器與正式評量仍待。保留合併分支codex/training-guidance作追溯；收尾僅Markdown狀態提交，不新增main build。
+
+五小時開工51%、內容檢查56%、本機62%、合併67%、收尾檢查68%，帳戶快照非精確token；無子代理／重設／自動續跑。S2.2只有下述準備完成，S3.1發布後接獨立S3.2（先檢視局後下一步／必要吃碰事後解釋），第4–8課與人格AI不自動啟動。
 
 ## 本輪文件包：S2.2 試用準備完成，真人驗收待驗
 

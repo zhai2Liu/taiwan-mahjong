@@ -18,9 +18,9 @@ S3.1九題試讀：兩份TRAINING JSON負責題幹／答案／牌面／範圍；
 
 S2.1新手課：learn.html／src/learning.ts與learning.css是獨立頁；learning-model.ts沿用引擎與手牌驗證，learning-progress.ts處理新鍵／版本／容量／Web Locks。內容與保存規格見[BEGINNER-LEARNING](BEGINNER-LEARNING.md)，改課程先同步courseVersion及遷移；現在只三筆，不能直接增長判舊檔壞掉。回歸見[S21](S21-VALIDATION.md)，進度重建須確認且等待時停用課程動作，不動舊Session／練習／檢討。三頁HTML引用的全部preload／JS／CSS都要驗，不再假定固定三個資源。
 
-S1.3：結算固定底部用scroll-padding保護焦點，新增控制時先重新驗高度；結算回歸含320px命中檢查。現有四條路徑共八項，可選已安裝Chrome／Edge；`npm run benchmark:browser -- chrome`／msedge只作同場景量測，方法與支援界線見[S13](S13-VALIDATION.md)。不為較慢單筆直接引入worker／全域快取。
+S1.3：結算固定底部用scroll-padding保護焦點，新增控制時先重新驗高度；結算回歸含320px命中檢查。該包四條共八項，最新範圍以README及當輪驗收為準；可選已安裝Chrome／Edge。`npm run benchmark:browser -- chrome`／msedge只作同場景量測，方法與支援界線見[S13](S13-VALIDATION.md)。不為較慢單筆直接引入worker／全域快取。
 
-S1.2b：`test/e2e/core.spec.js`與`playwright.config.js`管理三條真實瀏覽器核心路徑。改出牌解釋、結算／續局或試讀匯出／離頁時，用`npm run test:browser`核對正式建置；首次安裝Chromium，詳細步驟／隔離／未涵蓋範圍見[S12B](S12B-VALIDATION.md)。CI在既有build內執行，不改Pages權限；失敗證據保留七天。新合法動作／故障仍依原規則與控制器測試，不將六項端到端檢查當完整覆蓋。
+S1.2b：`test/e2e/core.spec.js`與`playwright.config.js`管理真實瀏覽器核心路徑，後續另擴練習、教學與分類。改出牌解釋、結算／續局或試讀匯出／離頁時，用`npm run test:browser`核對正式建置；首次安裝Chromium，最初步驟／隔離／未涵蓋範圍見[S12B](S12B-VALIDATION.md)，最新範圍見README。CI在既有build內執行，不改Pages權限；失敗證據保留七天。新合法動作／故障仍依原規則與控制器測試，不將端到端檢查當完整覆蓋。
 
 | 需求 | 先看位置 | 必要驗證 |
 |---|---|---|

@@ -30,6 +30,14 @@ Chromium 156.0.8078.4：七條路徑 × 桌面 1440×900／窄畫面 390×844，
 
 Chrome 155.0.8059.40／Edge 155.0.4283.45：分類與原試讀匯出／離頁兩條 × 兩視窗，各四項通過，`work/s31-chrome-final.log`、`s31-edge-final.log`；頁首收合後重驗受影響路徑。Chrome 1440／390／320、原生 200%（CSS720×450／DPR2）無水平溢出，`work/s31-visual.log`；390實際空白試讀畫面[S31-GUIDANCE.jpg](S31-GUIDANCE.jpg)，代理資料，非真人觀察。
 
-PR／main CI與正式資源／操作於發布後續填。Windows窄畫面不是手機實機；Safari／螢幕閱讀器／真人題意、難度與理由規準仍待S4。
+## 發布與正式站
+
+來源5275c43，[PR#6](https://github.com/zhai2Liu/taiwan-mahjong/pull/6)已合併015ef8f。PR Actions38560552418成功，Linux日誌352／十四項（24.9秒），Pages上傳與deploy skipped、0 artifact。main [Actions38560850276](https://github.com/zhai2Liu/taiwan-mahjong/actions/runs/38560850276)的352／十四項（23.8秒）、build與deploy成功。無外部真人程式審查；未改分支保護。
+
+正式三頁index／training／learn HTTP200；各4／3／4份JS／CSS引用SHA-256全與本機正式建置一致，`work/s31-live.log`。試讀為training-CbQLU3RL.js（5093cc378cf6b0258ec7e6b73500dcb277c14b8cbf62509f44ff62ec446f0f28）／training-C64NK14t.css（a3f34c36cff0178112b76ddbbaf7bd79ac99f6acfee6fdc3eed047db27d02dff），對戰／前三課及共用資源不變。正式產物只有HTML／JS／CSS，未包含測試頁、文件或原始作答。
+
+正式Chrome隔離context390／320完成C01兩種吃法、切回E01保留草稿、真實下載JSON後以新工具整理：7未答／1草稿／1提交、1回饋、版本一致。取消返回仍保留草稿，入門另開頁可達，無水平溢出／pageerror／localStorage寫入；`work/s31-production.log`。全部是合成資料，未操作日常profile或玩家存檔。4227及驗收瀏覽器已關，合併分支保留追溯；收尾只有Markdown，不觸發新main build。
+
+Windows窄畫面不是手機實機；Safari／螢幕閱讀器／真人題意、難度與理由規準仍待S4。
 
 S2.2 只有 [新手試用任務與紀錄](BEGINNER-TRIAL.md) 準備完成，真人人數 0，沒有理解通過、真人觀察或據此修訂。沒有用測試／模型審閱代替真人驗收。人格 AI 未實裝。
