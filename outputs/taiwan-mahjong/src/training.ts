@@ -1,4 +1,4 @@
-import { trainingQuestions, trainingContentRevision } from './training-data.js';
+import { trainingQuestions, trainingSkills, trainingContentRevision } from './training-data.js';
 import { tileFace } from './tile-face.js';
 import type { TileKind } from './model.js';
 
@@ -6,6 +6,7 @@ import type { TileKind } from './model.js';
 const drafts = trainingQuestions.map(() => ({ selected: new Set<string>(), reason: '', feedback: '', revealed: false }));
 const root = document.querySelector<HTMLElement>('#training')!;
 let index = 0;
+let skill = 'all';
 let leaveGuardActive = false;
 let answersExportSnapshot: string | undefined, feedbackExportSnapshot: string | undefined;
 const answersSnapshot = () => JSON.stringify(drafts.map(d => [[...d.selected].sort(), d.reason, d.feedback, d.revealed]));
@@ -55,9 +56,22 @@ const el = <K extends keyof HTMLElementTagNameMap>(tag: K, text = '') => {
 };
 function render(focus = true): void {
   const q = trainingQuestions[index], draft = drafts[index];
+  const visible = trainingQuestions.map((q, i) => ({ q, i })).filter(({ q }) => skill === 'all' || q.skill === skill);
+  const position = visible.findIndex(({ i }) => i === index), category = trainingSkills.find(s => s.id === q.skill)!;
   root.replaceChildren();
-  const heading = el('h2', `第 ${index + 1} / ${trainingQuestions.length} 題`); heading.tabIndex = -1;
-  root.append(heading, el('p', `題號 ${q.id} · 回報問題時可附上此題號`), el('p', q.prompt), el('p', '請選出全部成立的敘述；理由可留空。'));
+  const label = el('label', '練習重點'), picker = el('select'); picker.id = 'skill-picker'; label.htmlFor = picker.id;
+  for (const s of [{ id: 'all', label: '全部' }, ...trainingSkills]) {
+    const count = trainingQuestions.filter(q => s.id === 'all' || q.skill === s.id).length;
+    const option = el('option', `${s.label}（${count} 題）`); option.value = s.id; picker.append(option);
+  }
+  picker.value = skill;
+  picker.addEventListener('change', () => {
+    if (picker.value !== 'all' && !trainingSkills.some(s => s.id === picker.value)) return;
+    skill = picker.value; index = trainingQuestions.findIndex(q => skill === 'all' || q.skill === skill); render();
+  });
+  const heading = el('h2', `第 ${position + 1} / ${visible.length} 題 · ${category.label}`); heading.tabIndex = -1;
+  root.append(label, picker, el('p', category.goal), el('p', category.limit), heading,
+    el('p', `題號 ${q.id} · 回報問題時可附上此題號`), el('p', q.prompt), el('p', `本題範圍：${q.scope}`), el('p', '請選出全部成立的敘述；理由可留空。'));
   for (const row of q.board) {
     const figure = el('figure'); figure.className = 'question-tiles'; figure.append(el('figcaption', row.label));
     const tiles = el('div'); tiles.className = 'tile-row';
@@ -103,10 +117,11 @@ function render(focus = true): void {
   }
   const nav = el('nav'); nav.setAttribute('aria-label', '題目切換');
   for (const [text, delta] of [['上一題', -1], ['下一題', 1]] as const) {
-    const button = el('button', text); button.type = 'button'; button.disabled = index + delta < 0 || index + delta >= trainingQuestions.length;
-    button.addEventListener('click', () => { index += delta; render(); }); nav.append(button);
+    const button = el('button', text); button.type = 'button'; button.disabled = position + delta < 0 || position + delta >= visible.length;
+    button.addEventListener('click', () => { index = visible[position + delta].i; render(); }); nav.append(button);
   }
-  root.append(nav, el('p', `本頁已揭示 ${drafts.filter(d => d.revealed).length} / 9 題；這是閱讀進度，不是成績。`));
+  root.append(nav, el('p', `本頁已揭示 ${drafts.filter(d => d.revealed).length} / ${trainingQuestions.length} 題；這是閱讀進度，不是成績。`));
+  if (skill !== 'all') root.append(el('p', `本分類已揭示 ${visible.filter(({ i }) => drafts[i].revealed).length} / ${visible.length} 題；切換重點保留本頁作答，匯出包含全部 ${trainingQuestions.length} 題。`));
   const feedbackPanel = el('details'); feedbackPanel.open = !!draft.feedback;
   const feedbackLabel = el('label', `題號 ${q.id} 的題意或操作回饋`), feedback = el('textarea');
   feedback.id = 'trial-feedback'; feedbackLabel.htmlFor = feedback.id;

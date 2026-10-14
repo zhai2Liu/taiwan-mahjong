@@ -5,6 +5,7 @@
   "cases": [
     {
       "id": "C03", "board": [{"label":"你的完整手牌（尚未吃碰明槓）","groups":[["2s","2s","1m","2m","3m","4m","5m","6m","1p","2p","3p","1z","1z","3s","4s","7s"]]},{"label":"上家打出","groups":[["2s"]]}], "skill": "claim-cost", "familyId": "closed-pon-chi-shanten-tradeoff", "purpose": "training", "reviewStatus": "model-reviewed-not-calibrated",
+      "scope": "兩種取得牌後打七條的局部牌效與門清代價，仍以仲裁取得牌為前提",
       "prompt": "你尚未吃碰明槓，手牌為22條、123萬、456萬、123筒、東東、347條。上家打出2條，沒有其他公開一般牌；尾局、過水與禁碰都不限制回應。只比較用22條碰、用34條吃，且取得牌後都打7條。哪些敘述成立？選出全部；不判定全局最佳動作。",
       "choices": [
         {"id":"both-ready","text":"這兩條路線都能讓原本還差一次有效進牌的手牌聽牌"},
