@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { createBrowserFixtures } from '../../scripts/browser-fixtures.mjs';
 import { fixture } from '../fixtures.mjs';
 import { encodeSession } from '../../dist/session.js';
+import { createPractice, PRACTICE_KEY } from '../../dist/practice.js';
 
 const saveKey = 'tw16:TW16-CLASSIC-v1:save';
 const scenarios = createBrowserFixtures();
@@ -66,7 +67,25 @@ test('自摸逐條結算 → 重載不重付 → 下一局保留分數', async (
   expect(settled.scores).toEqual(settled.settlement.delta);
   expect(settled.scores[0]).toBeGreaterThan(0);
   expect(settled.scores.reduce((a, b) => a + b, 0)).toBe(0);
-  await result.getByRole('button', { name: '本局決策檢討', exact: true }).click();
+  const originalViewport = page.viewportSize();
+  for (const width of new Set([originalViewport.width, 320])) {
+    await page.setViewportSize({ ...originalViewport, width });
+    await page.getByRole('heading', { name: '你自摸', exact: true }).focus();
+    await page.keyboard.press('Tab'); // Return to table.
+    await page.keyboard.press('Tab'); // Decomposition summary.
+    await expect(result.locator('.result-breakdown summary')).toBeFocused();
+    for (const step of [0, 1]) {
+      if (step) await page.keyboard.press('Tab');
+      if (step) await expect(result.getByRole('button', { name: '本局決策檢討', exact: true })).toBeFocused();
+      // Hit-test the real focused control, so a sticky footer hiding it fails the regression.
+      expect(await page.evaluate(() => {
+        const control = document.activeElement, rect = control.getBoundingClientRect();
+        return rect.top >= 0 && rect.bottom <= innerHeight && control.contains(document.elementFromPoint(rect.x + rect.width / 2, rect.y + rect.height / 2));
+      })).toBe(true);
+    }
+  }
+  await page.setViewportSize(originalViewport);
+  await page.keyboard.press('Enter');
   await expect(page.getByRole('dialog', { name: '本局決策檢討', exact: true })).toBeVisible();
   await page.getByRole('button', { name: '回到本局結算', exact: true }).click();
   await expect(result.getByRole('button', { name: '本局決策檢討', exact: true })).toBeFocused();
@@ -139,5 +158,31 @@ test('試讀作答／真實匯出 → 修改提醒 → 取消離頁／重載 →
   await page.getByRole('link', { name: '返回牌室', exact: true }).click();
   await leave.getByRole('button', { name: '確認離開', exact: true }).click();
   await expect(page.getByRole('button', { name: '開始一將', exact: true })).toBeVisible();
+  expect(await savedText(page)).toBeNull();
+});
+
+test('練習鍵盤選牌 → 出牌 → 摸牌 → 返回，320px 控制可用', async ({ page }) => {
+  const initial = createPractice(20261014);
+  await page.addInitScript(({ key, initial }) => localStorage.setItem(key, JSON.stringify(initial)), { key: PRACTICE_KEY, initial });
+  await page.goto('/');
+  await page.getByRole('button', { name: '純練習模式', exact: true }).click();
+  await page.getByRole('button', { name: '繼續上次練習', exact: true }).click();
+  await expect(page.locator('[data-focus="practice-status"]')).toBeFocused();
+  await page.setViewportSize({ width: 320, height: 844 });
+  await page.keyboard.press('Tab');
+  const tile = page.getByRole('group', { name: '練習手牌' }).getByRole('button').first();
+  await expect(tile).toBeFocused();
+  await expect(tile).toHaveAttribute('aria-pressed', 'true');
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('button', { name: '摸下一張', exact: true })).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('[data-focus="practice-status"]')).toBeFocused();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  const practice = await page.evaluate(key => JSON.parse(localStorage.getItem(key)), PRACTICE_KEY);
+  expect(practice.discards).toHaveLength(1);
+  expect(practice.hand).toHaveLength(17);
+  expect(practice.pool).toHaveLength(initial.pool.length - 1);
+  await page.getByRole('button', { name: '返回對戰', exact: true }).click();
+  await expect(page.locator('[data-focus="home-entry"]')).toBeFocused();
   expect(await savedText(page)).toBeNull();
 });

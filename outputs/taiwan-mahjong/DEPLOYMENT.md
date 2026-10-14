@@ -22,7 +22,7 @@ S1.2a新增指向main的pull_request檢查，不設PR路徑排除，文件PR也�
 
 Vite保留`base: './'`與`outDir: 'site'`，建置資源使用相對路徑，支援帶repository子路徑的首頁；沒有前端路由或深層網址。dist是測試編譯，不能誤作發布產物。
 
-S1.2b在共同build內先安裝Chromium（CI含系統依賴），建置後執行六項核心瀏覽器回歸，再允許main上傳Pages及部署。檢查失敗時保留test-results的截圖／trace七天；這是測試證據artifact，PR仍不產生Pages artifact或取得Pages／OIDC權限。首次下載瀏覽器需要網路，失敗時不得跳過回歸發布。正式site只含兩入口與assets，測試範例由Node端注入隔離瀏覽器，不發布。見[S1.2b驗收](S12B-VALIDATION.md)。
+S1.2b在共同build內先安裝Chromium（CI含系統依賴），建置後執行核心瀏覽器回歸，再允許main上傳Pages及部署。檢查失敗時保留test-results的截圖／trace七天；這是測試證據artifact，PR仍不產生Pages artifact或取得Pages／OIDC權限。首次下載瀏覽器需要網路，失敗時不得跳過回歸發布。正式site只含兩入口與assets，測試範例由Node端注入隔離瀏覽器，不發布。見[S1.2b驗收](S12B-VALIDATION.md)。
 
 ## 首次部署的剩餘步驟
 

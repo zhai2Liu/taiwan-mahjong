@@ -2,7 +2,17 @@
 
 2026-10-13。S0.1已採納「台灣十六張麻將學習與決策練習」兩路線，詳見[PRODUCT-DIRECTION](PRODUCT-DIRECTION.md)、[全面強化企畫](MASTER-IMPROVEMENT-PLAN.md)。既有進階證據／檢討保留，完整八課屬S2，正式評量與真人成效仍待；人格AI仍需另外啟動。
 
-## 最新工作包：S1.2b 已完成並驗證發布
+## 最新工作包：S1.3 本機通過，遠端核對中
+
+2026-10-14。使用者續推S1.3，重現390／320結算sticky footer遮住Tab到胡牌拆法與檢討的焦點；style.css增加scroll-padding-block-end:6rem，新增控制的升級上限已註解。結算回歸加入實際Tab／中心命中；練習鍵盤摸打／返回／320隔離新增一條，目前四條路徑×兩視窗＝八項。src僅CSS，不改桌規、AI、存檔、題庫或匯出。
+
+342 Node測試（work/s13-unit.log）、check／build通過；Chromium156.0.8078.4、Chrome155.0.8059.40、Edge155.0.4283.45各八項通過。Win11專業版10.0.26200／Ryzen5 9600X；Chrome隔離profile原生200%縮放及reduce聽牌回饋通過，焦點圖片S13-SETTLEMENT-FOCUS.jpg。手機／Safari／螢幕閱讀器及真人未驗，不承諾全裝置／完整WCAG。
+
+新增scripts/browser-baseline.mjs、benchmark:browser與可選已安裝channel，無新依賴。固定feedbackReady、每瀏覽器暖身1次＋9新context，選牌中位數約29ms、解釋約64ms，Node分析約9ms；JSON與方法見[S13](S13-VALIDATION.md)，不是Pages行動網路、INP或全場景成效。產物index-pavZUWLg.js／index-BTGPI-3-.css，試讀／共用牌面不變。
+
+當前分支codex/usability-baseline，尚待提交／PR／main與正式資源核對，不先宣稱發布完成。4227檢視服務已停止，4226／4228由測試／工具自動關閉，瀏覽器已關閉、work/內profile／合成檔保留且忽略，真人存檔與Downloads未操作。開工五小時0%、本機檢查8%，非精確token；無子代理／重設／自動續跑。下一動作完成發布核對後更新本節；下一包S2.1，不實裝人格AI。C01重字仍留S3.1版本化修題。
+
+## 前包：S1.2b 已完成並驗證發布
 
 2026-10-14。使用者續推，新增Playwright 1.64.0開發依賴、三條核心回歸（1440×900／390×844各一次，共六項）、正式preview4226隔離測試、CI共同build的安裝／回歸及失敗證據七天。未改src、桌規、AI、存檔或題庫。本機342測試（work/s12b-unit.log）、check／build及六項瀏覽器通過；site只有兩入口與assets，無測試範例，產物雜湊名稱未變。詳見[S12B](S12B-VALIDATION.md)。
 
