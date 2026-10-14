@@ -2,7 +2,15 @@
 
 2026-10-13。S0.1已採納「台灣十六張麻將學習與決策練習」兩路線，詳見[PRODUCT-DIRECTION](PRODUCT-DIRECTION.md)、[全面強化企畫](MASTER-IMPROVEMENT-PLAN.md)。既有進階證據／檢討保留，完整八課屬S2，正式評量與真人成效仍待；人格AI仍需另外啟動。
 
-## 最新工作包：S1.3 已完成並驗證發布
+## 最新工作包：S2.1 本機完成，發布核對中
+
+2026-10-14。使用者續推，分支codex/beginner-lessons。已新增獨立learn.html、learning-model／learning-progress／learning.ts與CSS，首頁入口及Vite第三入口。認牌／海底與字牌順子三小題、引擎莊家先打→16摸花→補17→打16→下家兩示例、17與含一槓18張組牌／反例已接UI。契約見[BEGINNER-LEARNING](BEGINNER-LEARNING.md)。新鍵tw16:learn:v1、三筆布林、課程版本、4KiB、Web Locks與expectedRaw；不改舊存檔／桌規／AI。
+
+351 Node測試／check／build通過（work/s21-unit.log），原八項＋新學習／故障兩條×兩視窗，共12項Chromium通過（work/s21-browser.log）。Chrome與Edge完整12項曾通過，最後清除等待分支各四項限定回歸已補；測試artifact碰撞收尾錯誤已排除，Chrome／Edge最後各四項通過（work/s21-chrome-learning-final.log、s21-edge-learning-final.log）；Chrome／Edge整套十二項與原生200%是本輪限定環境證據，非真人／實機。操作時圖解收合並帶到任務；回看算提示，原生200%及1440／390／320無橫向溢出。見[S21](S21-VALIDATION.md)，class圖S21-LESSONS.jpg是合成示例。
+
+未改舊存檔／桌規／遊戲AI／九題版本，沒有新依賴。v1僅三筆，擴課前須明定保留旗標遷移；清除等待時停用課程動作以免丟新紀錄。額外4227已停，4226由測試管理，無使用者分頁、真人檔或Downloads操作，work/暫存profile已關。五小時開工19%、中途27%、本機收尾34%，非精確token；無子代理／重設／自動續跑。下一動作PR／main與正式三入口全部資源／操作隔離核對，完成再接S2.2真人形成性試用。無真人資料就保留待驗、可推獨立S3.1，不實裝人格AI。
+
+## 前包：S1.3 已完成並驗證發布
 
 2026-10-14。使用者續推S1.3，重現390／320結算sticky footer遮住Tab到胡牌拆法與檢討的焦點；style.css增加scroll-padding-block-end:6rem，新增控制的升級上限已註解。結算回歸加入實際Tab／中心命中；練習鍵盤摸打／返回／320隔離新增一條，目前四條路徑×兩視窗＝八項。src僅CSS，不改桌規、AI、存檔、題庫或匯出。
 

@@ -50,6 +50,10 @@
 
 </details>
 
+## 新手入門試用版
+
+[從零學台灣麻將（前三課）](https://zhai2liu.github.io/taiwan-mahjong/learn.html)：認牌與桌面、摸打補花、五組牌加眼睛；每課示範與換例，可跳課／回看／重排。獨立保存閱讀、提示下完成與換例自行完成，未完成操作不續存；第4–8課、真人理解與成效仍待。保存／版本契約見[新手課規格](BEGINNER-LEARNING.md)，當輪結果見[S2.1驗收](S21-VALIDATION.md)。原六步操作導覽仍在牌室，不取代這三課。
+
 ## 安裝與遊玩
 
 在此資料夾開啟終端機，使用Node.js與npm。前次驗證環境為Node 24.12.0、npm 11.6.2；安裝版本以package-lock.json為準，無執行時套件。
@@ -96,7 +100,7 @@ npm run build
 
 `npm test`編譯後執行Node內建測試；`npm run build`先編譯再產生正式site/。dist/供測試匯入，test/頁面與fixture不屬正式遊玩入口。依改動選擇驗證範圍，詳見維護指南，不為文件或CSS細節重跑長模擬。
 
-瀏覽器核心回歸：首次 `npx playwright install chromium`，再執行 `npm run test:browser`。四條路徑在桌面／390px 各驗一次，結算與練習另驗320px，使用正式建置、隔離的本機4226來源與合成資料；不取代手機／Safari實機或真人試用。CI亦執行，失敗證據機制見[S1.2b](S12B-VALIDATION.md)；目前八項、Chrome／Edge實測與可重跑效能基準見[S1.3](S13-VALIDATION.md)。
+瀏覽器核心回歸：首次 `npx playwright install chromium`，再執行 `npm run test:browser`。六條路徑在桌面／390px 各驗一次，結算與練習另驗320px，使用正式建置、隔離的本機4226來源與合成資料；不取代手機／Safari實機或真人試用。CI亦執行，失敗證據機制見[S1.2b](S12B-VALIDATION.md)；目前十二項含前三課與保存故障，見[S2.1](S21-VALIDATION.md)；歷史效能基準見[S1.3](S13-VALIDATION.md)。
 
 本輪[練習易用性驗收](M5.2-UX-VALIDATION.md)：集中手牌與預覽、清楚指標、候選點選及窄畫面流程。
 
