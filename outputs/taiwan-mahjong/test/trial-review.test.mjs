@@ -107,3 +107,14 @@ test('新版標記涵蓋完整題庫；改版轉人工，schema 1舊檔仍可讀
  assert.equal(run(d).questions[0].comparison,'選項集合符合目前答案');
  assert.match(run(d).notice,/無法證明/);
 });
+
+test('S3.1之前的真實題庫版本不得以新版導引和答案自動比對', () => {
+ const previousRevision = 'cb73cd35e285ebee5bc760ea5ed1e7940a437250d437939d214cd8573c1ef22a';
+ assert.notEqual(CONTENT_REVISION, previousRevision);
+ const data = fixture(); submit(data); data.contentRevision = previousRevision;
+ const report = run(data);
+ assert.equal(report.questions[0].comparison, '內容有異動，人工核對');
+ assert.ok(report.questions.every(q => q.contentDifferences.includes('題庫版本與目前不同')));
+ assert.match(report.notice, /能力導引、適用範圍/);
+ assert.equal('score' in report, false);
+});

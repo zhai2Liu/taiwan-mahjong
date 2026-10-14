@@ -11,7 +11,8 @@
 - [維護指南](MAINTENANCE.md)、[發布與回復](DEPLOYMENT.md)：資料流、修改位置及驗證。
 - [固定桌規](../taiwan-mahjong-m0/RULES.md)、[台灣用詞](LOCAL-TERMS.md)：規則與玩家文字的權威。
 
-- [決策題試讀](https://zhai2liu.github.io/taiwan-mahjong/training.html)：9題草案先作答再看推導，不計牌技總分；[驗收與限制](L3B0-TRIAL-VALIDATION.md)。
+- [決策題試讀](https://zhai2liu.github.io/taiwan-mahjong/training.html)：9題草案，牌效／吃碰取捨／安全牌／莊家連莊四類導引；切換保留本頁作答，匯出全部九題，先作答再看推導，不計牌技總分；[目前功能與版本](S31-VALIDATION.md)、[最初驗收](L3B0-TRIAL-VALIDATION.md)。
+- [新手試用任務與紀錄](BEGINNER-TRIAL.md)：前三課T0–T5與觀察模板已備妥，真人驗收仍待。
 
 <details>
 <summary>工程證據與歷史驗收索引（各份保留當時版本）</summary>
@@ -100,7 +101,7 @@ npm run build
 
 `npm test`編譯後執行Node內建測試；`npm run build`先編譯再產生正式site/。dist/供測試匯入，test/頁面與fixture不屬正式遊玩入口。依改動選擇驗證範圍，詳見維護指南，不為文件或CSS細節重跑長模擬。
 
-瀏覽器核心回歸：首次 `npx playwright install chromium`，再執行 `npm run test:browser`。六條路徑在桌面／390px 各驗一次，結算與練習另驗320px，使用正式建置、隔離的本機4226來源與合成資料；不取代手機／Safari實機或真人試用。CI亦執行，失敗證據機制見[S1.2b](S12B-VALIDATION.md)；目前十二項含前三課與保存故障，見[S2.1](S21-VALIDATION.md)；歷史效能基準見[S1.3](S13-VALIDATION.md)。
+瀏覽器核心回歸：首次 `npx playwright install chromium`，再執行 `npm run test:browser`。七條路徑在桌面／390px 各驗一次，結算、練習與分類試讀另驗320px，使用正式建置、隔離的本機4226來源與合成資料；不取代手機／Safari實機或真人試用。CI亦執行，失敗證據機制見[S1.2b](S12B-VALIDATION.md)；目前十四項含前三課、保存故障與四能力分類，見[S2.1](S21-VALIDATION.md)和[S3.1](S31-VALIDATION.md)；歷史效能基準見[S1.3](S13-VALIDATION.md)。
 
 本輪[練習易用性驗收](M5.2-UX-VALIDATION.md)：集中手牌與預覽、清楚指標、候選點選及窄畫面流程。
 

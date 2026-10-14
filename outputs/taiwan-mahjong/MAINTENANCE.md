@@ -14,6 +14,8 @@ README是使用與開發總入口；HANDOFF只記目前進度、風險與下一�
 
 ## 修改位置
 
+S3.1九題試讀：兩份TRAINING JSON負責題幹／答案／牌面／範圍；scripts/training-content.mjs負責四能力導引、固定九題允許名單與完整內容雜湊，生成器及review-trial同讀。不要直接改生成的training-data.ts。畫面分類只改瀏覽順序，drafts仍按原題位置保留，匯出必含所有題；舊schema2版本不符轉人工，schema1保留缺完整版本警告。新增分類回歸在test/e2e/training-guidance.spec.js，詳見[S3.1](S31-VALIDATION.md)。修改題量先處理允許名單／題族與舊匯出相容，不另外散落九題常數；人類資料和合成檔分開，接收見[審閱流程](TRIAL-REVIEW.md)。
+
 S2.1新手課：learn.html／src/learning.ts與learning.css是獨立頁；learning-model.ts沿用引擎與手牌驗證，learning-progress.ts處理新鍵／版本／容量／Web Locks。內容與保存規格見[BEGINNER-LEARNING](BEGINNER-LEARNING.md)，改課程先同步courseVersion及遷移；現在只三筆，不能直接增長判舊檔壞掉。回歸見[S21](S21-VALIDATION.md)，進度重建須確認且等待時停用課程動作，不動舊Session／練習／檢討。三頁HTML引用的全部preload／JS／CSS都要驗，不再假定固定三個資源。
 
 S1.3：結算固定底部用scroll-padding保護焦點，新增控制時先重新驗高度；結算回歸含320px命中檢查。現有四條路徑共八項，可選已安裝Chrome／Edge；`npm run benchmark:browser -- chrome`／msedge只作同場景量測，方法與支援界線見[S13](S13-VALIDATION.md)。不為較慢單筆直接引入worker／全域快取。

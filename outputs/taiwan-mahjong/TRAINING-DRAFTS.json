@@ -17,7 +17,7 @@
     },
     {
       "id": "E02", "board": [{"label":"已亮出的牌組","groups":[["1m","2m","3m"],["4m","5m","6m"],["1p","2p","3p"],["7p","8p","9p"]]},{"label":"你的手牌","groups":[["3s","4s","1z","1z","2z"]]}], "skill": "efficiency", "familyId": "four-meld-shanten-priority", "purpose": "training", "reviewStatus": "model-reviewed-not-calibrated",
-      "difficulty": "單一取捨題", "scope": "固定四副露後的局部牌效",
+      "difficulty": "單一取捨題", "scope": "已亮出四組牌後的局部牌效",
       "prompt": "已吃成四組牌：123萬、456萬、123筒、789筒；手牌三條、四條、東、東、南，沒有其他可見牌。目標先讓牌型更接近聽牌，再比有效進牌。選出全部符合此目標的打牌。",
       "choices": [{"id":"south","text":"南"},{"id":"east","text":"東"},{"id":"three","text":"三條"},{"id":"four","text":"四條"}],
       "accepted": ["south"],
@@ -37,9 +37,9 @@
     },
     {
       "id": "S02", "board": [{"label":"你持有的四張三萬","groups":[["3m","3m","3m","3m"]]}], "skill": "safety-scope", "familyId": "four-known-number-counterexample", "purpose": "training", "reviewStatus": "model-reviewed-not-calibrated",
-      "difficulty": "反例辨識題", "scope": "剩餘局部成形路徑，不是實際放槍概率",
+      "difficulty": "反例辨識題", "scope": "剩餘局部成形路徑，不是實際放槍機率",
       "prompt": "四張三萬都在自己手中，其他萬子沒有公開資訊。能因此證明打三萬不會普通放槍嗎？",
-      "choices": [{"id":"safe","text":"能，因為對手沒有三萬"},{"id":"unknown","text":"不能；對手仍可能用12、24或45萬接組成順子子"},{"id":"certain","text":"不能，因此一定會放槍"}],
+      "choices": [{"id":"safe","text":"能，因為對手沒有三萬"},{"id":"unknown","text":"不能；對手仍可能用12、24或45萬接組成順子"},{"id":"certain","text":"不能，因此一定會放槍"}],
       "accepted": ["unknown"],
       "expected": {"kind":"3m","unseenCopies":0,"routes":[["1m","2m"],["2m","4m"],["4m","5m"]],"provenSafe":false},
       "derivation": "四見只排除三萬當眼睛／三張同牌的一組，不能排除123、234、345三種順子。存在可行路徑不證明任何對手真的持有完整聽牌，故只能說未證明安全，不能推成必放槍或百分比。",
@@ -48,7 +48,7 @@
     {
       "id": "C01", "board": [{"label":"只顯示相關手牌（不是完整手牌）","groups":[["1m","3m","4m"]]},{"label":"上家打出","groups":[["2m"]]}], "skill": "claim-cost", "familyId": "chi-134-2-and-ban", "purpose": "training", "reviewStatus": "model-reviewed-not-calibrated",
       "difficulty": "基礎控制題", "scope": "組順子辨識，假設完整局況符合引擎吃牌前置條件",
-      "prompt": "只看相關手牌134萬，上家打2萬，尾局與過水等限制都不阻止吃牌，且吃後有合法牌可打。哪些手中的兩張可以吃組成順子子？選出全部；不問是否值得吃。",
+      "prompt": "只看相關手牌134萬，上家打2萬，尾局與過水等限制都不阻止吃牌，且吃後有合法牌可打。哪些手中的兩張可以吃組成順子？選出全部；不問是否值得吃。",
       "choices": [{"id":"13","text":"1與3萬"},{"id":"34","text":"3與4萬"},{"id":"14","text":"1與4萬"}],
       "accepted": ["13","34"],
       "expected": {"sequences":[["1m","2m","3m"],["2m","3m","4m"]]},
@@ -57,12 +57,12 @@
     },
     {
       "id": "C02", "board": [{"label":"本次拿去吃牌的兩張手牌","groups":[["3m","4m"]]},{"label":"本次吃入的上家打牌","groups":[["2m"]]}], "skill": "claim-cost", "familyId": "chi-134-2-and-ban", "purpose": "training", "reviewStatus": "model-reviewed-not-calibrated",
-      "difficulty": "單一取捨題", "scope": "本桌吃後禁捨；不是日麻振聽",
+      "difficulty": "單一取捨題", "scope": "本桌吃後不能打回的牌；只問這一次打牌限制",
       "prompt": "已用手中34萬吃入上家的2萬。依本桌吃後不能打回規則，這次不能打哪些牌種？選出全部。",
       "choices": [{"id":"2m","text":"二萬"},{"id":"5m","text":"五萬"},{"id":"1m","text":"一萬"},{"id":"4p","text":"四筒"}],
       "accepted": ["2m","5m"],
       "expected": {"ownKinds":["3m","4m"],"incoming":"2m","forbidden":["2m","5m"]},
-      "derivation": "這次取出的手中的兩張是34，2或5都能與它們重新組組成順子子，因此依凍結桌規兩種均不能打回。不能把吃前所有手牌打牌視為吃後仍合法。",
+      "derivation": "這次取出的手中的兩張是34，2或5都能與它們重新組成順子，因此依凍結桌規兩種均不能打回。不能把吃前所有手牌打牌視為吃後仍合法。",
       "references": ["../taiwan-mahjong-m0/RULES.md", "src/engine.ts:discardBan"]
     },
     {
