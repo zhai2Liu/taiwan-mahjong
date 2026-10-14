@@ -1,6 +1,6 @@
 # S1.3：操作焦點修正、支援範圍與效能基準
 
-2026-10-14（Asia/Taipei）。本機驗收完成，PR／main與發布核對待補；最新狀態見[HANDOFF](HANDOFF.md)。未改TW16-CLASSIC-v1、遊戲AI、存檔、題庫與匯出版本。
+2026-10-14（Asia/Taipei）。本機、PR／main與發布核對完成；最新狀態見[HANDOFF](HANDOFF.md)。未改TW16-CLASSIC-v1、遊戲AI、存檔、題庫與匯出版本。
 
 ## 問題與修正
 
@@ -67,6 +67,10 @@ node scripts/browser-baseline.mjs msedge
 
 ## 發布與下一包
 
-正式產物index-pavZUWLg.js／index-BTGPI-3-.css；試讀training-CyxzesHo.js／training-DnepUIbB.css、共用tile-face-CG76dTyt.js不變。測試頁、工具、JSON與截圖不入site；PR／main及正式資源驗證待補。
+來源1576c48的[PR#4](https://github.com/zhai2Liu/taiwan-mahjong/pull/4)已合併1ca8a18；[PR Actions38547430937](https://github.com/zhai2Liu/taiwan-mahjong/actions/runs/38547430937)成功，342／八項（Linux 8.1秒）通過、Pages上傳與deploy skipped、0 artifact；[main Actions38547636980](https://github.com/zhai2Liu/taiwan-mahjong/actions/runs/38547636980)的342／八項（11.2秒）、build與deploy均成功。沒有外部真人程式審查，未設定分支保護強制門檻。
+
+正式首頁／training.html均HTTP200，各自引用三份JS／CSS的SHA-256與本機一致（work/s13-live.log）。隔離Chrome合成結算在正式站390／320，實際Tab到拆法及檢討的中心命中均可見（work/s13-prod-focus.log），瀏覽器已關閉；未操作真人存檔。
+
+正式產物index-pavZUWLg.js／index-BTGPI-3-.css；試讀training-CyxzesHo.js／training-DnepUIbB.css、共用tile-face-CG76dTyt.js不變。遊戲JS內容雜湊未變，檔名隨CSS參照圖更新；測試頁、工具、JSON與截圖不入site。
 
 下一包S2.1：前三課最小可操作教學與必要進度，先定教學隔離、版本與保存契約，再接畫面。手機／Safari與真人驗證留S4，不用本輪自測代填；人格AI仍需另行啟動。

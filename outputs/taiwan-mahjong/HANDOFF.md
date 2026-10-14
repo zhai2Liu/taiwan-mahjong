@@ -2,7 +2,7 @@
 
 2026-10-13。S0.1已採納「台灣十六張麻將學習與決策練習」兩路線，詳見[PRODUCT-DIRECTION](PRODUCT-DIRECTION.md)、[全面強化企畫](MASTER-IMPROVEMENT-PLAN.md)。既有進階證據／檢討保留，完整八課屬S2，正式評量與真人成效仍待；人格AI仍需另外啟動。
 
-## 最新工作包：S1.3 本機通過，遠端核對中
+## 最新工作包：S1.3 已完成並驗證發布
 
 2026-10-14。使用者續推S1.3，重現390／320結算sticky footer遮住Tab到胡牌拆法與檢討的焦點；style.css增加scroll-padding-block-end:6rem，新增控制的升級上限已註解。結算回歸加入實際Tab／中心命中；練習鍵盤摸打／返回／320隔離新增一條，目前四條路徑×兩視窗＝八項。src僅CSS，不改桌規、AI、存檔、題庫或匯出。
 
@@ -10,7 +10,7 @@
 
 新增scripts/browser-baseline.mjs、benchmark:browser與可選已安裝channel，無新依賴。固定feedbackReady、每瀏覽器暖身1次＋9新context，選牌中位數約29ms、解釋約64ms，Node分析約9ms；JSON與方法見[S13](S13-VALIDATION.md)，不是Pages行動網路、INP或全場景成效。產物index-pavZUWLg.js／index-BTGPI-3-.css，試讀／共用牌面不變。
 
-當前分支codex/usability-baseline，尚待提交／PR／main與正式資源核對，不先宣稱發布完成。4227檢視服務已停止，4226／4228由測試／工具自動關閉，瀏覽器已關閉、work/內profile／合成檔保留且忽略，真人存檔與Downloads未操作。開工五小時0%、本機檢查8%，非精確token；無子代理／重設／自動續跑。下一動作完成發布核對後更新本節；下一包S2.1，不實裝人格AI。C01重字仍留S3.1版本化修題。
+已提交1576c48，PR#4已附本chat並合併1ca8a18，已回main。PR Actions38547430937成功，Linux日誌342／八項（8.1秒）通過，Pages上傳／deploy skipped、0 artifact。main Actions38547636980的342／八項（Linux11.2秒）、build與deploy均成功。正式首頁／training.html HTTP200，各自引用三份JS／CSS與本機SHA-256相符（work/s13-live.log）；正式隔離Chrome390／320實際Tab到拆法與檢討的中心命中皆可見（work/s13-prod-focus.log）。沒有外部真人程式審查，未改分支保護。4227檢視服務已停止，4226／4228由測試／工具自動關閉，瀏覽器已關閉、work/內profile／合成檔保留且忽略，真人存檔與Downloads未操作。開工五小時0%、本機檢查8%、發布檢查14%、收尾17%，非精確token；無子代理／重設／自動續跑。README／維護／部署／ROADMAP／驗收與交接已同步；收尾僅Markdown狀態提交，不新增main build。保留已合併codex/usability-baseline作追溯；下一包S2.1，不實裝人格AI。C01重字仍留S3.1版本化修題。
 
 ## 前包：S1.2b 已完成並驗證發布
 
