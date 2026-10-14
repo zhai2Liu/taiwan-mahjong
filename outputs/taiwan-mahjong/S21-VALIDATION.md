@@ -1,6 +1,6 @@
 # S2.1：前三課入門試用版
 
-2026-10-14（Asia/Taipei）。本機已完成，PR／main／正式發布核對待補。入口learn.html與[內容／保存契約](BEGINNER-LEARNING.md)；完整八課、真人理解及成效尚未完成。
+2026-10-14（Asia/Taipei）。本機、PR／main／正式發布核對已完成。入口[learn.html](https://zhai2liu.github.io/taiwan-mahjong/learn.html)與[內容／保存契約](BEGINNER-LEARNING.md)；完整八課、真人理解及成效尚未完成。
 
 ## 本輪成果
 
@@ -38,6 +38,10 @@
 
 ## 發布
 
-Vite現在三入口index.html、training.html、learn.html；新增學習JS／CSS，共用view與引擎因使用而拆chunk。驗收要核對三份HTML引用的所有JS／CSS／modulepreload，不能沿用固定三資源假設。測試範例與文件不入site。PR／main與正式三入口及存檔隔離核對待補。
+來源a8bf2d3的[PR#5](https://github.com/zhai2Liu/taiwan-mahjong/pull/5)已合併a57a167；[PR Actions38553873060](https://github.com/zhai2Liu/taiwan-mahjong/actions/runs/38553873060)成功，351測試及12項Linux回歸（21.0秒）通過，Pages上傳／deploy skipped、0 artifact；[main Actions38554245076](https://github.com/zhai2Liu/taiwan-mahjong/actions/runs/38554245076)的351／十二項（22.1秒）、build與deploy均成功。沒有外部真人程式或課文審查，未設定分支保護強制門檻。
+
+正式index.html、training.html、learn.html均HTTP200；引用4／3／4份JS／CSS／modulepreload全部SHA-256與本機一致，work/s21-live.log。產物index-B_AHbX-v.js／index-BTGPI-3-.css、learn-Bw2GxrMQ.js／learn-BkbYV_y2.css，共用view-DbjDdINE.js與原tile-face；試讀JS／CSS不變。測試範例與文件不入site，不再假定每頁固定三資源。
+
+正式390px隔離Chrome：從首頁新入口做第一課示範、第二課換例，重載後guided／independent標記保留；對戰／練習／檢討三鍵原字串不變，返回首頁可見繼續上次牌局（work/s21-production.log）。正式第三課操作未另重做，由本機及Linux完整回歸與發布資源核對覆蓋；所有驗收為合成資料，正式日常使用者存檔未碰。瀏覽器已關閉。
 
 下一包S2.2形成性試用與修訂。無真人資料時準備任務／記錄方式並保留待驗，可推獨立S3.1九題修訂；不跳稱八課完整或學習成效已通關，不實裝人格AI。

@@ -2,13 +2,19 @@
 
 2026-10-13。S0.1已採納「台灣十六張麻將學習與決策練習」兩路線，詳見[PRODUCT-DIRECTION](PRODUCT-DIRECTION.md)、[全面強化企畫](MASTER-IMPROVEMENT-PLAN.md)。既有進階證據／檢討保留，完整八課屬S2，正式評量與真人成效仍待；人格AI仍需另外啟動。
 
-## 最新工作包：S2.1 本機完成，發布核對中
+## 最新工作包：S2.1 已完成並驗證發布
 
-2026-10-14。使用者續推，分支codex/beginner-lessons。已新增獨立learn.html、learning-model／learning-progress／learning.ts與CSS，首頁入口及Vite第三入口。認牌／海底與字牌順子三小題、引擎莊家先打→16摸花→補17→打16→下家兩示例、17與含一槓18張組牌／反例已接UI。契約見[BEGINNER-LEARNING](BEGINNER-LEARNING.md)。新鍵tw16:learn:v1、三筆布林、課程版本、4KiB、Web Locks與expectedRaw；不改舊存檔／桌規／AI。
+2026-10-14。獨立learn.html與首頁入口提供前三課：認牌／海底來源／字牌不可順子，沿用引擎的莊家先打→16摸花→補17→打16→下家，17及含槓18張手選五組加眼睛／反例。示範與換例分開、可跳課／重排，操作時圖解收合並帶到任務；回看或錯答推導計提示。原六步導覽保留。規格[BEGINNER-LEARNING](BEGINNER-LEARNING.md)，[S21驗收](S21-VALIDATION.md)。未改桌規、正式遊戲AI、舊存檔或九題版本，無新依賴。
 
-351 Node測試／check／build通過（work/s21-unit.log），原八項＋新學習／故障兩條×兩視窗，共12項Chromium通過（work/s21-browser.log）。Chrome與Edge完整12項曾通過，最後清除等待分支各四項限定回歸已補；測試artifact碰撞收尾錯誤已排除，Chrome／Edge最後各四項通過（work/s21-chrome-learning-final.log、s21-edge-learning-final.log）；Chrome／Edge整套十二項與原生200%是本輪限定環境證據，非真人／實機。操作時圖解收合並帶到任務；回看算提示，原生200%及1440／390／320無橫向溢出。見[S21](S21-VALIDATION.md)，class圖S21-LESSONS.jpg是合成示例。
+新鍵tw16:learn:v1，schema1／courseVersion beginner-1-3-v1，三筆read／guided／independent、4KiB、嚴格格式與Web Locks／expectedRaw。只保存閱讀與整段完成，未完成操作重載重開；配額／讀取失敗保留，重試與未存離頁提醒；跨頁改動停止覆蓋，重讀／重新建立確認。清除等待時停用課程動作，成功才回圖解，避免丟掉等待中的新紀錄。擴第4–8課須先定保留三筆旗標的遷移。這些本機旗標不是證書／陌生題能力／防作弊或學習成效。
 
-未改舊存檔／桌規／遊戲AI／九題版本，沒有新依賴。v1僅三筆，擴課前須明定保留旗標遷移；清除等待時停用課程動作以免丟新紀錄。額外4227已停，4226由測試管理，無使用者分頁、真人檔或Downloads操作，work/暫存profile已關。五小時開工19%、中途27%、本機收尾34%，非精確token；無子代理／重設／自動續跑。下一動作PR／main與正式三入口全部資源／操作隔離核對，完成再接S2.2真人形成性試用。無真人資料就保留待驗、可推獨立S3.1，不實裝人格AI。
+351 Node測試／check／build通過（work/s21-unit.log）；原八項＋三課全流程／故障兩條×兩視窗，共十二項Chromium通過。Chrome155.0.8059.40／Edge155.0.4283.45整套十二項曾通過，清除等待改動後兩瀏覽器各四項限定回歸亦通過；work/s21-browser.log、s21-chrome-learning-final.log、s21-edge-learning-final.log。1440／390／320與Chrome原生200%無橫向溢出，合成圖S21-LESSONS.jpg。所有資料為代理合成，未取得真人／專家審課；手機／Safari／螢幕閱讀器未驗。
+
+來源a8bf2d3的PR#5已附本chat並合併a57a167，本機回main。PR Actions38553873060成功，351／十二項（Linux21.0秒），Pages上傳／deploy skipped、0 artifact；main Actions38554245076的351／十二項（22.1秒）、build與deploy均成功。正式index.html／training.html／learn.html HTTP200，4／3／4份引用資源SHA-256全與本機一致（work/s21-live.log）。index-B_AHbX-v.js／index-BTGPI-3-.css、learn-Bw2GxrMQ.js／learn-BkbYV_y2.css，共用view-DbjDdINE.js／tile-face；試讀JS／CSS不變，site無測試／文件。
+
+正式390px隔離Chrome完成第一課示範與第二課換例，重載保存旗標、三舊鍵原字串不變，返回可見繼續上次牌局（work/s21-production.log）；第三課由本機／Linux回歸與部署雜湊覆蓋，未另做正式互動。沒有外部真人程式審查，未設分支保護。4227已停，4226由測試管理且已關，所有本輪瀏覽器／work暫存profile已關，未碰日常存檔／Downloads。保留合併分支codex/beginner-lessons作追溯；收尾只有Markdown，不新增main build。
+
+已同步README／方向／維護／部署／ROADMAP／規格／驗收，最後連結及diff再查。五小時開工19%、中途27%、本機34%、發布43%、收尾50%，是帳戶快照非精確token；無子代理、重設或自動續跑。下一包S2.2形成性試用與修訂：先準備任務／記錄，缺真人不代填通關，可推獨立S3.1九題版本化修訂（C01順子子重字仍待）。第4–8課與人格AI不自動啟動。
 
 ## 前包：S1.3 已完成並驗證發布
 
