@@ -7,6 +7,7 @@
 ## 入口
 
 - [目前交接與發布狀態](HANDOFF.md)：最新完成、驗證範圍與下一包。
+- [人工回饋清單](HUMAN-FEEDBACK-CHECKLIST.md)：目前需要的新手／熟手／實機回饋，後續評量及本人決定事項。
 - [產品方向](PRODUCT-DIRECTION.md)、[全面強化企畫](MASTER-IMPROVEMENT-PLAN.md)、[工作包路線](ROADMAP.md)：已採納範圍、依賴與完成條件。
 - [維護指南](MAINTENANCE.md)、[發布與回復](DEPLOYMENT.md)：資料流、修改位置及驗證。
 - [固定桌規](../taiwan-mahjong-m0/RULES.md)、[台灣用詞](LOCAL-TERMS.md)：規則與玩家文字的權威。
