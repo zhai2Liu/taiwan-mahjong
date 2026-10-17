@@ -89,6 +89,8 @@ flowchart TD
 - **AI 協助：**整理規格、實作與修正程式、測試、發布核對、文件和交接；由 6.1 Sol 主導，Luna 按限定範圍協助。
 - **可追溯方式：**保留實際 Git 作者及階段驗收，以上案例可連到程式與測試。本人程式熟練程度、獨立修改能力與手寫比例不由 AI 推定。
 
+上述需求、方向、實際操作回饋與AI協作分工，已於2026-10-17由專案擁有者確認符合實際；[確認紀錄](outputs/taiwan-mahjong/S51-DEMO-VALIDATION.md)不推定個人技能或手寫比例。
+
 ## 開發與驗證
 
 TypeScript、Vite、原生 HTML／CSS／SVG；無執行時套件。Node 24.12.0 為 CI 基準，依 lockfile 安裝。
@@ -107,7 +109,7 @@ npm run preview -- --port 4173
 
 測試數與發布狀態以 [HANDOFF](outputs/taiwan-mahjong/HANDOFF.md) 為準。題庫模型複核與程式測試不等同真人理解或學習成效；目前尚未證實能普遍提升牌技。
 
-[版本回復演練與來源盤點](outputs/taiwan-mahjong/S52-RELEASE-PREPARATION.md)記錄舊版→新版的五種本機資料保留、結算不重付與發布草稿；本人貢獻敘述、公開授權及實際Release仍待決定。
+[版本回復演練與來源盤點](outputs/taiwan-mahjong/S52-RELEASE-PREPARATION.md)記錄舊版→新版的五種本機資料保留、結算不重付與發布草稿；既有分工已由本人確認，另擬履歷摘要、公開授權及實際Release仍待決定。
 
 ## 文件與後續範圍
 
