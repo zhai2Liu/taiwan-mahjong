@@ -102,7 +102,7 @@ function header(model: ViewModel, send: Send): HTMLElement {
   if (model.game) tools.append(pill('本地公平 AI', 'fair-pill'));
   else {
     tools.setAttribute('aria-label', '牌室導覽');
-    const routes = node('a', 'home-nav-link', '選擇玩法'); routes.href = '#home-routes'; tools.append(routes);
+    const routes = node('a', 'home-nav-link', '選擇玩法'); routes.href = '#home-routes'; routes.dataset.focus = 'home-routes'; tools.append(routes);
   }
   tools.append(button('新手教學', 'tutorial', () => send({ type: 'tutorial' }), 'button button-quiet'));
   if (model.game) {
@@ -149,10 +149,10 @@ function home(model: ViewModel, send: Send): HTMLElement {
   const cards = node('div', 'home-cards');
   const learnCard = node('article', 'home-card');
   learnCard.append(node('span', 'home-card-label', '01 / 還不會打'), node('h3', '', '從零學習'), node('p', 'home-card-description', '認牌、摸打、胡牌組成。\n用前三課，走出入門的第一步。'));
-  const learn = node('a', 'button home-action', '從零學台灣麻將（前三課）'); learn.href = './learn.html'; learnCard.append(learn, node('p', 'home-card-note', '入門試用版・可操作牌例'));
+  const learn = node('a', 'button home-action', '從零學台灣麻將（前三課）'); learn.href = './learn.html'; learn.dataset.focus = 'home-learn'; learnCard.append(learn, node('p', 'home-card-note', '入門試用版・可操作牌例'));
   const practiceCard = node('article', 'home-card');
   practiceCard.append(node('span', 'home-card-label', '02 / 想打得更好'), node('h3', '', '練習判斷'), node('p', 'home-card-description', '慢慢比較進牌與捨牌，\n看懂每個選擇背後的取捨。'), button('純練習模式', 'practice', () => send({ type: 'practice' }), 'button home-action'));
-  const trial = node('a', 'home-text-link', '決策題試讀'); trial.href = './training.html';
+  const trial = node('a', 'home-text-link', '決策題試讀'); trial.href = './training.html'; trial.dataset.focus = 'home-trial';
   const arrow = node('span', '', '↗'); arrow.setAttribute('aria-hidden', 'true'); trial.append(arrow); practiceCard.append(trial);
   const playCard = node('article', 'home-card home-card-play');
   playCard.append(node('span', 'home-card-label', '03 / 直接來一局'), node('h3', '', '入座對戰'), node('p', 'home-card-description', '一位真人，三位公平電腦。\n吃碰槓胡，照你的節奏打。'));

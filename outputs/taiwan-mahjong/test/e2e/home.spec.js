@@ -81,3 +81,18 @@ test('首頁優先提供續玩，取消新局保留原存檔，續玩還原原�
   expect(await page.evaluate(() => localStorage.getItem('home-unrelated'))).toBe('keep-original');
   await expect(page.locator('.home-shell')).toHaveCount(0);
 });
+
+test('別頁更新牌局時，首頁連結保持鍵盤焦點且不覆寫存檔', async ({ page }) => {
+  const other = await page.context().newPage();
+  await page.goto('/'); await other.goto('/');
+  const samples = [...new Set(createBrowserFixtures().map(item => encodeSession(item.session)))];
+  for (const [index, name] of ['從零學台灣麻將（前三課）', '決策題試讀'].entries()) {
+    const link = page.getByRole('link', { name, exact: true });
+    await link.focus();
+    await other.evaluate(({ key, raw }) => localStorage.setItem(key, raw), { key: saveKey, raw: samples[index] });
+    await expect(page.getByRole('alert')).toContainText('另一個分頁已變更存檔');
+    await expect(link).toBeFocused();
+    expect(await page.evaluate(key => localStorage.getItem(key), saveKey)).toBe(samples[index]);
+  }
+  await other.close();
+});
