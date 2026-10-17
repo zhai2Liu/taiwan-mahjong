@@ -8,6 +8,8 @@
 
 - [目前交接與發布狀態](HANDOFF.md)：最新完成、驗證範圍與下一包。
 - [人工回饋清單](HUMAN-FEEDBACK-CHECKLIST.md)：目前需要的新手／熟手／實機回饋，後續評量及本人決定事項。
+- [33秒示範與三張畫面](../taiwan-mahjong-showcase/README.md)：正式版本的合成牌例、文字導覽與支援界線；不是學習成效證據。
+- [評量候選審核準備](S34-ASSESSMENT-PREPARATION.md)：四候選缺口、人工理由規準、流程及空模板；真人審核與正式放行仍待。
 - [局後下一步與吃碰回應後解釋](S32-VALIDATION.md)：仲裁後才顯示取得／未取得，關閉保持暫停；同類練習另開分頁，發布狀態依HANDOFF。
 - [產品方向](PRODUCT-DIRECTION.md)、[全面強化企畫](MASTER-IMPROVEMENT-PLAN.md)、[工作包路線](ROADMAP.md)：已採納範圍、依賴與完成條件。
 - [維護指南](MAINTENANCE.md)、[發布與回復](DEPLOYMENT.md)：資料流、修改位置及驗證。
