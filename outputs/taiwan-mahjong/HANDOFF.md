@@ -12,9 +12,9 @@
 
 發布核對包已完成：來源543cf3b、[PR#18](https://github.com/zhai2Liu/taiwan-mahjong/pull/18)合併3b3f4da。PR39047211722成功399／44（34.5秒），main39047332167成功399／44（44.2秒）、build117438598260／deploy117438932626成功。正式三頁HTML與8份獨立JS／CSS經新命令比對相符；十個公開修改檔雜湊與git blob相符。`npm run verify:release -- <明確網址/>`、限定三入口LF及觸發已落盤，三個HTML git blob／runtime未變。子路徑正例及HTML／資源不同、404、201、轉址五負例均驗；autocrlf=true匯出三入口仍0CR且等於git blob。83文件／525鏈通過。logs在work/release-check-{build,negative,live,after-deploy,pr-ci,main-ci,public}.log、html-line-endings-after.log及html-release-diff.log；只驗HTML直接引用，不宣稱動態資源或操作驗收。
 
-目前分支codex/release-check-regression：新發布工具正反例已接`test/release-check.test.mjs`／`npm test`，本機400項通過。使用work/隔離生成目錄、本機HTTP與真CLI子程序，不依賴先有site／外網；核對子路徑三頁、共用資源只取一次、五種內容／HTTP反例及無參數／錯協定／查詢／無結尾斜線均在發出HTTP前拒絕。子程序逾時、清理僅限自己生成目錄，沒有改玩家資料。指定head CI／發布待核對；logs為work/release-regression-targeted.log及tests.log。
+發布工具回歸包已完成：來源30ee090、[PR#19](https://github.com/zhai2Liu/taiwan-mahjong/pull/19)合併5fc7d79。PR39047870458與main39048017431均400／44（各37.2秒），build117440572410／deploy117440880022成功；正式三頁HTML／8份獨立資源相符，三個公開修改檔與git blob相符。`test/release-check.test.mjs`隨npm test執行，不依賴既有site／外網；驗真CLI子路徑、共用資源、五負例及四錯參數，子程序逾時與自身目錄清理均限定。83文件／525鏈通過，無runtime／依賴改動。logs為work/release-regression-{targeted,tests,pr-ci,main-ci,live,public}.log。
 
-另已完成Chrome155.0.8059.80真正BFCache跨頁更新檢查（pageshow.persisted=true）：舊牌桌停止操作、最新原文不變，work/play-bfcache-audit-after-wait.log；初次工具等load逾時已改等commit，並非遊戲故障，不把此單例當所有裝置驗收。後續可補入既有瀏覽器回歸，先實際核對練習／課程／試讀的快取返回，不憑API推定資料保護。
+下一包將四模式的真正BFCache跨頁更新檢查整理成具名Chrome／Edge命令。Chrome155.0.8059.80原型四模式均pageshow.persisted=true，舊操作停止／管理保存停用，課程與試讀可明確重讀，其他鍵不變、0pageerror；見work/browser-history-prototype-chrome.log。預設Chromium156 headless shell未進快取；完整Chromium channel在本機spawn UNKNOWN，未改或重裝使用者瀏覽器。故不把CI的一般重載充作快取驗收，不擴全域設定。原型work/browser-history-prototype.mjs，先改成正式相對匯入及標準fileURLToPath、可靠關閉服務，再依次驗Chrome／Edge。
 
 完成本包後繼續處理可重現的操作／可及性／維護缺口，先驗證再修正。後五課教材與引擎牌例已備，正式互動整合仍沿前三課試用／修訂順序；不能為消耗額度跳過真人門檻。真人資料只阻擋相應理解／難度／成效與實機結論，不代表整個專案必須停工。
 
@@ -44,9 +44,9 @@
 | S4.2重讀保留 | 8fe4564／f994fa2，[PR#15](https://github.com/zhai2Liu/taiwan-mahjong/pull/15) | PR39045048994：399／38（40.1秒）；main39045246989：399／38（35.2秒）、build117432567895／deploy117432905099成功 |
 | S4.2遊玩離頁 | fdc2879／65dc22f，[PR#17](https://github.com/zhai2Liu/taiwan-mahjong/pull/17) | PR39046540677：399／44；main39046718938：399／44、部署及正式三類失敗／重試通過 |
 
-最近本機399 Node／check／build、Chromium38項（31.2秒）通過；重讀故障受影響Chrome155.0.8059.80／Edge155.0.4283.62各6項通過。三種故障為讀取錯誤、壞檔、未知格式；保留本頁進度／原文／離頁提醒，修復後成功重讀才取代記憶體。不是存檔遷移或真人試用證據。
+最近Node400項、本機及雲端check／build通過，瀏覽器44項當輪雲端通過；Windows Chrome155.0.8059.80／Edge155.0.4283.62遊玩離頁各6項通過。新手重讀的讀取錯誤／壞檔／未知版也已驗保留本頁進度／原文／離頁提醒，修復後成功重讀才取代記憶體。不是存檔遷移或真人試用證據。
 
-正式站：[青竹牌室](https://zhai2liu.github.io/taiwan-mahjong/)，origin為https://github.com/zhai2Liu/taiwan-mahjong.git。最新Pages提交3b3f4da71cf838d6f4ad7aa4b54328b9fca7ca62，功能資源仍65dc22f；三頁HTTP200及HTML、全部4／3／4份JS／CSS SHA-256與site一致。最新index-Cb42fmnp.js、learn-By-3MGNT.js、view-BptEx-mj.js；其他資源清單及舊PR證據見歷史交接。
+正式站：[青竹牌室](https://zhai2liu.github.io/taiwan-mahjong/)，origin為https://github.com/zhai2Liu/taiwan-mahjong.git。最新Pages提交5fc7d7989efdbd7666f1e5918f611c54ee541ccf，功能資源仍65dc22f；三頁HTTP200及HTML、全部4／3／4份JS／CSS SHA-256與site一致。最新index-Cb42fmnp.js、learn-By-3MGNT.js、view-BptEx-mj.js；其他資源清單及舊PR證據見歷史交接。
 
 PR均已附本chat；PR的Pages上傳與deploy跳過，沒有Pages產物。沒有外部真人程式審查或分支保護修改；不要以舊CI充當新提交證據。全為隔離合成資料，不代表手機／Safari／真人理解或普遍學習成效。
 
