@@ -6,7 +6,9 @@
 
 使用者要求「把五小時的額度全部用來推進專案進度」，持續目標有效。當前窗口resetsAt1792266558，起始0%、最近檢查46%；比例是帳戶用量，不能推算精確對話剩餘token。逐包驗證、提交、發布及落盤，接近耗盡先收斂交接；不使用重設額度或新增自動續跑。
 
-目前分支codex/document-link-check：把反覆手動的md連結檢查變成`npm run check:docs`並接既有CI；使用Node標準函式庫，不改遊戲runtime。新增script檢查追蹤的本機行內／圖片連結、Git追蹤與大小寫，略過程式圍欄／網址／錨點。已用缺檔、未追蹤、錯誤大小寫與編碼四個負例驗證非零退出，fixture已移除；詳work/doc-links-negative.log。正在完成正例、指定head CI及發布核對，尚不可稱本包完成。
+文件維護包已完成：來源8f097b8、[PR#16](https://github.com/zhai2Liu/taiwan-mahjong/pull/16)合併8ec8b9b。`npm run check:docs`使用Node標準函式庫，83份文件／520個本機連結0問題；四個負例均拒絕、fixture已移除。PR39045918296成功399／38（34.0秒），main39046061000成功399／38（31.8秒）、build117434907375／deploy117435191400成功；三頁及全部引用資源與site相符，八個公開修改檔與合併git blob相符。最新Pages提交8ec8b9b，功能資源仍f994fa2。logs為work/doc-links-negative.log、positive.log、pr-ci.log、main-ci.log、live-assets.log、public.log（皆doc-links-前綴）。
+
+下一包已在隔離瀏覽器重現：對戰／練習保存失敗後有警告與重試按鈕，但beforeunload未攔截，見work/play-leave-before.log及play-leave-audit.mjs。接著補原生離頁提醒，成功存妥後解除；不改牌局、存檔格式或新增自訂離頁視窗。需驗原文保留、取消重載、重試不推進及成功後可正常重載。
 
 完成本包後繼續處理可重現的操作／可及性／維護缺口，先驗證再修正。後五課教材與引擎牌例已備，正式互動整合仍沿前三課試用／修訂順序；不能為消耗額度跳過真人門檻。真人資料只阻擋相應理解／難度／成效與實機結論，不代表整個專案必須停工。
 
