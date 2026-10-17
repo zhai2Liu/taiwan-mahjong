@@ -12,6 +12,7 @@
     "verify:release": "node scripts/verify-release.mjs",
     "test": "npm run check && node --test test/*.test.mjs",
     "test:browser": "npm run build && playwright test",
+    "test:history": "npm run build && node scripts/browser-history.mjs",
     "benchmark:browser": "npm run build && node scripts/browser-baseline.mjs",
     "simulate": "npm run check && node scripts/simulate.mjs",
     "predev": "node scripts/prepare-training.mjs"

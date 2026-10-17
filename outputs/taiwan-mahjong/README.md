@@ -113,6 +113,8 @@ npm run build
 
 發布成功後，用`npm run verify:release -- https://zhai2liu.github.io/taiwan-mahjong/`比對同一來源建置的site/與正式三頁HTML、全部引用JS／CSS的SHA-256。只讀取公開網站，不操作存檔；失敗會非零退出。先確認指定提交的Actions／部署成功，這項核對不取代受影響操作驗收；步驟見[發布指南](DEPLOYMENT.md)。
 
+有已安裝Chrome／Edge時，可跑`npm run test:history -- chrome`或`msedge`，另驗四種保存的真正快取返回與跨頁更新；不是一般CI的重載檢查。方法、結果與限制見[S4.2](S42-ACCESSIBILITY.md)。
+
 瀏覽器核心回歸：首次 `npx playwright install chromium`，再執行 `npm run test:browser`。目前test/e2e案例在桌面／390px各驗一次，結算、練習、分類與檢討另驗320px，使用正式建置、隔離本機4226來源與合成資料；不取代手機／Safari實機或真人試用。CI亦執行，失敗證據機制見[S1.2b](S12B-VALIDATION.md)；範圍見[S2.1](S21-VALIDATION.md)、[S3.1](S31-VALIDATION.md)、[S3.2](S32-VALIDATION.md)、[S3.3](S33-VALIDATION.md)及[S4.2可及性／重讀保留](S42-ACCESSIBILITY.md)，最新項目數及指定提交結果只記[HANDOFF](HANDOFF.md)，不在此重複維護計數；歷史效能基準見[S1.3](S13-VALIDATION.md)。
 
 本輪[練習易用性驗收](M5.2-UX-VALIDATION.md)：集中手牌與預覽、清楚指標、候選點選及窄畫面流程。

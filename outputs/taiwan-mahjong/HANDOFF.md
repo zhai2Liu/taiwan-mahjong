@@ -14,7 +14,7 @@
 
 發布工具回歸包已完成：來源30ee090、[PR#19](https://github.com/zhai2Liu/taiwan-mahjong/pull/19)合併5fc7d79。PR39047870458與main39048017431均400／44（各37.2秒），build117440572410／deploy117440880022成功；正式三頁HTML／8份獨立資源相符，三個公開修改檔與git blob相符。`test/release-check.test.mjs`隨npm test執行，不依賴既有site／外網；驗真CLI子路徑、共用資源、五負例及四錯參數，子程序逾時與自身目錄清理均限定。83文件／525鏈通過，無runtime／依賴改動。logs為work/release-regression-{targeted,tests,pr-ci,main-ci,live,public}.log。
 
-下一包將四模式的真正BFCache跨頁更新檢查整理成具名Chrome／Edge命令。Chrome155.0.8059.80原型四模式均pageshow.persisted=true，舊操作停止／管理保存停用，課程與試讀可明確重讀，其他鍵不變、0pageerror；見work/browser-history-prototype-chrome.log。預設Chromium156 headless shell未進快取；完整Chromium channel在本機spawn UNKNOWN，未改或重裝使用者瀏覽器。故不把CI的一般重載充作快取驗收，不擴全域設定。原型work/browser-history-prototype.mjs，先改成正式相對匯入及標準fileURLToPath、可靠關閉服務，再依次驗Chrome／Edge。
+目前分支codex/browser-history-validation：`npm run test:history -- chrome`／msedge已整理為正式腳本，四模式真BFCache、舊操作停止／保存停用、課程／試讀明確重讀、其他鍵原文及0pageerror均驗。Chrome155.0.8059.80／Edge155.0.4283.62各四條通過，關閉cache的自有負例非零拒絕，成功／失敗後4231與context均關閉。未改全域回歸設定、runtime／依賴／存檔；不把CI headless shell的一般重載當快取驗收。指定提交CI／發布待核對；詳[S42](S42-ACCESSIBILITY.md)，logs在work/browser-history-{chrome,msedge,negative}.log。完整Chromium channel在本機spawn UNKNOWN，未重裝或修改日常瀏覽器。
 
 完成本包後繼續處理可重現的操作／可及性／維護缺口，先驗證再修正。後五課教材與引擎牌例已備，正式互動整合仍沿前三課試用／修訂順序；不能為消耗額度跳過真人門檻。真人資料只阻擋相應理解／難度／成效與實機結論，不代表整個專案必須停工。
 

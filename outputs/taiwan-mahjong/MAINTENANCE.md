@@ -103,6 +103,7 @@ exactPool只接剩餘一般牌的唯一實體ID；publicPool扣自家牌、公�
 | npm run dev -- --port 4183 | 獨立開發／fixture來源，避免覆寫實際遊玩的4173存檔 |
 | npm run preview -- --port 4173 | 預覽已建置site/，修改後須重新build |
 | npm run verify:release -- https://zhai2liu.github.io/taiwan-mahjong/ | 指定提交部署成功後，比對本機site與正式三頁HTML／引用資源，非零退出表示尚未核對通過 |
+| npm run test:history -- chrome | 建置後以已安裝Chrome驗四模式真正快取返回／跨頁更新，另可指定msedge；自開關隔離4231，不計入一般CI回歸 |
 | npm run simulate -- --hands 1000 --matches 3 --seed 20261004 | M1測試策略長模擬，輸出SIMULATION.json；不是正式AI策略驗收 |
 | node scripts/verify-m3.mjs M5.1-SIMULATION.json | 正式策略3完整將驗證，需先check；指定輸出檔名以保留歷史；省略時更新M3-SIMULATION.json，非每次修改必跑 |
 
@@ -111,6 +112,8 @@ test/browser.html與test/runner.html為開發來源工具；browser-fixtures、c
 純文件修改跑`npm run check:docs`，再人工核對命令與現況一致性。檢查器只用Node標準函式庫，從script位置找Git根目錄，涵蓋根README／AGENTS及遊戲、M0、showcase內追蹤的md；略過圍欄程式碼、外部網址及頁內錨點。檢查本機行內／圖片連結的檔案或追蹤目錄，不驗外部網站、標題錨點、參照式或巢狀連結。新增檔先加入Git索引；只存在本機／被忽略的目標也會失敗，避免發布後才斷鏈。與型別／build分開，讓不含.git的原始碼仍可建置；不為此新增Markdown依賴。
 
 發布工具回歸在`test/release-check.test.mjs`，隨`npm test`執行；可單跑`node --test test/release-check.test.mjs`。複製真實CLI到work/內獨立生成目錄、以合成三頁／資源及本機HTTP驗子路徑、共用資源只取一次、內容不同／非200／轉址與錯誤參數；不依賴先有site或外網。清理前核對生成目錄仍在work/，子程序有逾時，原遊戲／正式網址／玩家資料不會被測試改寫。
+
+`scripts/browser-history.mjs`重用既有fixture與保存編碼，在具名Chrome／Edge核對BFCache返回；需實際persisted=true，未進快取即非零退出。其他分頁更新後，舊對戰／練習停止操作，課程／試讀可明確重讀，四類鍵逐一比對。詳[S42](S42-ACCESSIBILITY.md)。預設headless shell的結果不能代替此項；不為此自動安裝或替換日常瀏覽器，CI仍沿原設定。
 
 行為修改跑受影響測試，跨模組或正式交付再跑全套及build；只有AI／回合／續局改動需要相應完整牌局驗證，不反覆長模擬消耗額度。測試失敗先保存重現資料；simulate會把seed、狀態與動作記至工作區work/taiwan-mahjong/。
 
