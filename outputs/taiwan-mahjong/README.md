@@ -8,6 +8,7 @@
 
 - [目前交接與發布狀態](HANDOFF.md)：最新完成、驗證範圍與下一包。
 - [人工回饋清單](HUMAN-FEEDBACK-CHECKLIST.md)：目前需要的新手／熟手／實機回饋，後續評量及本人決定事項。
+- [局後下一步與吃碰回應後解釋](S32-VALIDATION.md)：仲裁後才顯示取得／未取得，關閉保持暫停；同類練習另開分頁，發布狀態依HANDOFF。
 - [產品方向](PRODUCT-DIRECTION.md)、[全面強化企畫](MASTER-IMPROVEMENT-PLAN.md)、[工作包路線](ROADMAP.md)：已採納範圍、依賴與完成條件。
 - [維護指南](MAINTENANCE.md)、[發布與回復](DEPLOYMENT.md)：資料流、修改位置及驗證。
 - [固定桌規](../taiwan-mahjong-m0/RULES.md)、[台灣用詞](LOCAL-TERMS.md)：規則與玩家文字的權威。
@@ -84,9 +85,9 @@ npm run preview -- --port 4173
 
 機率是下一張改善比例，聽牌距離是結構下限，不代表還要摸幾次。練習獨立續存，重載後回練習入口選「繼續上次練習」。切入會暫停對戰，返回後按「繼續牌局」。儲存失敗時請保持頁面開啟，模式切換會暫時受阻。
 
-## 出牌後解釋
+## 打牌／吃碰後解釋
 
-對戰上方「提示」選「出牌後解釋」，先自行出牌再比較候選。出牌成功後牌局暫停；看完關閉視窗，再按「繼續牌局」。目前只解釋打牌；原本即時輔助與不提示仍可選。詳見 [使用與驗收](AFTER-DISCARD-VALIDATION.md)。玩家文字以台灣牌桌說法為主，維護對照見 [用語規範](LOCAL-TERMS.md)。
+對戰上方「提示」選「打牌／吃碰後解釋」，先自行選擇再比較。打牌成功後暫停；有吃碰機會時，吃、碰、過會等正常仲裁完成才暫停解釋。視窗分開說明原選擇、實際是否取得牌、決策前候選差異與門清代價；關閉後自行按「繼續牌局」，已結算則回結算。純過不另彈窗，同類練習另開分頁。詳見[S3.2契約與驗收](S32-VALIDATION.md)及[最初打牌解釋](AFTER-DISCARD-VALIDATION.md)。玩家文字以台灣牌桌說法為主，維護對照見[用語規範](LOCAL-TERMS.md)。
 
 ## 開發與驗證
 
@@ -102,7 +103,7 @@ npm run build
 
 `npm test`編譯後執行Node內建測試；`npm run build`先編譯再產生正式site/。dist/供測試匯入，test/頁面與fixture不屬正式遊玩入口。依改動選擇驗證範圍，詳見維護指南，不為文件或CSS細節重跑長模擬。
 
-瀏覽器核心回歸：首次 `npx playwright install chromium`，再執行 `npm run test:browser`。七條路徑在桌面／390px 各驗一次，結算、練習與分類試讀另驗320px，使用正式建置、隔離的本機4226來源與合成資料；不取代手機／Safari實機或真人試用。CI亦執行，失敗證據機制見[S1.2b](S12B-VALIDATION.md)；目前十四項含前三課、保存故障與四能力分類，見[S2.1](S21-VALIDATION.md)和[S3.1](S31-VALIDATION.md)；歷史效能基準見[S1.3](S13-VALIDATION.md)。
+瀏覽器核心回歸：首次 `npx playwright install chromium`，再執行 `npm run test:browser`。十條路徑在桌面／390px各驗一次，結算、練習、分類與檢討另驗320px，使用正式建置、隔離本機4226來源與合成資料；不取代手機／Safari實機或真人試用。CI亦執行，失敗證據機制見[S1.2b](S12B-VALIDATION.md)；目前二十項範圍見[S2.1](S21-VALIDATION.md)、[S3.1](S31-VALIDATION.md)與[S3.2](S32-VALIDATION.md)；歷史效能基準見[S1.3](S13-VALIDATION.md)。
 
 本輪[練習易用性驗收](M5.2-UX-VALIDATION.md)：集中手牌與預覽、清楚指標、候選點選及窄畫面流程。
 

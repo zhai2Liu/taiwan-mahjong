@@ -83,6 +83,8 @@
 .review-chosen { border: 2px solid #32755a; }
 .review-tag { color: #286046; font-weight: 700; }
 .review-limit { font-size: .9rem; line-height: 1.65; }
+.review-practice { display: flex; flex-wrap: wrap; gap: 10px; margin-block: 16px; }
+.review-practice p { flex-basis: 100%; margin: 0; }
 .review-tiles { display: flex; flex-wrap: wrap; gap: 3px; margin-block: 12px; }
 .review-context, .review-more { padding-block: 12px; }
 .review-panel summary { cursor: pointer; font-weight: 700; }

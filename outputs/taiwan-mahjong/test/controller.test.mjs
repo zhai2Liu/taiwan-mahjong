@@ -11,7 +11,7 @@ import * as reviewStore from '../dist/review-store.js';
 import { createReviewRecorder } from '../dist/review-recorder.js';
 import * as handReview from '../dist/hand-review.js';
 import { captureDecision } from '../dist/decision-snapshot.js';
-import { fixture, run, WIN } from './fixtures.mjs';
+import { fixture, run, discard, WIN, W02 } from './fixtures.mjs';
 import { kindOf } from '../dist/tiles.js';
 
 const key = 'tw16:TW16-CLASSIC-v1:save';
@@ -657,4 +657,64 @@ test('事後解釋或保存失敗不撤銷已生效出牌，也不自動行牌',
   if(faults.explainError) {assert.match(app.view.coachNotice,/出牌已生效/);assert.notEqual(app.raw(),raw);}
   else {assert.equal(app.raw(),raw);assert.equal(app.view.canRetrySave,true);assert.equal(app.reviewViews.length,1);assert.match(app.reviewViews[0].saveWarning,/尚未儲存/);}
  }
+});
+
+const claimSession = (winner = false) => ({ schemaVersion: 1, aiRandom: [17, 29, 43],
+ game: discard(fixture({ turn: 3, hands: winner ? { 0: '1345m67m123p456p789s1z', 1: W02, 3: '2m' }
+  : { 0: '22s123m456m123p11z347s', 3: '2s' } }), 3, winner ? '2m' : '2s') });
+const finishClaim = app => { for (let i = 0; i < 6 && app.timers.size; i++) app.tick(); };
+
+test('吃碰後模式等仲裁才暫停、只記一次，過期再按不重做；回到結算可核對原吃牌被胡截走', async () => {
+ for (const winner of [false, true]) {
+  const app = controller(sessions.encodeSession(claimSession(winner)), true, { coachRaw: 'after' }); app.send({ type: 'resume' });
+  const before = app.view.game, intent = before.legalActions.find(a => a.type === (winner ? 'CHI' : 'PON'));
+  app.send({ type: 'intent', intent, version: before.version });
+  assert.equal(app.view.game.phase, 'awaitClaims'); assert.equal(app.view.paused, false); assert.equal(app.reviewViews.length, 0);
+  finishClaim(app);
+  assert.equal(app.view.paused, true); assert.equal(app.timers.size, 0); assert.equal(app.reviewViews.length, 1);
+  assert.equal(app.reviewViews[0].context, 'claim');
+  const card = app.reviewViews[0].review.cards[0];
+  assert.equal(card.snapshot.observation.version, before.version); assert.equal(card.claimResolution.action, winner ? 'win' : 'pon');
+  assert.equal(app.view.game.phase, winner ? 'handResult' : 'awaitDiscard');
+  const saved = app.raw(); app.send({ type: 'intent', intent, version: before.version });
+  assert.equal(app.raw(), saved); assert.equal(app.reviewViews.length, 1);
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(reviewStore.readReviewArchive({ getItem: () => app.reviewRaw() }).records.length, 1);
+  if (winner) { app.send({ type: 'review-open' }); assert.equal(app.reviewViews[1].review.cards[0].claimResolution.action, 'win'); }
+ }
+});
+
+test('吃碰解釋／保存失敗保留已生效仲裁與暫停，不變成「未套用」或重複回應', () => {
+ for (const failure of [{ explainError: true }, { gameWrite: Error('full') }]) {
+  const raw = sessions.encodeSession(claimSession()), app = controller(raw, true, { ...failure, coachRaw: 'after' });
+  app.send({ type: 'resume' }); const o = app.view.game;
+  app.send({ type: 'intent', intent: o.legalActions.find(a => a.type === 'PON'), version: o.version }); finishClaim(app);
+  assert.equal(app.view.game.self.melds.length, 1); assert.equal(app.view.paused, true); assert.equal(app.timers.size, 0);
+  assert.doesNotMatch(app.view.notice, /未套用/);
+  if (failure.explainError) { assert.match(app.view.coachNotice, /回應已生效/); assert.equal(app.reviewViews.length, 0); }
+  else { assert.equal(app.raw(), raw); assert.equal(app.view.canRetrySave, true); assert.match(app.reviewViews[0].saveWarning, /尚未儲存/); }
+ }
+});
+
+test('切換提示、他頁改檔或重載，不留下過期吃碰事後解釋', () => {
+ for (const change of ['mode', 'remote', 'reload']) {
+  const app = controller(sessions.encodeSession(claimSession()), true, { coachRaw: 'after' }); app.send({ type: 'resume' });
+  const o = app.view.game; app.send({ type: 'intent', intent: o.legalActions.find(a => a.type === 'PON'), version: o.version });
+  if (change === 'mode') { app.send({ type: 'coach-mode', value: 'off' }); finishClaim(app); assert.equal(app.reviewViews.length, 0); }
+  else if (change === 'remote') { const raw = app.raw(); app.remote(raw, true); assert.equal(app.timers.size, 0); assert.equal(app.reviewViews.length, 0); }
+  else { const resumed = controller(app.raw(), true, { coachRaw: 'after' }); resumed.send({ type: 'resume' }); finishClaim(resumed); assert.equal(resumed.reviewViews.length, 0); }
+ }
+});
+
+test('有吃碰可選時按過也待仲裁解釋；純過不新增視窗', () => {
+ const app = controller(sessions.encodeSession(claimSession()), true, { coachRaw: 'after' }); app.send({ type: 'resume' });
+ let o = app.view.game; app.send({ type: 'intent', intent: o.legalActions.find(a => a.type === 'PASS'), version: o.version });
+ assert.equal(app.reviewViews.length, 0); finishClaim(app);
+ assert.equal(app.view.paused, true); assert.equal(app.reviewViews[0].review.cards[0].snapshot.chosen.type, 'PASS');
+ assert.equal(app.reviewViews[0].review.cards[0].claimResolution.seat, null);
+ const simple = { schemaVersion: 1, aiRandom: [17, 29, 43], game: discard(fixture({ turn: 3, hands: { 0: '123m456m123p456p789s1z', 3: '7z' } }), 3, '7z') };
+ const pure = controller(sessions.encodeSession(simple), true, { coachRaw: 'after' }); pure.send({ type: 'resume' });
+ o = pure.view.game; assert.ok(o.legalActions.every(a => a.type === 'PASS'));
+ pure.send({ type: 'intent', intent: o.legalActions[0], version: o.version }); finishClaim(pure);
+ assert.equal(pure.reviewViews.length, 0); assert.equal(pure.view.paused, false);
 });
