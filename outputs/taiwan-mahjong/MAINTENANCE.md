@@ -14,6 +14,8 @@ README是使用與開發總入口；HANDOFF只記目前進度、風險與下一�
 
 ## 修改位置
 
+S3.3試讀續答：src/training-draft.ts管新鍵tw16:trial:v1，封套schema1存schema3作答及題號／分類，手動寫入、同版自動讀取。src/trial-record.ts是無I/O的共用格式驗證；review-trial.mjs用Node24原生型別移除直接讀它，不能加入只能編譯後讀取的執行期TS語法或瀏覽器依賴。CLI仍讀schema1／2／3，輸出reportVersion2；舊曝光未知、版本不符人工核對。Web Locks ifAvailable＋expectedRaw，保存前捕捉報告，忙碌／缺鎖／跨頁／壞檔／配額失敗不覆寫，明確清除只動此鍵。本機原檔封套與一般作答匯出不同，接收依TRIAL-REVIEW。改動驗training-draft、training-page、trial-review及e2e/trial-save；[契約與證據](S33-VALIDATION.md)。下方S1.1等段落保留當時版本，離頁防護現以本機確認保存且未修改為解除條件，下載本身不解除。
+
 S3.2：hand-review.ts從原決策快照算證據，claimResolution另對同局公開打牌／牌組／結算核對仲裁，不把after資料混進evidence。main只暫存待解釋快照，RESOLVE後暫停／開視窗，失敗不撤銷已生效動作；重載不續存待解釋，但本局局後檢討仍可用原快照與當前公開結果。hand-review-view.ts的claim視窗及靜態練習能力表，連到training.ts白名單skill參數並另開頁。存檔版本不變；改這些流程驗controller、review-claims與e2e/review-followup；[完整契約／限制](S32-VALIDATION.md)。
 
 S3.1九題試讀：兩份TRAINING JSON負責題幹／答案／牌面／範圍；scripts/training-content.mjs負責四能力導引、固定九題允許名單與完整內容雜湊，生成器及review-trial同讀。不要直接改生成的training-data.ts。畫面分類只改瀏覽順序，drafts仍按原題位置保留，匯出必含所有題；舊schema2版本不符轉人工，schema1保留缺完整版本警告。新增分類回歸在test/e2e/training-guidance.spec.js，詳見[S3.1](S31-VALIDATION.md)。修改題量先處理允許名單／題族與舊匯出相容，不另外散落九題常數；人類資料和合成檔分開，接收見[審閱流程](TRIAL-REVIEW.md)。

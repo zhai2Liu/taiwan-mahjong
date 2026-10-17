@@ -15,7 +15,7 @@
 | 狀態 | 範圍 |
 |---|---|
 | **已上線** | 完整對戰、台型與台數明細、本機續局、純牌效練習、六步操作導覽、即時輔助／打牌與吃碰後解釋、局後最多三筆檢討與同類練習入口 |
-| **可試讀原型** | 九道情境題，四類能力導引、分類切題保留作答；先作答再看推導、回饋與作答匯出、離頁提醒；不計整體牌技分數 |
+| **可試讀原型** | 九道情境題，四類能力導引、手動本機保存續答；先作答再看推導、回饋與作答匯出、曝光自陳與未存離頁提醒；不計整體牌技分數 |
 | **入門試用版** | 前三課認牌／摸打補花／組牌，固定示例與換例、獨立本機進度；已發布，限定驗收見HANDOFF |
 | **後續工作** | 新手第4–8課、前三課真人試用、題族／難度校準、正式無提示評量與成效驗證 |
 | **離線研究** | 人性化 AI、牌風與阻莊；現行正式電腦策略尚未整合人格 |
@@ -101,7 +101,7 @@ npm run build
 npm run preview -- --port 4173
 ```
 
-開發可用 `npm run dev -- --port 4183`。Node 內建測試涵蓋規則、牌效、牌權、存檔、計台、資訊邊界及控制器；Playwright 驗證六條核心操作在桌面與窄畫面的正式建置。首次執行先用 `npx playwright install chromium` 安裝測試瀏覽器，再用 `npm run test:browser`。測試使用隔離存檔與合成作答，不操作玩家資料。已安裝 Chrome／Edge 的操作與效能基準見 [S1.3](outputs/taiwan-mahjong/S13-VALIDATION.md)。
+開發可用 `npm run dev -- --port 4183`。Node 內建測試涵蓋規則、牌效、牌權、存檔、計台、資訊邊界及控制器；Playwright 驗證十三條核心操作在桌面與窄畫面的正式建置。首次執行先用 `npx playwright install chromium` 安裝測試瀏覽器，再用 `npm run test:browser`。測試使用隔離存檔與合成作答，不操作玩家資料。已安裝 Chrome／Edge 的操作與效能基準見 [S1.3](outputs/taiwan-mahjong/S13-VALIDATION.md)。
 
 指向 main 的所有 PR 都執行型別／測試／建置與瀏覽器回歸，PR 不發布網站；main 來源變更通過後才發布。目前沒有分支保護強制合併門檻。[PR 檢查](outputs/taiwan-mahjong/S12A-VALIDATION.md) · [瀏覽器回歸與重現方式](outputs/taiwan-mahjong/S12B-VALIDATION.md)。
 

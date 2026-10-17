@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 import ts from 'typescript';
 import {trainingQuestions,trainingSkills,trainingContentRevision} from '../dist/training-data.js';
+import * as trainingDraft from '../dist/training-draft.js';
 
 test('試讀包只有九道已複核訓練題，保留候選與額外資料不進包',()=>{
  const all=['TRAINING-DRAFTS.json','TRAINING-REVIEW-CANDIDATES.json'].flatMap(f=>JSON.parse(fs.readFileSync(new URL('../'+f,import.meta.url),'utf8')).cases);
@@ -33,9 +34,9 @@ test('試讀控制與回饋：揭示界線、草稿保留、只匯出意見及�
  const click=text=>find('button',text).listeners.click();
  const submit=()=>find('form').listeners.submit({preventDefault(){}});
  const source=ts.transpileModule(fs.readFileSync(new URL('../src/training.ts',import.meta.url),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
- vm.runInNewContext(source,{exports:{},require:name=>name==='./tile-face.js'?{tileFace:()=>new Element('svg')}:{trainingQuestions,trainingSkills,trainingContentRevision},Blob,
+ vm.runInNewContext(source,{exports:{},require:name=>name==='./training-draft.js'?trainingDraft:name==='./tile-face.js'?{tileFace:()=>new Element('svg')}:{trainingQuestions,trainingSkills,trainingContentRevision},Blob,
   URL:{createObjectURL(value){if(downloadFailure)throw Error('blocked');blob=value;return 'blob:trial';},revokeObjectURL(){}},
-  window:{addEventListener(type,fn){if(type==='pageshow')return;assert.equal(type,'beforeunload');leaveHandlers.add(fn);},removeEventListener(type,fn){assert.equal(type,'beforeunload');leaveHandlers.delete(fn);}},
+  window:{addEventListener(type,fn){if(type==='pageshow'||type==='storage')return;assert.equal(type,'beforeunload');leaveHandlers.add(fn);},removeEventListener(type,fn){assert.equal(type,'beforeunload');leaveHandlers.delete(fn);}},
   setTimeout:fn=>fn(),document:{querySelector:()=>root,createElement:tag=>new Element(tag)}});
  assert.equal(leaveHandlers.size,0);
  click('下載全部試讀回饋');assert.equal(downloaded,undefined);
@@ -62,8 +63,8 @@ test('試讀控制與回饋：揭示界線、草稿保留、只匯出意見及�
  assert.equal(root.querySelector('#trial-feedback').value,firstFeedback.value);
  downloadFailure=false;click('匯出作答紀錄（含理由與回饋）');
  assert.equal(downloaded.download,'taiwan-mahjong-trial-answers.json');
- const answers=JSON.parse(await blob.text());assert.equal(answers.schemaVersion,2);assert.equal(answers.questions.length,9);
- assert.equal(answers.reasonAssessment,'not-reviewed');assert.equal(answers.schemaVersion,2);assert.equal(answers.contentRevision,trainingContentRevision);
+ const answers=JSON.parse(await blob.text());assert.equal(answers.schemaVersion,3);assert.equal(answers.questions.length,9);
+ assert.equal(answers.reasonAssessment,'not-reviewed');assert.equal(answers.schemaVersion,3);assert.equal(answers.contentRevision,trainingContentRevision);
  assert.equal(answers.questions[0].status,'submitted-and-revealed');
  assert.deepEqual(answers.questions[0].selected,trainingQuestions[0].choices);
  assert.equal(answers.questions[0].reason,reason.value);assert.equal(answers.questions[1].feedback,secondFeedback.value);
@@ -99,9 +100,9 @@ test('離頁防護：空白無提醒、只有回饋或理由也保護、取消�
  }
  const root=new Element('root');
  const source=ts.transpileModule(fs.readFileSync(new URL('../src/training.ts',import.meta.url),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
- vm.runInNewContext(source,{exports:{},require:name=>name==='./tile-face.js'?{tileFace:()=>new Element('svg')}:{trainingQuestions,trainingSkills,trainingContentRevision},Blob,
+ vm.runInNewContext(source,{exports:{},require:name=>name==='./training-draft.js'?trainingDraft:name==='./tile-face.js'?{tileFace:()=>new Element('svg')}:{trainingQuestions,trainingSkills,trainingContentRevision},Blob,
   URL:{createObjectURL(){return 'blob:trial';},revokeObjectURL(){}},setTimeout:fn=>fn(),
-  window:{addEventListener(type,fn){if(type==='pageshow')return;assert.equal(type,'beforeunload');handlers.add(fn);},removeEventListener(type,fn){assert.equal(type,'beforeunload');handlers.delete(fn);}},
+  window:{addEventListener(type,fn){if(type==='pageshow'||type==='storage')return;assert.equal(type,'beforeunload');handlers.add(fn);},removeEventListener(type,fn){assert.equal(type,'beforeunload');handlers.delete(fn);}},
   document:{querySelector:()=>root,createElement:tag=>new Element(tag)}});
  const field=id=>root.querySelector('#'+id);
  const input=(id,value)=>{field(id).value=value;field(id).listeners.input();};
@@ -131,8 +132,8 @@ test('返回牌室：空白與另開分頁不阻擋，取消保留內容，確�
  }
  const root=new Element('root'), link=new Element('a');link.href='https://example.test/taiwan-mahjong/';
  const source=ts.transpileModule(fs.readFileSync(new URL('../src/training.ts',import.meta.url),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
- vm.runInNewContext(source,{exports:{},require:name=>name==='./tile-face.js'?{tileFace:()=>new Element('svg')}:{trainingQuestions,trainingSkills,trainingContentRevision},
-  window:{addEventListener(type,fn){if(type==='pageshow')pageShow=fn;else handlers.add(fn);},removeEventListener(type,fn){handlers.delete(fn);},location:{assign(url){navigation=url;}}},
+ vm.runInNewContext(source,{exports:{},require:name=>name==='./training-draft.js'?trainingDraft:name==='./tile-face.js'?{tileFace:()=>new Element('svg')}:{trainingQuestions,trainingSkills,trainingContentRevision},
+  window:{addEventListener(type,fn){if(type==='pageshow')pageShow=fn;else if(type!=='storage')handlers.add(fn);},removeEventListener(type,fn){handlers.delete(fn);},location:{assign(url){navigation=url;}}},
   setTimeout:fn=>fn(),document:{querySelector:selector=>selector==='#training'?root:link,createElement:tag=>new Element(tag),body:{append(){}}}});
  const event=(extras={})=>({button:0,prevented:false,preventDefault(){this.prevented=true;},...extras});
  let click=event();link.listeners.click(click);assert.equal(click.prevented,false);assert.equal(made.filter(x=>x.tag==='dialog').length,0);

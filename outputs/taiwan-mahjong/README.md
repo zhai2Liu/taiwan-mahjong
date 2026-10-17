@@ -13,7 +13,7 @@
 - [維護指南](MAINTENANCE.md)、[發布與回復](DEPLOYMENT.md)：資料流、修改位置及驗證。
 - [固定桌規](../taiwan-mahjong-m0/RULES.md)、[台灣用詞](LOCAL-TERMS.md)：規則與玩家文字的權威。
 
-- [決策題試讀](https://zhai2liu.github.io/taiwan-mahjong/training.html)：9題草案，牌效／吃碰取捨／安全牌／莊家連莊四類導引；切換保留本頁作答，匯出全部九題，先作答再看推導，不計牌技總分；[目前功能與版本](S31-VALIDATION.md)、[最初驗收](L3B0-TRIAL-VALIDATION.md)。
+- [決策題試讀](https://zhai2liu.github.io/taiwan-mahjong/training.html)：9題草案，牌效／吃碰取捨／安全牌／莊家連莊四類導引；手動保存後下次同版續答，匯出全部九題，先作答再看推導，不計牌技總分；[續答與曝光](S33-VALIDATION.md)、[內容版本](S31-VALIDATION.md)、[最初驗收](L3B0-TRIAL-VALIDATION.md)。
 - [新手試用任務與紀錄](BEGINNER-TRIAL.md)：前三課T0–T5與觀察模板已備妥，真人驗收仍待。
 
 <details>
@@ -93,7 +93,7 @@ npm run preview -- --port 4173
 
 決策題匯出檔的接收、格式檢查與人工審閱方式見 [試讀紀錄審閱](TRIAL-REVIEW.md)。本機工具不自動回傳 GitHub，也不將理由判分。
 
-試讀仍只保留本頁草稿；選項、理由或回饋有內容時啟用瀏覽器離頁提醒。下載後修改會提示再次匯出；交由瀏覽器下載不保證檔案已存好，因此仍保留離頁提醒。請先確認檔案，手機關閉／瀏覽器中斷可能無法提醒。S1.1範圍見[驗收](S01-S11-VALIDATION.md)。
+試讀預設不寫入作答；按「保存作答到此瀏覽器」後，下次自動載入同版紀錄，另有管理／確認清除與原檔下載。未存修改啟用離頁提醒；確認保存且內容未變時可直接離頁。一般匯出不保證下載已落盤，仍保留未存提醒；網頁不會自動交回作答。先前是否見題為自陳，預設未知、揭示後鎖定；有類別導引，不是無提示評量。共用裝置可清除本機作答，清除瀏覽器資料或換來源無法保證找回。見[S3.3](S33-VALIDATION.md)及[審閱流程](TRIAL-REVIEW.md)；歷史離頁設計見[S1.1](S01-S11-VALIDATION.md)。
 
 ```powershell
 npm run dev -- --port 4183
@@ -103,7 +103,7 @@ npm run build
 
 `npm test`編譯後執行Node內建測試；`npm run build`先編譯再產生正式site/。dist/供測試匯入，test/頁面與fixture不屬正式遊玩入口。依改動選擇驗證範圍，詳見維護指南，不為文件或CSS細節重跑長模擬。
 
-瀏覽器核心回歸：首次 `npx playwright install chromium`，再執行 `npm run test:browser`。十條路徑在桌面／390px各驗一次，結算、練習、分類與檢討另驗320px，使用正式建置、隔離本機4226來源與合成資料；不取代手機／Safari實機或真人試用。CI亦執行，失敗證據機制見[S1.2b](S12B-VALIDATION.md)；目前二十項範圍見[S2.1](S21-VALIDATION.md)、[S3.1](S31-VALIDATION.md)與[S3.2](S32-VALIDATION.md)；歷史效能基準見[S1.3](S13-VALIDATION.md)。
+瀏覽器核心回歸：首次 `npx playwright install chromium`，再執行 `npm run test:browser`。十三條路徑在桌面／390px各驗一次，結算、練習、分類與檢討另驗320px，使用正式建置、隔離本機4226來源與合成資料；不取代手機／Safari實機或真人試用。CI亦執行，失敗證據機制見[S1.2b](S12B-VALIDATION.md)；目前二十六項範圍見[S2.1](S21-VALIDATION.md)、[S3.1](S31-VALIDATION.md)、[S3.2](S32-VALIDATION.md)與[S3.3](S33-VALIDATION.md)；歷史效能基準見[S1.3](S13-VALIDATION.md)。
 
 本輪[練習易用性驗收](M5.2-UX-VALIDATION.md)：集中手牌與預覽、清楚指標、候選點選及窄畫面流程。
 
