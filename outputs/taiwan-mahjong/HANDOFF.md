@@ -4,7 +4,9 @@
 
 ## 現況與下一步
 
-S4.2新手重讀保留本機完成、待PR：基線679cf5d、分支codex/learning-read-preservation。原版read-error／壞JSON／未知版本三項桌面回歸先重現清空；修後399 Node／check／build、Chromium38項（31.2秒）、Chrome／Edge受影響各6項通過。loadProgress讀取且驗證成功才替換progress與dirty，失敗保留本頁紀錄及beforeunload提醒、停止覆寫；成功重讀才採用舊保存，其他保存原文不變。未改格式／鍵／規則／AI。詳[S42](S42-ACCESSIBILITY.md)及BEGINNER-LEARNING；logs work/s42-read-before-tests.log、s42-read-before-evidence/、s42-read-targeted.log、s42-read-tests.log、s42-read-build.log、s42-read-browser.log、s42-read-chrome.log、s42-read-msedge.log、s42-learning-read-before／after.log。帳戶31%→35%，同窗口resetsAt1792266558，非精確token。持續目標有效，4230仍在；下一獨立維護包把反覆手動的md連結檢查收斂為標準命令，已讀查77份／468鏈0失效（work/doc-links-audit.json）。
+S4.2新手重讀保留已發布：來源8fe4564、[PR#15](https://github.com/zhai2Liu/taiwan-mahjong/pull/15)合併f994fa2。PR Actions39045048994成功399／38（40.1秒），main39045246989成功399／38（35.2秒）、build117432567895／deploy117432905099成功。正式三頁200及引用4／3／4份JS／CSS SHA-256與site相同；正式隔離context重現先寫入失敗再讀取失敗，核對本頁進度／原文保留及0pageerror。八個公開檔案雜湊與f994fa2 git blob相符。詳[S42](S42-ACCESSIBILITY.md)及BEGINNER-LEARNING；本機Chrome／Edge受影響各6項通過，沒有改三課格式／鍵／規則／AI。
+
+B包logs：work/s42-read-before-tests.log、s42-read-before-evidence/、s42-read-targeted.log、s42-read-tests.log、s42-read-build.log、s42-read-browser.log、s42-read-chrome.log、s42-read-msedge.log、s42-read-pr-ci.log、s42-read-main-ci.log、s42-read-public.log、s42-read-live-assets.log、s42-read-live-ui.log、s42-learning-read-before／after.log。帳戶31%→35%，同窗口resetsAt1792266558，非精確token；持續目標有效，4230仍在（session80087）。下一獨立維護包把反覆手動的md連結檢查收斂為標準命令；已讀查含M0的82份／487鏈、全部在Git追蹤且0失效，原型work/check-doc-links-prototype.mjs。
 
 S4.2牌面／強制色彩修正已發布：來源69439e8、[PR#14](https://github.com/zhai2Liu/taiwan-mahjong/pull/14)合併1f91996。PR Actions39044088421成功399／32（36.7秒），main39044234956成功399／32（29.3秒）、build117429668346／deploy117429929423成功。正式三頁200、引用4／3／4份JS／CSS SHA-256與site相同；正式隔離Chrome系context驗海底圖片名稱、暗槓遮罩、強制色彩雙線選取、原牌局保存不變及0pageerror。九個公開檔案雜湊與1f91996 git blob相符。限定範圍見[S42](S42-ACCESSIBILITY.md)，本機Chrome155.0.8059.80及Edge155.0.4283.62各6項通過；尚無手機／Safari／真人輔具驗收。
 
@@ -60,10 +62,11 @@ S2.4腳本／附錄準備及發布核對已完成，下一包為S4.2桌面可及
 | S2.3準備 | 54d9e11／aa02c78，[PR#12](https://github.com/zhai2Liu/taiwan-mahjong/pull/12) | PR39039769390成功391／26（29.5秒）；main39039947228成功391／26（29.7秒），部署成功且三頁資源相符 |
 | S2.4準備 | 7f7e291／36aa912，[PR#13](https://github.com/zhai2Liu/taiwan-mahjong/pull/13) | PR39042980660成功399／26（34.8秒）；main39043175446成功399／26（33.0秒），部署及三頁資源通過 |
 | S4.2牌面／強制色彩 | 69439e8／1f91996，[PR#14](https://github.com/zhai2Liu/taiwan-mahjong/pull/14) | PR39044088421成功399／32（36.7秒）；main39044234956成功399／32（29.3秒），正式資源／限定UI通過 |
+| S4.2重讀保留 | 8fe4564／f994fa2，[PR#15](https://github.com/zhai2Liu/taiwan-mahjong/pull/15) | PR39045048994成功399／38（40.1秒）；main39045246989成功399／38（35.2秒），正式資源／讀取故障通過 |
 
-八個PR均已附本chat。PR的Pages上傳／deploy skipped，無Pages產物；沒有外部真人程式審查或分支保護修改。不要只拿舊CI當新變更證據。
+九個PR均已附本chat。PR的Pages上傳／deploy skipped，無Pages產物；沒有外部真人程式審查或分支保護修改。不要只拿舊CI當新變更證據。
 
-正式站：https://zhai2liu.github.io/taiwan-mahjong/；origin：https://github.com/zhai2Liu/taiwan-mahjong.git。S3.3正式index／training／learn HTTP200、全部4／3／4份JS／CSS SHA-256與本機相符；S5.2及本輪S2.3準備部署後再核對仍未變。最新index-QYDJZATp.js／index-8F0VuNEV.css、view-BptEx-mj.js、learn-CbiWUkPF.js／learn-s-i9bbyn.css，training-vkOYxEaA.js未變。
+正式站：https://zhai2liu.github.io/taiwan-mahjong/；origin：https://github.com/zhai2Liu/taiwan-mahjong.git。S3.3正式index／training／learn HTTP200、全部4／3／4份JS／CSS SHA-256與本機相符；S5.2及本輪S2.3準備部署後再核對仍未變。最新index-QYDJZATp.js／index-8F0VuNEV.css、view-BptEx-mj.js、learn-By-3MGNT.js／learn-s-i9bbyn.css，training-vkOYxEaA.js未變。
 
 ## 驗證範圍與資料契約
 
