@@ -52,7 +52,7 @@ let practiceBlocked = false;
 // ponytail: waiting explanations are page-local; persisted replay requires a separate versioned archive contract.
 let pendingClaimReview: DecisionSnapshot | null = null;
 const reviews = createReviewRecorder({ getItem: key => localStorage.getItem(key), setItem: (key, value) => localStorage.setItem(key, value) },
-  () => { if (mode === 'game') updateReviewStatus(root, reviews.status(), send); });
+  () => { syncSaveLeaveGuard(); if (mode === 'game') updateReviewStatus(root, reviews.status(), send); });
 try {
   practiceRaw = localStorage.getItem(PRACTICE_KEY);
   if (practiceRaw !== null) {
@@ -93,7 +93,14 @@ function needsAutomation(): boolean {
   const game = session.game;
   return legalActions(game, 'engine').length > 0 || (!legalActions(game, 0).length && ([1, 2, 3] as const).some(s => legalActions(game, s).length));
 }
+// ponytail: native warnings cannot guarantee protection against mobile closure or a browser crash; retry remains explicit.
+function warnUnsavedPlay(event: BeforeUnloadEvent): void { event.preventDefault(); event.returnValue = 'true'; }
+function syncSaveLeaveGuard(): void {
+  window.removeEventListener('beforeunload', warnUnsavedPlay);
+  if (saveFailed || practiceSaveFailed || reviews.status().pending) window.addEventListener('beforeunload', warnUnsavedPlay);
+}
 function paint(): void {
+  syncSaveLeaveGuard();
   const screen = ++rendered;
   if (mode === 'practice') {
     renderPractice(root, practice, practiceNotice, practiceSaved !== null, practiceBlocked, command => { if (screen === rendered) send(command); }, !!practice && !practiceBlocked && practiceSaveFailed);

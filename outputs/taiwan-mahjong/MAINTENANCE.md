@@ -30,6 +30,8 @@ S4.2牌面語意／選取：[限定驗收](S42-ACCESSIBILITY.md)。共用view.ti
 
 S4.2重讀保留：learning.loadProgress先驗候選原文才替換記憶體，讀取錯誤／壞檔／未知版保留progress及dirty離頁提醒並blocked；不在重讀按鈕先清空。learning.spec.js核對三種故障、取消離頁與修復後重讀；詳同一份S42限定驗收，沒有改三課格式或把未知檔套為有效進度。
 
+S4.2遊玩離頁：main.syncSaveLeaveGuard以saveFailed／practiceSaveFailed／reviews.status().pending啟閉原生beforeunload，paint及檢討非同步通知都須同步。不能只在目前模式保存成功就解除其他類未存內容，也不在離頁中改寫資料。play-save.spec.js驗三類失敗、真實取消重載、明確重試／解除與各鍵隔離；限制與重現見[S42](S42-ACCESSIBILITY.md)。
+
 S1.3：結算固定底部用scroll-padding保護焦點，新增控制時先重新驗高度；結算回歸含320px命中檢查。該包四條共八項，最新範圍以README及當輪驗收為準；可選已安裝Chrome／Edge。`npm run benchmark:browser -- chrome`／msedge只作同場景量測，方法與支援界線見[S13](S13-VALIDATION.md)。不為較慢單筆直接引入worker／全域快取。
 
 S1.2b：`test/e2e/core.spec.js`與`playwright.config.js`管理真實瀏覽器核心路徑，後續另擴練習、教學與分類。改出牌解釋、結算／續局或試讀匯出／離頁時，用`npm run test:browser`核對正式建置；首次安裝Chromium，最初步驟／隔離／未涵蓋範圍見[S12B](S12B-VALIDATION.md)，最新範圍見README。CI在既有build內執行，不改Pages權限；失敗證據保留七天。新合法動作／故障仍依原規則與控制器測試，不將端到端檢查當完整覆蓋。
