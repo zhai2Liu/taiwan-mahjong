@@ -95,11 +95,15 @@ function rules(): HTMLDetailsElement {
 function header(model: ViewModel, send: Send): HTMLElement {
   const head = node('header', 'site-header');
   const brand = node('div', 'brand');
-  const mark = node('span', 'brand-mark', '雀'); mark.setAttribute('aria-hidden', 'true');
-  const text = node('div'); text.append(node('h1', '', '台灣十六張'), node('p', '', '一張一刻，好好打牌。'));
+  const mark = node('span', 'brand-mark', model.game ? '雀' : '青'); mark.setAttribute('aria-hidden', 'true');
+  const text = node('div'); text.append(node('h1', '', model.game ? '台灣十六張' : '青竹牌室'), node('p', '', model.game ? '一張一刻，好好打牌。' : '台灣十六張・學習與決策練習'));
   brand.append(mark, text); head.append(brand);
-  const tools = node('div', 'header-tools');
-  tools.append(pill('本地公平 AI', 'fair-pill'));
+  const tools = node(model.game ? 'div' : 'nav', 'header-tools');
+  if (model.game) tools.append(pill('本地公平 AI', 'fair-pill'));
+  else {
+    tools.setAttribute('aria-label', '牌室導覽');
+    const routes = node('a', 'home-nav-link', '選擇玩法'); routes.href = '#home-routes'; tools.append(routes);
+  }
   tools.append(button('新手教學', 'tutorial', () => send({ type: 'tutorial' }), 'button button-quiet'));
   if (model.game) {
     const coachLabel = node('label', 'speed-label', '提示');
@@ -125,27 +129,38 @@ function header(model: ViewModel, send: Send): HTMLElement {
 
 function home(model: ViewModel, send: Send): HTMLElement {
   const main = node('main', 'welcome');
+  if (model.hasSave) {
+    const resume = node('section', 'home-resume'); resume.setAttribute('aria-label', '繼續遊玩');
+    const text = node('div'); text.append(node('strong', '', '上次的牌局還在，接著打。'), node('p', '', '繼續此瀏覽器保存的進度；也可以往下選擇其他玩法。'));
+    resume.append(text, button('繼續上次牌局', 'resume', () => send({ type: 'resume' }), 'button home-action home-action-primary', model.busy)); main.append(resume);
+  }
   const hero = node('section', 'welcome-hero');
   const copy = node('div', 'welcome-copy');
-  const title = node('h2', '', '牌桌已備好，\n就等你入座。'); title.tabIndex = -1; title.dataset.focus = 'home-entry';
-  copy.append(node('p', 'eyebrow', 'TAIWAN MAHJONG · 十六張'), title, node('p', 'welcome-description', '一位玩家，三位電腦。\n熟悉的台灣桌規，專心打一場好牌。'));
-  const actions = node('div', 'welcome-actions');
-  const learn = node('a', 'button button-secondary button-large', '從零學台灣麻將（前三課）'); learn.href = './learn.html'; actions.append(learn);
-  if (model.hasSave) actions.append(button('繼續上次牌局', 'resume', () => send({ type: 'resume' }), 'button button-primary button-large', model.busy));
-  actions.append(button(model.hasSave ? '開始新的一將' : '開始一將', 'start', () => send({ type: 'start' }), `button ${model.hasSave ? 'button-secondary' : 'button-primary'} button-large`, model.busy));
-  actions.append(button('純練習模式', 'practice', () => send({ type: 'practice' }), 'button button-secondary button-large'));
-  const trial = node('a', 'button button-secondary button-large', '決策題試讀'); trial.href = './training.html'; actions.append(trial);
-  copy.append(actions, node('p', 'welcome-footnote', '無需登入 · 自動續存 · 真人操作不限時'));
+  const title = node('h2', '', '打得順手，\n也想得明白。'); title.tabIndex = -1; title.dataset.focus = 'home-entry';
+  copy.append(node('p', 'eyebrow', '一張一刻，好好打牌。'), title, node('p', 'welcome-description', '從認識第一張牌，到想清楚下一張。\n在這裡，照自己的節奏學、練、玩。'));
   const art = node('div', 'welcome-art'); art.setAttribute('aria-hidden', 'true');
-  const ring = node('div', 'table-ring'); ring.append(node('span', 'ring-north', '北'), node('span', 'ring-east', '東'), node('span', 'ring-south', '南'), node('span', 'ring-west', '西'));
-  const fan = node('div', 'tile-fan'); fan.setAttribute('aria-hidden', 'true'); ['1m', '2m', '3m', '5z', '6z'].forEach(id => fan.append(tile(id, 'tile-hero')));
-  art.append(ring, fan, node('span', 'art-caption', '底 30 / 台 10 · 純積分'));
+  const fan = node('div', 'tile-fan'); ['2s', '3s', '4s', '7z', '7z'].forEach(id => fan.append(tile(id, 'tile-hero')));
+  art.append(node('span', 'art-note', '熟悉的牌，新的好習慣。'), fan, node('span', 'art-caption', '台灣十六張 / 五組牌＋一對眼睛'));
   hero.append(copy, art); main.append(hero);
-  const features = node('div', 'welcome-features');
-  for (const [number, title, text] of [['16', '道地十六張', '五組牌加一對眼睛，吃碰槓胡完整呈現。'], ['3', '公平的電腦對手', '各自只看手牌與公開資訊，不偷看牌牆。'], ['∞', '照你的節奏', '雙擊出牌，隨時暫停、下次再續。']]) {
-    const feature = node('section'); feature.append(node('span', 'feature-number', number), node('h3', '', title), node('p', '', text)); features.append(feature);
-  }
-  main.append(features); return main;
+  const routes = node('section', 'home-routes'); routes.setAttribute('aria-labelledby', 'home-routes');
+  const routeHeading = node('div', 'home-section-heading');
+  const heading = node('h2', '', '今天，想怎麼玩？'); heading.id = 'home-routes'; heading.tabIndex = -1;
+  routeHeading.append(heading, node('p', '', '不用依序完成，隨時選擇適合你的入口。')); routes.append(routeHeading);
+  const cards = node('div', 'home-cards');
+  const learnCard = node('article', 'home-card');
+  learnCard.append(node('span', 'home-card-label', '01 / 還不會打'), node('h3', '', '從零學習'), node('p', 'home-card-description', '認牌、摸打、胡牌組成。\n用前三課，走出入門的第一步。'));
+  const learn = node('a', 'button home-action', '從零學台灣麻將（前三課）'); learn.href = './learn.html'; learnCard.append(learn, node('p', 'home-card-note', '入門試用版・可操作牌例'));
+  const practiceCard = node('article', 'home-card');
+  practiceCard.append(node('span', 'home-card-label', '02 / 想打得更好'), node('h3', '', '練習判斷'), node('p', 'home-card-description', '慢慢比較進牌與捨牌，\n看懂每個選擇背後的取捨。'), button('純練習模式', 'practice', () => send({ type: 'practice' }), 'button home-action'));
+  const trial = node('a', 'home-text-link', '決策題試讀'); trial.href = './training.html';
+  const arrow = node('span', '', '↗'); arrow.setAttribute('aria-hidden', 'true'); trial.append(arrow); practiceCard.append(trial);
+  const playCard = node('article', 'home-card home-card-play');
+  playCard.append(node('span', 'home-card-label', '03 / 直接來一局'), node('h3', '', '入座對戰'), node('p', 'home-card-description', '一位真人，三位公平電腦。\n吃碰槓胡，照你的節奏打。'));
+  playCard.append(button(model.hasSave ? '開始新的一將' : '開始一將', 'start', () => send({ type: 'start' }), `button home-action ${model.hasSave ? '' : 'home-action-primary'}`, model.busy), node('p', 'home-card-note', model.hasSave ? '將詢問是否取代上次牌局' : '真人操作不限時・隨時暫停'));
+  cards.append(learnCard, practiceCard, playCard); routes.append(cards);
+  const note = node('div', 'home-assurances');
+  note.append(node('p', '', '不需登入・純積分遊玩'), node('p', '', '電腦只看自己的牌與公開資訊'), node('p', '', '進度留在此瀏覽器，請留意保存提示'));
+  main.append(routes, note); return main;
 }
 
 function publicPlayer(game: Game, seat: Seat): HTMLElement {
@@ -495,7 +510,7 @@ export function render(root: HTMLElement, model: ViewModel, send: Send): void {
   let resultDialog: HTMLDialogElement | undefined;
   const focus = root.contains(document.activeElement) ? (document.activeElement as HTMLElement).dataset.focus : undefined;
   const restoreDetails = preserveDetails(root);
-  const shell = node('div', `app-shell ${model.game ? 'in-game' : ''}`); shell.append(header(model, send));
+  const shell = node('div', `app-shell ${model.game ? 'in-game' : 'home-shell'}`); shell.append(header(model, send));
   if (model.notice) {
     const notice = node('p', 'notice', model.notice); notice.setAttribute('role', 'alert');
     if (model.canRetrySave) notice.append(button('重試儲存', 'retry-save', () => send({ type: 'retry-save' }), 'button button-secondary'));
