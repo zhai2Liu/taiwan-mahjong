@@ -1,6 +1,6 @@
-# S4.2：牌面語意與強制色彩選取修正
+# S4.2：可及性與操作可靠性修正
 
-2026-10-17。本包處理兩個已在隔離瀏覽器重現的缺口；當輪測試／提交／發布只記[HANDOFF](HANDOFF.md)。不代表手機、真人或螢幕閱讀器完整驗收，S4.2整體仍未完成。
+2026-10-17。依已在隔離瀏覽器重現的缺口分包修正；當輪測試／提交／發布只記[HANDOFF](HANDOFF.md)。不代表手機、真人或螢幕閱讀器完整驗收，S4.2整體仍未完成。
 
 ## 重現與最小修正
 
@@ -25,3 +25,11 @@
 在遊戲目錄建置後，`npx playwright test test/e2e/accessibility.spec.js`可重跑；全套沿既有命令。共用4230人工檢視preview與4226回歸服務分開；Chrome／Edge回歸需依次執行，不重用其他測試正在使用的4226。無新套件、規則／AI／資料格式變更。
 
 判斷依據：[W3C非文字對比與元件狀態](https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast.html)、[MDN forced-colors行為](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/forced-colors)。這些是本包的設計依據，不是完整WCAG合規聲明。指定手機／Safari／輔具仍依[真人回饋清單](HUMAN-FEEDBACK-CHECKLIST.md)記錄，未取得資料不填通過。
+
+## 新手進度重讀失敗：保留本頁紀錄與離頁提醒
+
+前版按「重新讀取保存紀錄」會先重建空進度，loadProgress又先清dirty；如果讀取失敗、JSON壞掉或版本未知，就把尚未保存的本頁完成旗標及離頁提醒一併清掉。原存檔雖未改，本頁新完成的紀錄會失去。
+
+[learning.ts](src/learning.ts)改先把讀到的原文放候選值，通過原本嚴格驗證後才替換progress並清dirty。失敗只停止覆寫，保留本頁進度與未存提醒；確認文案說明「重讀成功後」才放棄本頁未存紀錄。原文為未知／壞檔時仍不遷移，讀取失敗不假裝知道原檔；無新格式或新鍵。
+
+[learning.spec.js](test/e2e/learning.spec.js)新增三種故障，各在桌面／窄畫面驗：先讓實際課程完成但寫入失敗，再重讀read-error／壞JSON／未知版本。三種均先重現原版清空問題；修後保留本頁完成、停用覆寫、原文不動，真實beforeunload仍可取消。修復原文或讀取後，再確認重讀才採用已存內容，重載及其他三類保存隔離亦核對。這是隔離合成故障，不是新真人試用資料。

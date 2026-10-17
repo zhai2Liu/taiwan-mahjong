@@ -4,6 +4,8 @@
 
 ## 現況與下一步
 
+S4.2新手重讀保留本機完成、待PR：基線679cf5d、分支codex/learning-read-preservation。原版read-error／壞JSON／未知版本三項桌面回歸先重現清空；修後399 Node／check／build、Chromium38項（31.2秒）、Chrome／Edge受影響各6項通過。loadProgress讀取且驗證成功才替換progress與dirty，失敗保留本頁紀錄及beforeunload提醒、停止覆寫；成功重讀才採用舊保存，其他保存原文不變。未改格式／鍵／規則／AI。詳[S42](S42-ACCESSIBILITY.md)及BEGINNER-LEARNING；logs work/s42-read-before-tests.log、s42-read-before-evidence/、s42-read-targeted.log、s42-read-tests.log、s42-read-build.log、s42-read-browser.log、s42-read-chrome.log、s42-read-msedge.log、s42-learning-read-before／after.log。帳戶31%→35%，同窗口resetsAt1792266558，非精確token。持續目標有效，4230仍在；下一獨立維護包把反覆手動的md連結檢查收斂為標準命令，已讀查77份／468鏈0失效（work/doc-links-audit.json）。
+
 S4.2牌面／強制色彩修正已發布：來源69439e8、[PR#14](https://github.com/zhai2Liu/taiwan-mahjong/pull/14)合併1f91996。PR Actions39044088421成功399／32（36.7秒），main39044234956成功399／32（29.3秒）、build117429668346／deploy117429929423成功。正式三頁200、引用4／3／4份JS／CSS SHA-256與site相同；正式隔離Chrome系context驗海底圖片名稱、暗槓遮罩、強制色彩雙線選取、原牌局保存不變及0pageerror。九個公開檔案雜湊與1f91996 git blob相符。限定範圍見[S42](S42-ACCESSIBILITY.md)，本機Chrome155.0.8059.80及Edge155.0.4283.62各6項通過；尚無手機／Safari／真人輔具驗收。
 
 本輪持續目標有效。下一包已重現：寫入失敗後重讀也失敗，學習頁會先清空本頁進度及dirty離頁提醒；原存檔未改。work/s42-learning-read-before.log及work/s42-learning-read-audit.mjs可重跑。接著改為讀取／驗證成功才替換記憶體，失敗保留本頁紀錄與提醒。4230隔離preview仍在（session80087），4226回歸及額外context均結束；不動原4173或日常profile。A包logs：work/s42-before-tests.log、s42-before-evidence/、s42-tests.log、s42-browser-final.log、s42-chrome-final.log、s42-msedge-final.log、s42-pr-ci.log、s42-main-ci.log、s42-live-assets.log、s42-live-ui.log、s42-public.log，before／after視覺及語意log亦保留。

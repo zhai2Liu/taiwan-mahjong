@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { createBrowserFixtures } from '../../scripts/browser-fixtures.mjs';
 import { createPractice, PRACTICE_KEY } from '../../dist/practice.js';
-import { LEARN_KEY } from '../../dist/learning-progress.js';
+import { LEARN_KEY, emptyProgress, markLesson, encodeLearningProgress } from '../../dist/learning-progress.js';
 
 const otherSaves = {
   'tw16:TW16-CLASSIC-v1:save': JSON.stringify(createBrowserFixtures().find(s => s.name === 'feedbackReady').session),
@@ -135,4 +135,45 @@ test('保存失敗保留本頁、重試；壞檔清除要確認，跨頁更新�
   await expect(unreadable.getByRole('button', { name: '重試保存進度', exact: true })).toBeDisabled();
   expect((await course(page)).lessons.every(p => !p.read)).toBe(true);
   await unreadable.close();
+});
+
+for (const failure of ['read-error', 'broken', 'future']) test(`重讀${failure}保留本頁未存進度及離頁提醒，修復後才採用保存紀錄`, async ({ page }) => {
+  const original = encodeLearningProgress(markLesson(emptyProgress(), 0, 'read'));
+  const bad = failure === 'broken' ? '{broken' : JSON.stringify({ ...emptyProgress(), schemaVersion: 2 });
+  await page.addInitScript(({ key, original }) => {
+    if (localStorage.getItem(key) === null) localStorage.setItem(key, original);
+    window.__failLearningRead = false; window.__failLearningWrite = true;
+    const get = Storage.prototype.getItem, set = Storage.prototype.setItem;
+    Storage.prototype.getItem = function(k) { if (k === key && window.__failLearningRead) throw new DOMException('Test read failure', 'SecurityError'); return get.call(this, k); };
+    Storage.prototype.setItem = function(k, v) { if (k === key && window.__failLearningWrite) throw new DOMException('Test quota', 'QuotaExceededError'); return set.call(this, k, v); };
+  }, { key: LEARN_KEY, original });
+  await seededPage(page); await recognition(page, false);
+  await expect(page.locator('#save-notice')).toContainText('未能保存');
+  await expect(page.locator('.progress-list')).toContainText('第1課：已閱讀 ✓ · 提示下完成 ✓');
+  const memory = await page.locator('.progress-list').innerText();
+  await page.evaluate(({ key, bad, failure }) => {
+    if (failure === 'read-error') window.__failLearningRead = true;
+    else { window.__failLearningWrite = false; localStorage.setItem(key, bad); window.__failLearningWrite = true; }
+  }, { key: LEARN_KEY, bad, failure });
+  page.once('dialog', d => d.accept()); await page.getByRole('button', { name: '重新讀取保存紀錄', exact: true }).click();
+  expect(await page.locator('.progress-list').innerText()).toBe(memory);
+  await expect(page.locator('#save-notice')).toContainText('本頁紀錄仍保留');
+  await expect(page.getByRole('button', { name: '重試保存進度', exact: true })).toBeDisabled();
+  const stored = await page.evaluate(key => {
+    const failed = window.__failLearningRead; window.__failLearningRead = false;
+    const value = localStorage.getItem(key); window.__failLearningRead = failed; return value;
+  }, LEARN_KEY);
+  expect(stored).toBe(failure === 'read-error' ? original : bad);
+  const pending = page.waitForEvent('dialog'), reload = page.evaluate(() => location.reload());
+  const warning = await pending; expect(warning.type()).toBe('beforeunload'); await warning.dismiss(); await reload;
+  expect(await page.locator('.progress-list').innerText()).toBe(memory);
+  await page.evaluate(({ key, original }) => {
+    window.__failLearningRead = false; window.__failLearningWrite = false;
+    localStorage.setItem(key, original); window.__failLearningWrite = true;
+  }, { key: LEARN_KEY, original });
+  page.once('dialog', d => d.accept()); await page.getByRole('button', { name: '重新讀取保存紀錄', exact: true }).click();
+  await expect(page.locator('.progress-list')).toContainText('第1課：已閱讀 ✓ · 提示下完成 —');
+  await expect(page.locator('#save-notice')).toContainText('已讀取');
+  await page.reload(); expect((await course(page)).lessons[0]).toEqual({ read: true, guided: false, independent: false });
+  expect(await page.evaluate(keys => Object.fromEntries(keys.map(k => [k, localStorage.getItem(k)])), Object.keys(otherSaves))).toEqual(otherSaves);
 });

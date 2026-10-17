@@ -16,9 +16,13 @@ let round: GameState | null = null, remaining: string[] = [], groups: Meld[] = [
 const warnLeave = (event: BeforeUnloadEvent) => { event.preventDefault(); event.returnValue = 'true'; };
 function syncLeaveGuard(): void { window.removeEventListener('beforeunload', warnLeave); if (dirty) window.addEventListener('beforeunload', warnLeave); }
 function loadProgress(): void {
-  dirty = false;
-  try { raw = localStorage.getItem(LEARN_KEY); progress = decodeLearningProgress(raw); blocked = false; dirty = false; saveNotice = '已讀取此瀏覽器的學習進度。'; }
-  catch { blocked = true; saveNotice = raw === undefined ? '無法讀取學習進度；可在本頁練習，但不會覆寫未知原檔。' : '學習進度損壞或版本不符，原檔已保留；可在本頁練習，重新建立須確認。'; }
+  let candidate: string | null | undefined;
+  try {
+    candidate = localStorage.getItem(LEARN_KEY); const loaded = decodeLearningProgress(candidate);
+    // Commit a reread only after validation; failed reads keep in-page progress and its leave guard.
+    raw = candidate; progress = loaded; blocked = false; dirty = false; saveNotice = '已讀取此瀏覽器的學習進度。';
+  }
+  catch { raw = candidate; blocked = true; saveNotice = raw === undefined ? '無法讀取學習進度；本頁紀錄仍保留，可在本頁練習，但不會覆寫未知原檔。' : '學習進度損壞或版本不符，原檔已保留；本頁紀錄仍保留，可在本頁練習，重新建立須確認。'; }
   syncLeaveGuard(); renderProgress();
 }
 async function save(): Promise<void> {
@@ -42,8 +46,8 @@ function renderProgress(): void {
   const actions = node('div', 'lesson-actions');
   if (dirty) actions.append(button('重試保存進度', 'learn-retry', () => { void save(); }, '', busy || blocked));
   actions.append(button('重新讀取保存紀錄', 'learn-load', () => {
-    if (dirty && !confirm('重新讀取會放棄本頁尚未保存的新手紀錄，未完成操作仍不續存。確定？')) return;
-    progress = emptyProgress(); raw = undefined; loadProgress();
+    if (dirty && !confirm('重新讀取成功後會放棄本頁尚未保存的新手紀錄，未完成操作仍不續存。確定？')) return;
+    loadProgress();
   }, '', busy));
   actions.append(button('重新建立新手進度', 'learn-reset', async () => {
     if (raw === undefined || !confirm('只重建前三課的學習進度，清除已閱讀與完成標記，目前教學操作回到圖解；對戰、練習及檢討不變。確定？')) return;
