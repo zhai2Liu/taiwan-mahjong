@@ -55,6 +55,7 @@ export function tileName(id: string): string {
 export function tile(id: string | null, size = '', selected = false): HTMLSpanElement {
   const kind = id === null ? '' : kindOf(id);
   const face = node('span', `tile ${size} ${id === null ? 'tile-back' : `suit-${kind[0] === 'f' ? 'f' : kind[1]}`} ${selected ? 'is-selected' : ''}`);
+  face.setAttribute('role', 'img');
   if (id === null) { face.setAttribute('aria-label', '暗牌'); return face; }
   face.setAttribute('aria-label', tileName(id));
   face.append(tileFace(kind));
@@ -137,7 +138,7 @@ function home(model: ViewModel, send: Send): HTMLElement {
   copy.append(actions, node('p', 'welcome-footnote', '無需登入 · 自動續存 · 真人操作不限時'));
   const art = node('div', 'welcome-art'); art.setAttribute('aria-hidden', 'true');
   const ring = node('div', 'table-ring'); ring.append(node('span', 'ring-north', '北'), node('span', 'ring-east', '東'), node('span', 'ring-south', '南'), node('span', 'ring-west', '西'));
-  const fan = node('div', 'tile-fan'); ['1m', '2m', '3m', '5z', '6z'].forEach(id => fan.append(tile(id, 'tile-hero')));
+  const fan = node('div', 'tile-fan'); fan.setAttribute('aria-hidden', 'true'); ['1m', '2m', '3m', '5z', '6z'].forEach(id => fan.append(tile(id, 'tile-hero')));
   art.append(ring, fan, node('span', 'art-caption', '底 30 / 台 10 · 純積分'));
   hero.append(copy, art); main.append(hero);
   const features = node('div', 'welcome-features');

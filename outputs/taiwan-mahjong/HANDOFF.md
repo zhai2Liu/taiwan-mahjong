@@ -4,6 +4,8 @@
 
 ## 現況與下一步
 
+S4.2本機修正完成、待PR發布核對：基線1014d9f、分支codex/accessibility-tile-states。共用tile補role=img，首頁裝飾牌隱藏、他家暗手／暗槓仍遮罩；learning.css強制色彩用雙線框且補償內距。新回歸先驗原版兩項失敗，再驗399 Node／check／build、Chromium32項（28.7秒）、Chrome155.0.8059.80與Edge155.0.4283.62各6項通過；Chromium156.0.8078.4。light／dark、1440／390、選取／焦點分離與尺寸不變、海底圖片語意／暗槓不洩漏及局面不變已核對，截圖見[S42](S42-ACCESSIBILITY.md)。logs work/s42-before-tests.log、s42-before-evidence/、s42-tests.log、s42-browser-final.log、s42-chrome-final.log、s42-msedge-final.log、s42-forced-colors-before／after.log、s42-tile-before／after.log。無規則／AI／存檔格式變更；尚未PR，不先稱正式發布。4230隔離preview仍在（session80087），本機4226回歸均已結束，Chrome／Edge需依次跑以免占同埠。最近帳戶19%，非精確token；持續目標有效，發布後繼續檢查保存失敗／操作缺口。
+
 本輪S2.4準備完成（2026-10-17）：來源7f7e291、[PR#13](https://github.com/zhai2Liu/taiwan-mahjong/pull/13)合併36aa912。第7–8課固定整局腳本／實桌附錄及8個從真實DEAL到結算／合法選過的分支已備；全套399／26，PR Actions39042980660成功（34.8秒），main39043175446成功（33.0秒），build117426596946／deploy117426915027成功。正式三頁200及4／3／4份JS／CSS SHA-256與本輪site相同，網頁仍4bb87cd功能內容；六個公開檔案與36aa912 git blob相符。教材／牌例見[S24](S24-LESSON-PREPARATION.md)，logs為work/s24-tests.log、s24-build.log、s24-pr-ci.log、s24-main-ci.log、s24-public.log、s24-live-after.log。未改runtime／依賴／三課進度，S2.4互動頁、真正暫停／中途保存及正常對戰連接未整合；實桌附錄未加入外部罰則。
 
 使用者要求用本次五小時額度持續推進；新窗口起始0%、最近15%、resetsAt1792266558，不沿用上輪40%，非精確token。每包完成驗證、提交及更新本檔；下一包S4.2已重現：強制色彩下組牌選取只剩顏色、靜態牌面無圖片語意。work/s42-forced-colors-before.log／png及s42-tile-before.log；4230隔離preview仍在，session80087，測試context已關，尚未改runtime。後五課正式整合仍沿前三課試用／修訂順序，真人0、S6未啟動。無子代理、重設額度或新增排程／自動續跑，持續目標有效。
