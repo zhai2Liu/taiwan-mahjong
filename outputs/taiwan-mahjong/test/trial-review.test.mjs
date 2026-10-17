@@ -55,7 +55,7 @@ test('題幹或已選選項異動不默默重新判分，且揭露完整版本�
 
 test('拒絕未知版本、缺題重題、額外欄位、過長資料與矛盾狀態', () => {
   const invalid = [
-    d => d.schemaVersion = 3, d => d.mode = 'assessment', d => d.rulesVersion = 'other', d => d.reasonAssessment = 'graded',
+    d => d.schemaVersion = 4, d => d.mode = 'assessment', d => d.rulesVersion = 'other', d => d.reasonAssessment = 'graded',
     d => d.questions.pop(), d => d.questions[1] = d.questions[0], d => d.questions[0].id = 'HE01',
     d => d.extra = true, d => d.questions[0].extra = true, d => d.questions[0].reason = 'x'.repeat(2001),
     d => d.questions[0].feedback = 'x'.repeat(1001), d => d.questions[0].prompt = null,
@@ -117,4 +117,20 @@ test('S3.1之前的真實題庫版本不得以新版導引和答案自動比對'
  assert.ok(report.questions.every(q => q.contentDifferences.includes('題庫版本與目前不同')));
  assert.match(report.notice, /能力導引、適用範圍/);
  assert.equal('score' in report, false);
+});
+
+test('schema3自陳曝光與類別導引可讀，但不證明首次；舊檔仍未知', () => {
+ const d = fixture(); d.schemaVersion = 3; d.guidanceMode = 'topic-guided';
+ for (const row of d.questions) row.exposure = 'unknown';
+ d.questions[0].exposure = 'unseen-self-report'; submit(d);
+ const before = JSON.stringify(d), report = run(d);
+ assert.equal(report.reportVersion, 2); assert.equal(report.questions[0].exposureStatus, 'unseen-self-report');
+ assert.equal(report.questions[0].comparison, '選項集合符合目前答案');
+ assert.match(report.exposureNotice, /玩家自陳.*未經驗證/); assert.match(report.exposureNotice, /不是無提示/);
+ assert.equal(JSON.stringify(d), before); assert.equal('score' in report, false);
+ assert.equal(run(fixture()).questions[0].exposureStatus, 'unknown');
+ for (const change of [x => x.guidanceMode = 'unassisted', x => x.questions[0].exposure = 'certified-first', x => delete x.questions[0].exposure]) {
+  const bad = structuredClone(d); change(bad); assert.throws(() => run(bad));
+ }
+ d.contentRevision = '0'.repeat(64); assert.equal(run(d).questions[0].comparison, '內容有異動，人工核對');
 });

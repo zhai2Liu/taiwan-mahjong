@@ -4,7 +4,15 @@
 
 2026-10-14人工待辦整理：[HUMAN-FEEDBACK-CHECKLIST](HUMAN-FEEDBACK-CHECKLIST.md)區分現在可試用的新手／熟手／操作／實機、後續正式評量與作品試讀、本人貢獻／授權／公開同意／S6決定。新增最小回報格式並沿用既有任務及JSON接收流程。純文件、未收到新資料或啟動新功能；S3.1發布與下一包S3.2不變。
 
-## 最新工作包：S3.2 已完成並驗證發布
+## 目前工作包：S3.3 進行中
+
+本機檢查點：365 Node／check／build、Chromium26項通過，Chrome／Edge新增六項各通過。1440／390／320及原生200%續答、schema3真實下載審閱、未知skill保留已存作答、0pageerror與無橫向溢出；畫面已檢視、全合成。原檔與其他鍵不變、故障／衝突／確認保護見[S33](S33-VALIDATION.md)。文件同步續答與schema3，內容版本不變。帳戶用量41%，原窗口不變；4227本輪preview仍在，發布後關閉。下一動作指定head PR CI→main deploy→正式三頁資源與續答，再準備獨立S3.4規準；真人／實機／S6不代填。以下早期檢查點保留過程，未提交／未驗的描述由本段現況覆蓋。
+
+2026-10-17，承接使用者本次五小時窗口（resetsAt1792229095）持續授權，分支codex/trial-draft-exposure，基線d9ff641。已實作[契約](S33-VALIDATION.md)的新鍵tw16:trial:v1手動保存／同版自動載入、原檔回復下載、嚴格128KiB與Web Locks／expectedRaw、曝光自陳schema3、共享純格式驗證trial-record.ts（Node24原生移除型別）、CLI仍讀1／2／3。舊內容／壞檔不覆寫；未知曝光不當首次，類別導引不是無提示評量；不動game／practice／learn／review鍵或AI／規則。
+
+check通過；首次全套364項僅缺鎖測試注入方式失敗（Node24本身已有locks，undefined會採預設；改null模擬缺鎖），修正後相關16項通過（work/s33-focused.log），舊schema1／2與CLI原檔保留相容已過。全套／新真瀏覽器故障與跨頁／正式發布尚待，不能宣稱完成。目前未啟動暫存伺服器；未碰日常profile或真人資料。帳戶檢查34%，窗口未變；下一動作補續答／曝光／配額／缺鎖忙碌／跨頁／原檔下載／讀取失敗瀏覽器路徑→全套→發布。尚未提交S3.3，變更已落盤；S3.2發布證據如下。
+
+## 前包：S3.2 已完成並驗證發布
 
 2026-10-17發布：來源e1a59f7，[PR#7](https://github.com/zhai2Liu/taiwan-mahjong/pull/7)已附本chat，指定head Actions39017877867成功，360／二十項（Linux28.3秒），Pages上傳及deploy skipped、0 artifact；已合併032bc1c並回main。[main Actions39018073228](https://github.com/zhai2Liu/taiwan-mahjong/actions/runs/39018073228)的360／二十項（23.4秒）、build與deploy成功。正式三HTML HTTP200，4／3／4份JS／CSS引用SHA-256全與本機相符（work/s32-live.log）；index-DbMxywyF.js／index-8F0VuNEV.css、training-BqbpRj_O.js、view-BjMvH8LY.js，learning因共用view引用改名，牌面與教學邏輯不變。
 

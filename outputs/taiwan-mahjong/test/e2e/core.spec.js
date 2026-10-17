@@ -126,7 +126,7 @@ test('試讀作答／真實匯出 → 修改提醒 → 取消離頁／重載 →
   const answersDownload = await answersPending;
   expect(answersDownload.suggestedFilename()).toBe('taiwan-mahjong-trial-answers.json');
   const answers = JSON.parse(await readFile(await answersDownload.path(), 'utf8'));
-  expect(answers.schemaVersion).toBe(2);
+  expect(answers.schemaVersion).toBe(3);
   expect(answers.contentRevision).toMatch(/^[0-9a-f]{64}$/);
   expect(answers.questions).toHaveLength(9);
   expect(answers.questions[0]).toMatchObject({ id: 'E01', status: 'submitted-and-revealed', reason: 'S1.2b 合成理由', feedback: 'S1.2b 合成回饋，非真人試讀' });
