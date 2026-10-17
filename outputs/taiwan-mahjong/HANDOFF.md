@@ -4,7 +4,13 @@
 
 2026-10-14人工待辦整理：[HUMAN-FEEDBACK-CHECKLIST](HUMAN-FEEDBACK-CHECKLIST.md)區分現在可試用的新手／熟手／操作／實機、後續正式評量與作品試讀、本人貢獻／授權／公開同意／S6決定。新增最小回報格式並沿用既有任務及JSON接收流程。純文件、未收到新資料或啟動新功能；S3.1發布與下一包S3.2不變。
 
-## 目前工作包：S3.2 本機完成，發布待驗
+## 最新工作包：S3.2 已完成並驗證發布
+
+2026-10-17發布：來源e1a59f7，[PR#7](https://github.com/zhai2Liu/taiwan-mahjong/pull/7)已附本chat，指定head Actions39017877867成功，360／二十項（Linux28.3秒），Pages上傳及deploy skipped、0 artifact；已合併032bc1c並回main。[main Actions39018073228](https://github.com/zhai2Liu/taiwan-mahjong/actions/runs/39018073228)的360／二十項（23.4秒）、build與deploy成功。正式三HTML HTTP200，4／3／4份JS／CSS引用SHA-256全與本機相符（work/s32-live.log）；index-DbMxywyF.js／index-8F0VuNEV.css、training-BqbpRj_O.js、view-BjMvH8LY.js，learning因共用view引用改名，牌面與教學邏輯不變。
+
+正式隔離Chrome390／320完成碰成立及吃被胡截走、另開正確同類題／原局仍暫停、關閉焦點、結算再開檢討核對同一結果，0pageerror（work/s32-production.log）；全為合成資料。無外部真人程式審查、未改分支保護。所有本輪服務／瀏覽器已關，保留已合併codex/review-followup及work/合成證據；收尾純Markdown不新增main build。帳戶用量1→13→18→27%，本次窗口resetsAt1792229095，不跨窗口自行續跑。接下來S3.3手動草稿續答及曝光／版本；真人與未啟動S6維持待驗。
+
+### S3.2開工與本機檢查點（發布前記錄）
 
 2026-10-17。使用者授權持續推進直到本次五小時額度用完。開工main／origin/main 478fd7e乾淨，帳戶五小時已用1%，本次窗口resetsAt1792229095，比例不是精確token；不跨到下一個重設窗口自行追加工作、不使用重設或自動排程。分支codex/review-followup，先完成[S32契約與驗收](S32-VALIDATION.md)：同類練習入口、有吃碰選項的回應待仲裁完成才解釋，使用公開結果與原決策證據分開呈現。未改已發布版本；逐包驗證／提交後接可獨立後續，真人待驗、S6未授權實裝。無本輪暫存服務，未開發課4–8。
 

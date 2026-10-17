@@ -1,6 +1,6 @@
 # S3.2：局後下一步與吃碰回應後解釋
 
-2026-10-17，本機完成、發布待驗；發布狀態依[HANDOFF](HANDOFF.md)。沿用已發布證據、快照、局後畫面、九題與引擎。無新增依賴，不改TW16-CLASSIC-v1、AI策略或存檔格式。
+2026-10-17，已完成並驗證發布；發布狀態依[HANDOFF](HANDOFF.md)。沿用已發布證據、快照、局後畫面、九題與引擎。無新增依賴，不改TW16-CLASSIC-v1、AI策略或存檔格式。
 
 ## 本包契約
 
@@ -25,6 +25,10 @@ Chromium二十項通過（原十四＋新三條×兩視窗，最終22.2秒），
 
 Chrome155.0.8059.80及Edge155.0.4283.62各六項新流程通過，work/s32-chrome-final.log／s32-edge.log。Chrome1440／390／320與原生200%（CSS720×450／DPR2）無橫向溢出，work/s32-visual.log；[390畫面](S32-CLAIM.jpg)為合成牌例，不是真人回饋。首次型別檢查修正狀態union的縮限，沒有以忽略錯誤略過。
 
-## 發布待驗與限制
+## 發布與限制
 
-PR指定head CI、main部署、三入口正式資源與正式受影響操作尚待。真人理解／手機／Safari／螢幕閱讀器未驗，人性化AI未實裝。公開資料與本機快照可被使用者改動，這是顯示一致性核對，不是歷史來源認證；只可核對仍在本局的結果，不提供跨局完整回放。
+來源e1a59f7，[PR#7](https://github.com/zhai2Liu/taiwan-mahjong/pull/7)已附本chat並合併032bc1c。PR Actions39017877867的360／二十項（Linux28.3秒）成功，Pages上傳及deploy skipped、0 artifact。main [Actions39018073228](https://github.com/zhai2Liu/taiwan-mahjong/actions/runs/39018073228)的360／二十項（23.4秒）、build及deploy成功。
+
+正式index／training／learn HTTP200，4／3／4份JS／CSS引用的SHA-256全與本機一致，work/s32-live.log。正式Chrome155.0.8059.80隔離390／320完成碰成立、吃被胡截走、同類練習另開正確分類、關閉焦點及牌局保持暫停、結算再開檢討重核對，0pageerror（work/s32-production.log）。原牌局讀寫均為隔離context合成資料，沒有真人受測；未碰日常profile／存檔。4227／4226及瀏覽器已關，合併分支與work/證據保留；收尾只有Markdown狀態提交。沒有外部真人程式審查、未改分支保護。
+
+真人理解／手機／Safari／螢幕閱讀器未驗，人性化AI未實裝。公開資料與本機快照可被使用者改動，這是顯示一致性核對，不是歷史來源認證；只可核對仍在本局的結果，不提供跨局完整回放。
