@@ -32,7 +32,7 @@
 
 ![台灣十六張實際牌桌，真人手牌與吃碰選項在下方](outputs/taiwan-mahjong-showcase/01-table.jpg)
 
-上圖及[完整操作短片／解釋與新手課畫面](outputs/taiwan-mahjong-showcase/README.md)來自2026-10-17正式版本，使用合成牌例與作答；[文字版導覽](outputs/taiwan-mahjong-showcase/README.md#文字版導覽)可不看影片直接閱讀。這些是功能示範，未代表真人學習成效；最新驗證以HANDOFF為準。
+上圖及[完整操作短片／解釋與新手課畫面](outputs/taiwan-mahjong-showcase/README.md)已依2026-10-18正式版本重錄，包含新首頁、試讀與學習頁；使用合成牌例與作答。[文字版導覽](outputs/taiwan-mahjong-showcase/README.md#文字版導覽)可不看影片直接閱讀。這些是功能示範，未代表真人學習成效；最新驗證以HANDOFF為準。
 
 ## 架構與資訊邊界
 

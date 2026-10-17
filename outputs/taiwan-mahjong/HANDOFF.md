@@ -14,7 +14,7 @@ S1.5[試讀工作區](TRIAL-WORKSPACE-20261018.md)已由[PR#23](https://github.c
 
 S1.6[前三課排版](LEARNING-LAYOUT-20261018.md)已由[PR#24](https://github.com/zhai2Liu/taiwan-mahjong/pull/24)合併並發布51f35773a25162ffddecf333352f97a52d5e5881。來源80f7546bfef18297808413a40a04d7430d449960的Actions39066375904／build117494810165成功400／52（52.0秒）；main39066578543／build117495408948成功400／52（50.7秒）、deploy117495801813成功。正式三頁資源相符；Chrome1440／Edge390認牌完成、組牌收組、重載三筆v1進度／未完成不誤計與其他鍵保留通過，0pageerror。learn-pMwkekFN.js／learn-Bv3fDrzy.css。本機learning／accessibility16／16，最後Chrome／Edge各6／6。只改HTML／CSS，未改learning.ts、課文、示例與保存格式；原始證據在work/entry-pages-20261018/learning-*。
 
-在codex/showcase-refresh-20261018重錄作品展示（執行中session67402，log=work/entry-pages-20261018/showcase-capture.log）。generate-demo.mjs已加錄製前重用verify-release的檢查，未提交；發布前自然差異曾被拒絕，現正核對後錄正式51f3577。下一步候選完整解碼／原生播放／13段字幕及畫面檢視，再放入展示目錄、更新README／S51與PR。錄的是正式站，單獨npm build不會錄本機頁；不改遊戲行為。
+codex/showcase-refresh-20261018已完成[新版展示](S51-DEMO-VALIDATION.md)的70.52秒影片／13段字幕／三圖本機驗收：最終work/showcase-AaZOE7，完整解碼、原生播放、VTT13段、重載狀態及理由實際可見、0pageerror，原牌局保持不變。檔案已放展示目錄，工具加錄製前資源核對（自然差異拒絕及正式版本成功均已驗），README及S51已同步，舊影片保留。尚未提交／公開，下一步check:docs、PR完整CI及公開原檔雜湊。全部合成，未改遊戲行為；logs在work/entry-pages-20261018/showcase-*。
 
 另外同一建置的221個一次性跨畫面檢查通過：13種寬度、17狀態／寬，含新／續局、返回深色對戰／練習、九題、三課與組牌。原始viewport-matrix.mjs／json／log在work/entry-pages-20261018；不計入CI52，也不代表221張逐一人工目視、手機實機或真人理解。
 

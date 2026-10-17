@@ -1,4 +1,4 @@
-// Run from any directory after the game build. Requires installed Chrome and FFmpeg on PATH.
+// Records the published site after verifying it matches the local build. Requires Chrome and FFmpeg on PATH.
 // ponytail: this fixed walkthrough uses existing fixtures; update named steps when the UI changes, not a recorder framework.
 import assert from 'node:assert/strict';
 import { mkdir, mkdtemp, writeFile } from 'node:fs/promises';
@@ -11,6 +11,8 @@ import { encodeSession } from '../taiwan-mahjong/dist/session.js';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const base = 'https://zhai2liu.github.io/taiwan-mahjong/';
+const release = JSON.parse(execFileSync(process.execPath, [fileURLToPath(new URL('../taiwan-mahjong/scripts/verify-release.mjs', import.meta.url)), base], { encoding: 'utf8' }).trim().split('\n').at(-1));
+assert.equal(release.verified, true);
 await mkdir(join(root, 'work'), { recursive: true });
 const scratch = await mkdtemp(join(root, 'work/showcase-'));
 const gameKey = 'tw16:TW16-CLASSIC-v1:save';
@@ -57,11 +59,13 @@ try {
   await chapter(lesson, '07-explanation', '答案集合與推導可核對；自由文字理由仍未評閱\n提供類別導引的練習，不是正式能力測驗', 5000);
   await lesson.getByRole('button', { name: '保存作答到此瀏覽器', exact: true }).click();
   await lesson.locator('#storage-status').filter({ hasText: '已保存作答' }).waitFor();
+  await lesson.locator('#storage-status').scrollIntoViewIfNeeded();
   await chapter(lesson, '08-save', '手動保存到此瀏覽器，下次可接續同版作答\n需要交回時仍須自行匯出，不會自動上傳', 4000);
   await lesson.reload(); await lesson.locator('#storage-status').filter({ hasText: '已載入' }).waitFor();
   await lesson.locator('#storage-status').scrollIntoViewIfNeeded();
   assert.ok((await lesson.locator('#reason').inputValue()).startsWith('合成示範：'));
-  await chapter(lesson, '09-resume', '重載後顯示已載入，選擇與理由仍保留\n先前是否看過題目預設未知，不當作首次證明', 4000);
+  await chapter(lesson, '09-resume', '重載後顯示已載入，選擇與理由仍保留\n先前是否看過題目預設未知，不當作首次證明', 2200);
+  await lesson.locator('#reason').scrollIntoViewIfNeeded(); await wait(1800);
   await lesson.goto(base + 'learn.html');
   await lesson.getByRole('button', { name: '3. 五組牌加一對眼睛', exact: true }).click();
   await lesson.getByRole('button', { name: '我讀完了，開始示範', exact: true }).click();
@@ -90,7 +94,7 @@ await writeFile(join(scratch, 'captions.ass'), assHeader + chapters.map((c, i) =
 const output = join(scratch, 'demo.mp4');
 const filters = `[0:v]trim=end=${cut.toFixed(3)},setpts=PTS-STARTPTS[first];[1:v]setpts=PTS-STARTPTS[second];[first][second]concat=n=2:v=1:a=0,pad=1920:1080:0:0:black,subtitles=captions.ass[out]`;
 execFileSync('ffmpeg', ['-hide_banner','-loglevel','warning','-i',sources.main,'-i',sources.lesson,'-filter_complex',filters,'-map','[out]','-c:v','libx264','-preset','medium','-crf','23','-pix_fmt','yuv420p','-movflags','+faststart','-an',output], { cwd: scratch, stdio: 'inherit' });
-const metadata = { base, source: 'isolated synthetic walkthrough', browser: browser.version(), viewport: { width: 1920, height: 840 }, errors, originalTableRemainsPaused: true, actualPopup: true, scratch, sources, cut, chapters, output, probe: probe(output) };
+const metadata = { base, release, source: 'isolated synthetic walkthrough', browser: browser.version(), viewport: { width: 1920, height: 840 }, errors, originalTableRemainsPaused: true, actualPopup: true, scratch, sources, cut, chapters, output, probe: probe(output) };
 await writeFile(join(scratch, 'capture.json'), JSON.stringify(metadata, null, 2));
 console.log(JSON.stringify(metadata));
 // Candidate files stay in ignored work/. Inspect playback and captions before copying video/VTT to this folder.
