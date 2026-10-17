@@ -4,7 +4,7 @@
 
 ## 目前網站與本輪交付
 
-正式入口：[青竹牌室](https://zhai2liu.github.io/taiwan-mahjong/)。repository／origin為zhai2Liu/taiwan-mahjong。**目前功能來源51f35773a25162ffddecf333352f97a52d5e5881；最近Pages建置為8de3bf37bf72f5ffbaadee21a36e38649df2a781（固定workflow來源，正式內容相同）。純文件／展示提交不等於新runtime。**
+正式入口：[青竹牌室](https://zhai2liu.github.io/taiwan-mahjong/)。repository／origin為zhai2Liu/taiwan-mahjong。**目前正式功能／Pages來源97847778cfc623f553b8dbe1f7ed1ea713984a23，400項Node／54項瀏覽器回歸與部署、正式資源／操作均通過。純文件狀態提交不等於新runtime。**
 
 | 工作包 | 結果與指定來源 |
 |---|---|
@@ -15,19 +15,21 @@
 
 三次UI發布均核對正式三HTML及全部引用JS／CSS，並實際驗受影響操作。首頁新局／取消／續玩、試讀真實作答／保存重載／schema3下載／取消離頁、前三課認牌完成與組牌／三筆v1進度及其他鍵保留均通過，0pageerror。Chrome155.0.8059.80／Edge155.0.4283.62的指定操作範圍見各包，不宣稱手機實機通過。
 
-目前資源：index-w9IuzQfR.js／index-BOwf8lyn.css、training-BH5dEc_t.js／training-Ddyr2V09.css、learn-pMwkekFN.js／learn-Bv3fDrzy.css、view-BlHMN2jy.js、tile-face-CG76dTyt.js。展示合併後再次verify:release相符、main沒有新run；網站未重部署。
+目前資源：index-BKqnfuRx.js／index-C5jxypL6.css、training-DZ2kWL9p.js／training-Ddyr2V09.css、learn-pMwkekFN.js／learn-Bv3fDrzy.css、view-BlHMN2jy.js、tile-face-CG76dTyt.js。最新三HTML及全部引用資源與指定建置SHA-256相符。展示固定記錄51f3577版，不為後續一處文字色與回焦小修反覆重錄；版本界線見S51。
 
 同一建置另有[S4.2限定驗證](S42-ACCESSIBILITY.md)：13種寬度×17狀態＝221項，以及Chrome原生200%放大19狀態，無頁面橫向溢出或焦點中心被遮；0pageerror。這些一次性檢查不併入CI52，也不是221張逐一目視或完整WCAG證明。原生縮放的Playwright截圖裁切異常已用同頁CDP畫面釐清，未因此改網站。
 
-## 本輪尚在收尾
+## 本輪維護與最近完成
 
 [PR#26](https://github.com/zhai2Liu/taiwan-mahjong/pull/26)已合併95e06ec1bcfa3abe4b68af6c9a2c316058d0b63c：S52草稿／來源更新到51f3577，明確保留032bc1c→4bb87cd為指定歷史演練；回復程序不固定沿26項。S51／ROADMAP同步公開完成、S42補放大驗證、交接收斂。Luna唯讀核對無問題；來源2c8e7df的Actions39067926469／build117499341466成功400／52（51.1秒），87份文件／629連結0問題，PR無Pages。純MD不重部署。
 
 [PR#27](https://github.com/zhai2Liu/taiwan-mahjong/pull/27)已合併並發布8de3bf37bf72f5ffbaadee21a36e38649df2a781：五個官方Action直接引用固定commit，原版本旁註及來源／升級程序在DEPLOYMENT，事件／權限／Pages隔離未改。來源ba0bfe2的PR39068225911／build117500219011成功400／52（50.9秒）；main39068383426／build117500680291成功400／52（40.0秒）、deploy117500995456成功，五個下載SHA正確。正式三頁／引用資源與原51f3577相符（pinned-actions-live.log）。deploy-pages仍有Node20宣告被runner轉Node24的既有警告，實際部署成功，未假稱整套runner固定。沒有遊戲／保存格式改動。
 
-目前分支codex/home-contrast-20261018：Chrome實際重現綠底對戰卡11px小標籤4.207749，Luna獨立算同值；只對該卡沿用既有muted色，建置後實際5.018787，其他兩卡／註記不改。另重現試讀鍵盤保存／清除後BODY焦點無指示（Tab仍在附近，未誇稱頁首重走），加最小回焦：若玩家已移去理由或換題則不搶回。原版先紅，修後首頁／保存14／14（10.6秒），Chrome／Edge新鍵盤各2／2（3.4／3.8秒）、build通過；完整CI預計54項，尚未提交／發布。資料鎖／schema／題目答案不改，限定證據見[S42](S42-ACCESSIBILITY.md)，不重錄版本化展示以免為小色差反覆刷新素材。
+[PR#28](https://github.com/zhai2Liu/taiwan-mahjong/pull/28)已合併並發布97847778cfc623f553b8dbe1f7ed1ea713984a23，來源9454dae的PR39068777950／build117501847164成功400／54（52.7秒），PR無Pages；main39068956795／build117502380144成功400／54（51.5秒）、deploy117502776024成功。正式三頁／引用資源相符，Chrome1440／Edge390實際驗新色、鍵盤保存回原按鈕、清除回管理summary、理由／其他鍵保留，0pageerror（entry-polish-live-assets／live-ui.log）。
 
-使用者要求本次五小時額度持續推進，6.1 Sol主導、Luna限定唯讀審查，未使用Astra。啟動帳戶讀值0%，本窗口resetsAt=1792284614，曾讀到66%；其後工具改回0%且resetsAt=1792287639／週額度也回0，原因未確認。**沒有呼叫額度重設或新增續跑；不能把讀值變動算成已用完100%，也不能得知精確對話剩餘token。** 每包先落盤，不為消耗額度新增受人工門檻阻擋的功能。
+此包修綠底對戰卡11px標籤4.207749→5.018787（實際Chrome色值及Luna獨算）、試讀鍵盤保存／清除後BODY無焦點指示。回焦只在原控制仍連接且焦點body時動作，不搶玩家的新焦點。原版先紅，修後首頁／保存14／14（10.6秒）、Chrome／Edge新鍵盤各2／2（3.4／3.8秒）、build通過。資料鎖／schema／題目答案不改，限定證據見[S42](S42-ACCESSIBILITY.md)。本工作包無剩餘程式或發布待辦；後續仍可修新重現操作／維護缺口，大型課程／評量依下方人工門檻，不能自動解鎖S2.3或S6。
+
+使用者要求本次五小時額度持續推進，6.1 Sol主導、Luna限定唯讀審查，未使用Astra。啟動帳戶讀值0%，原窗口resetsAt=1792284614，曾讀到66%；其後工具改回0%且resetsAt=1792287639／週額度也回0，原因未確認，新窗口最近記錄28%。**沒有呼叫額度重設或新增自動續跑；不能把不同窗口百分比相加宣稱已用完100%，也不能得知精確對話剩餘token。** 每包先落盤，不為消耗額度新增受人工門檻阻擋的功能；窗口切換不自動解讀為可再增加一整窗預算。
 
 ## 進度與不能代理的門檻
 
@@ -39,7 +41,7 @@
 | S3.1–S3.3 | 九題四類導引、同類練習、吃碰事後解釋、手動保存／同版續答與曝光自陳已發布；不自動上傳 |
 | S3.4 | [人工錨點／缺口／流程](S34-ASSESSMENT-PREPARATION.md)已備；13題／12題族、四候選不進試讀、assessmentFamilies空；真人題族／難度／內容及正式放行待驗 |
 | S4 | 限定技術檢查已完成；[人工回饋清單](HUMAN-FEEDBACK-CHECKLIST.md)中的手機／Safari／輔具／理解仍待，程式或模型不能代填 |
-| S5 | 新展示已公開；[發布技術準備](S52-RELEASE-PREPARATION.md)完成、草稿更新待本分支合併。LICENSE、tag／Release、另擬履歷摘要仍待本人決定 |
+| S5 | 新展示已公開；[發布技術準備](S52-RELEASE-PREPARATION.md)及草稿同步完成。LICENSE、tag／Release、另擬履歷摘要仍待本人決定 |
 | S6 | 人格AI僅離線研究，使用者未授權實裝，需另行啟動 |
 
 分工本人已確認「本人負責需求、方向與操作回饋；AI協助規格、程式、測試、發布與文件」，不重問、不推定手寫比例／個人技能。真人資料接收依[TRIAL-REVIEW](TRIAL-REVIEW.md)，不代填、不自行公開回饋。其他新重現操作／維護缺口可獨立修，不代表必須停工或放行上述功能。
@@ -62,4 +64,4 @@ main只安排一個自動計時器，吃碰解釋等正常RESOLVE並核對原快
 
 ## 現場與原始證據
 
-本輪隔離預覽4232（session44614），4226由Playwright自行管理；原4173與日常瀏覽器profile未動。work/home-redesign-20261018/、work/entry-pages-20261018/與work/showcase-AaZOE7保留本輪合成資料、截圖／錄影與logs，全部忽略不提交。最新原生放大證據zoom-9Xip9x、zoom-native-final.log；展示公開showcase-public.log，正式未變showcase-live-unchanged.log。先保留收尾證據，再關閉自己啟動的4232；不廣泛終止Node或瀏覽器。
+本輪隔離預覽4232（session44614／Vite PID27208）已核對命令與監聽來源後只關閉該程序，4232無監聽；4226由Playwright自行管理，驗收context皆關閉。原4173與日常瀏覽器profile未動。work/home-redesign-20261018/、work/entry-pages-20261018/與work/showcase-AaZOE7保留本輪合成資料、截圖／錄影與logs，全部忽略不提交。原生放大證據zoom-9Xip9x／zoom-native-final.log，展示公開showcase-public.log，新正式資源／兩瀏覽器操作為entry-polish-live-assets.log／entry-polish-live-ui.json及對應jpg；交接已保存，不留未發布工作包。

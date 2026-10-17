@@ -71,3 +71,5 @@
 同時以真實鍵盤保存／清除試讀重現：busy停用原生按鈕後，操作完成焦點停在body、沒有焦點指示；下一次Tab仍到附近控制，未誇稱須從頁首重走。training.restoreStorageFocus只在焦點仍為body、原按鈕仍連在目前畫面時還原；若原控制已停用（如清除成功），回到管理summary。等待期間玩家移到理由欄或切題後不搶回。同步重讀原本就聚焦新題標題，維持該行為。
 
 新增一條桌面／窄畫面鍵盤回歸（兩項）：成功保存、配額失敗保留原檔、延後鎖完成時仍保留新焦點與較新未存理由、清除後回管理summary。先在原版以toBeFocused失敗重現，修後連同原首頁／保存回歸14／14（10.6秒）；Chrome155.0.8059.80／Edge155.0.4283.62的新鍵盤兩項各通過（3.4／3.8秒），新總項目數54的指定CI依HANDOFF。沒有為純配色新增單元測試，保存鎖、資料版本及題目／答案未改。原始home-contrast-before／after.json、trial-focus-before.log、trial-focus-red.log、entry-polish-browser.log與trial-focus-chrome／msedge.log在work/entry-pages-20261018/。
+
+[PR#28](https://github.com/zhai2Liu/taiwan-mahjong/pull/28)來源9454dae，Actions39068777950成功400／54（52.7秒），合併9784777；main39068956795成功400／54（51.5秒）與Pages成功。正式三頁及全部引用資源相符，Chrome1440／Edge390的實際新色、鍵盤保存／清除回焦、保留頁內理由及其他鍵、0pageerror均通過，詳HANDOFF與entry-polish-live-*。不因這兩項修正宣稱完整輔具或真人驗收已完成。

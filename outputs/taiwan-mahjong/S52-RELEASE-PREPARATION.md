@@ -16,7 +16,7 @@
 
 [立即遊玩](https://zhai2liu.github.io/taiwan-mahjong/) · [前三課](https://zhai2liu.github.io/taiwan-mahjong/learn.html) · [決策題](https://zhai2liu.github.io/taiwan-mahjong/training.html) · [操作展示與文字導覽](../taiwan-mahjong-showcase/README.md)。所有展示牌局及作答是合成資料。
 
-正式runtime來源51f35773a25162ffddecf333352f97a52d5e5881；該次PR／main均通過型別、400項Node測試及52項桌面／窄畫面瀏覽器回歸，三頁HTML及引用資源和正式操作已核對。改版範圍與具名驗證見[首頁](HOME-REDESIGN-20261018.md)、[試讀](TRIAL-WORKSPACE-20261018.md)、[前三課](LEARNING-LAYOUT-20261018.md)及[S4.2](S42-ACCESSIBILITY.md)。目前展示以[S5.1](S51-DEMO-VALIDATION.md)的70.52秒字幕片、文字導覽與三圖為準；不把技術測試數當玩家學習成效。
+草稿及展示基準為已發布功能來源51f35773a25162ffddecf333352f97a52d5e5881；該次PR／main均通過型別、400項Node測試及52項桌面／窄畫面瀏覽器回歸，三頁HTML及引用資源和正式操作已核對。改版範圍與具名驗證見[首頁](HOME-REDESIGN-20261018.md)、[試讀](TRIAL-WORKSPACE-20261018.md)、[前三課](LEARNING-LAYOUT-20261018.md)及[S4.2](S42-ACCESSIBILITY.md)；後續小修與最新正式來源只依HANDOFF，不將這組歷史項目數當最新值。目前展示以[S5.1](S51-DEMO-VALIDATION.md)的70.52秒字幕片、文字導覽與三圖為準；不把技術測試數當玩家學習成效。
 
 完整八課、正式陌生題評量、真人難度／理解及手機／Safari／螢幕閱讀器仍待；人格AI保留離線，不在這個版本。現有公開程式碼與本機曝光自陳不能提供防作弊認證。既有分工已確認；授權選擇、另擬履歷摘要、最終Release標籤與發布仍待決定；本段是可編輯草稿，不是已發布公告。
 
