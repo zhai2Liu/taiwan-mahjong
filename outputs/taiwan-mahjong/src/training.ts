@@ -115,7 +115,8 @@ function render(focus = true): void {
   const visible = trainingQuestions.map((q, i) => ({ q, i })).filter(({ q }) => skill === 'all' || q.skill === skill);
   const position = visible.findIndex(({ i }) => i === index), category = trainingSkills.find(s => s.id === q.skill)!;
   root.replaceChildren();
-  const storageStatus = el('p'); storageStatus.id = 'storage-status'; storageStatus.setAttribute('role', 'status'); root.append(storageStatus);
+  const controls = el('section'); controls.className = 'trial-controls'; controls.setAttribute('aria-label', '練習重點與保存狀態');
+  const storageStatus = el('p'); storageStatus.id = 'storage-status'; storageStatus.setAttribute('role', 'status');
   const label = el('label', '練習重點'), picker = el('select'); picker.id = 'skill-picker'; label.htmlFor = picker.id;
   for (const s of [{ id: 'all', label: '全部' }, ...trainingSkills]) {
     const count = trainingQuestions.filter(q => s.id === 'all' || q.skill === s.id).length;
@@ -126,15 +127,22 @@ function render(focus = true): void {
     if (picker.value !== 'all' && !trainingSkills.some(s => s.id === picker.value)) return;
     skill = picker.value; index = trainingQuestions.findIndex(q => skill === 'all' || q.skill === skill); render();
   });
-  const heading = el('h2', `第 ${position + 1} / ${visible.length} 題 · ${category.label}`); heading.tabIndex = -1;
-  root.append(label, picker, el('p', category.goal), el('p', category.limit), heading,
-    el('p', `題號 ${q.id} · 回報問題時可附上此題號`), el('p', q.prompt), el('p', `本題範圍：${q.scope}`), el('p', '請選出全部成立的敘述；理由可留空。'));
+  const pickerGroup = el('div'); pickerGroup.className = 'trial-picker'; pickerGroup.append(label, picker);
+  const goals = el('div'); goals.className = 'trial-goals'; goals.append(el('p', category.goal), el('p', category.limit));
+  controls.append(pickerGroup, storageStatus, goals); root.append(controls);
+  const question = el('section'); question.className = 'trial-question'; question.setAttribute('aria-labelledby', 'question-heading');
+  const heading = el('h2', `第 ${position + 1} / ${visible.length} 題 · ${category.label}`); heading.tabIndex = -1; heading.id = 'question-heading';
+  const questionId = el('p', `題號 ${q.id} · 回報問題時可附上此題號`); questionId.className = 'trial-question-id';
+  const scope = el('p', `本題範圍：${q.scope}`); scope.className = 'trial-scope';
+  question.append(heading, questionId, el('p', q.prompt), scope);
+  const workspace = el('div'); workspace.className = 'trial-workspace';
+  const board = el('div'); board.className = 'trial-board'; board.setAttribute('role', 'region'); board.setAttribute('aria-label', '題目牌例');
   const exposurePanel = el('details'), exposure = el('select'), exposureLabel = el('label', '開始這份作答前，你是否看過這題？（自行回報）');
   exposure.id = 'prior-exposure'; exposureLabel.htmlFor = exposure.id; exposure.disabled = draft.revealed; exposurePanel.open = draft.exposure !== 'unknown';
   for (const [value, text] of [['unknown', '不確定／未回報'], ['seen', '以前看過'], ['unseen-self-report', '此前沒看過（自行回報）']]) { const option = el('option', text); option.value = value; exposure.append(option); }
   exposure.value = draft.exposure;
   exposure.addEventListener('change', () => { if (!draft.revealed && ['unknown', 'seen', 'unseen-self-report'].includes(exposure.value)) { draft.exposure = exposure.value as Exposure; updateDraftStatus(); } });
-  exposurePanel.append(el('summary', '選填：以前是否看過本題（預設不確定）'), exposureLabel, exposure, el('p', '揭示推導後鎖定這份紀錄；自陳不證明首次。畫面已提供類別導引，不是無提示測驗。')); root.append(exposurePanel);
+  exposurePanel.append(el('summary', '選填：以前是否看過本題（預設不確定）'), exposureLabel, exposure, el('p', '揭示推導後鎖定這份紀錄；自陳不證明首次。畫面已提供類別導引，不是無提示測驗。'));
   for (const row of q.board) {
     const figure = el('figure'); figure.className = 'question-tiles'; figure.append(el('figcaption', row.label));
     const tiles = el('div'); tiles.className = 'tile-row';
@@ -147,9 +155,12 @@ function render(focus = true): void {
       }
       tiles.append(set);
     }
-    figure.append(tiles); root.append(figure);
+    figure.append(tiles); board.append(figure);
   }
-  const form = el('form'), options = el('fieldset'); options.append(el('legend', '你的選擇'));
+  if (!q.board.length) board.append(el('p', '依上方題幹所列局況作答，本題沒有額外牌面。'));
+  board.append(exposurePanel);
+  const form = el('form'); form.className = 'trial-form';
+  const options = el('fieldset'); options.append(el('legend', '你的選擇'));
   for (const choice of q.choices) {
     const label = el('label'), input = el('input');
     input.type = 'checkbox'; input.value = choice.id; input.checked = draft.selected.has(choice.id); input.disabled = draft.revealed;
@@ -162,13 +173,13 @@ function render(focus = true): void {
   reason.addEventListener('input', () => { draft.reason = reason.value; updateDraftStatus(); });
   const submit = el('button', '提交並看推導'); submit.type = 'submit'; submit.disabled = draft.revealed;
   const message = el('p'); message.setAttribute('role', 'status');
-  form.append(options, reasonLabel, reason, submit, message);
+  form.append(el('p', '請選出全部成立的敘述；理由可留空。'), options, reasonLabel, reason, submit, message);
   form.addEventListener('submit', event => {
     event.preventDefault(); if (draft.revealed) return;
     if (!draft.selected.size) { message.textContent = '請先選擇至少一項，再提交。'; return; }
     draft.revealed = true; render(false); root.querySelector<HTMLElement>('#answer')?.focus();
   });
-  root.append(form);
+  workspace.append(board, form); question.append(workspace); root.append(question);
   if (draft.revealed) {
     const answer = el('section'); answer.className = 'answer';
     const title = el('h3', draft.selected.size === q.accepted.length && q.accepted.every(id => draft.selected.has(id)) ? '選擇集合符合本題答案' : '有選項需要再核對');
@@ -176,15 +187,15 @@ function render(focus = true): void {
     const list = el('ul');
     for (const c of q.choices) if (q.accepted.includes(c.id)) list.append(el('li', c.text));
     answer.append(title, el('p', '成立的選項：'), list, el('p', q.derivation), el('p', '理由：未評閱。請自行對照推導與適用範圍；選對不代表已證明理解或整體牌技。'));
-    root.append(answer);
+    question.append(answer);
   }
   const nav = el('nav'); nav.setAttribute('aria-label', '題目切換');
   for (const [text, delta] of [['上一題', -1], ['下一題', 1]] as const) {
     const button = el('button', text); button.type = 'button'; button.disabled = position + delta < 0 || position + delta >= visible.length;
     button.addEventListener('click', () => { index = visible[position + delta].i; render(); }); nav.append(button);
   }
-  root.append(nav, el('p', `本頁已揭示 ${drafts.filter(d => d.revealed).length} / ${trainingQuestions.length} 題；這是閱讀進度，不是成績。`));
-  if (skill !== 'all') root.append(el('p', `本分類已揭示 ${visible.filter(({ i }) => drafts[i].revealed).length} / ${visible.length} 題；切換重點保留本頁作答，匯出包含全部 ${trainingQuestions.length} 題。`));
+  question.append(nav, el('p', `本頁已揭示 ${drafts.filter(d => d.revealed).length} / ${trainingQuestions.length} 題；這是閱讀進度，不是成績。`));
+  if (skill !== 'all') question.append(el('p', `本分類已揭示 ${visible.filter(({ i }) => drafts[i].revealed).length} / ${visible.length} 題；切換重點保留本頁作答，匯出包含全部 ${trainingQuestions.length} 題。`));
   const feedbackPanel = el('details'); feedbackPanel.open = !!draft.feedback;
   const feedbackLabel = el('label', `題號 ${q.id} 的題意或操作回饋`), feedback = el('textarea');
   feedback.id = 'trial-feedback'; feedbackLabel.htmlFor = feedback.id;
@@ -198,7 +209,7 @@ function render(focus = true): void {
   const draftStatus = el('p'); draftStatus.id = 'draft-status'; draftStatus.setAttribute('role', 'status');
   const previewLabel = el('label', '最近一次匯出內容（可自行複製）'), preview = el('textarea');
   preview.id = 'feedback-export'; previewLabel.htmlFor = preview.id; preview.readOnly = true; preview.rows = 5;
-  const previewPanel = el('div'); previewPanel.hidden = true; previewPanel.append(previewLabel, preview);
+  const previewPanel = el('div'); previewPanel.className = 'trial-export-preview'; previewPanel.hidden = true; previewPanel.append(previewLabel, preview);
   const exportRecord = (includeAnswers: boolean): void => {
     const notes = drafts.flatMap((d, i) => d.feedback.trim() ? [`題號 ${trainingQuestions[i].id}\n${d.feedback.trim()}`] : []);
     if (!includeAnswers && !notes.length) { exportStatus.textContent = '目前沒有回饋；可先展開「提供本題回饋」填寫。'; return; }
@@ -234,8 +245,10 @@ function render(focus = true): void {
     finally { if (url) { const old = url; setTimeout(() => URL.revokeObjectURL(old), 1000); } }
   });
   savedActions.append(read, clear, recover); savedPanel.append(el('summary', '管理本機保存／回復原檔'), savedActions);
-  root.append(feedbackPanel, el('p', '若要交回作答，請匯出紀錄並自行附到專案對話。檔案含選項、理由、回饋與先前曝光自陳，不含標準答案；不會自動上傳。'), exports,
-    el('p', '手動保存後，下次開啟會自動載入同版作答。資料只在此瀏覽器；共用裝置離開前可清除本機保存。'), save, savedPanel, draftStatus, exportStatus, previewPanel);
+  const storageArea = el('section'); storageArea.className = 'trial-storage'; storageArea.setAttribute('aria-label', '保存與交回作答');
+  const localArea = el('div'); localArea.append(el('strong', '留在這裡，下次接著練'), el('p', '手動保存後，下次開啟會自動載入同版作答。保存會一併記住當下的題目與分類；之後切題不會自動更新保存位置。資料只在此瀏覽器；共用裝置離開前可清除本機保存。'), save, draftStatus, savedPanel);
+  const exportArea = el('div'); exportArea.append(el('strong', '交回紀錄，幫助完善題目'), el('p', '若要交回作答，請匯出紀錄並自行附到專案對話。檔案含選項、理由、回饋與先前曝光自陳，不含標準答案；不會自動上傳。'), feedbackPanel, exports, exportStatus);
+  storageArea.append(localArea, exportArea, previewPanel); root.append(storageArea);
   updateDraftStatus();
   if (focus) heading.focus();
 }
