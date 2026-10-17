@@ -107,6 +107,8 @@ npm run preview -- --port 4173
 
 測試數與發布狀態以 [HANDOFF](outputs/taiwan-mahjong/HANDOFF.md) 為準。題庫模型複核與程式測試不等同真人理解或學習成效；目前尚未證實能普遍提升牌技。
 
+[版本回復演練與來源盤點](outputs/taiwan-mahjong/S52-RELEASE-PREPARATION.md)記錄舊版→新版的五種本機資料保留、結算不重付與發布草稿；本人貢獻敘述、公開授權及實際Release仍待決定。
+
 ## 文件與後續範圍
 
 [現行方向](outputs/taiwan-mahjong/PRODUCT-DIRECTION.md) · [全面強化企畫](outputs/taiwan-mahjong/MASTER-IMPROVEMENT-PLAN.md) · [工作包路線](outputs/taiwan-mahjong/ROADMAP.md) · [維護指南](outputs/taiwan-mahjong/MAINTENANCE.md) · [部署與回復](outputs/taiwan-mahjong/DEPLOYMENT.md)

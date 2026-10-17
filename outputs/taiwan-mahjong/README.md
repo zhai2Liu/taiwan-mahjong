@@ -13,6 +13,7 @@
 - [局後下一步與吃碰回應後解釋](S32-VALIDATION.md)：仲裁後才顯示取得／未取得，關閉保持暫停；同類練習另開分頁，發布狀態依HANDOFF。
 - [產品方向](PRODUCT-DIRECTION.md)、[全面強化企畫](MASTER-IMPROVEMENT-PLAN.md)、[工作包路線](ROADMAP.md)：已採納範圍、依賴與完成條件。
 - [維護指南](MAINTENANCE.md)、[發布與回復](DEPLOYMENT.md)：資料流、修改位置及驗證。
+- [發布草稿／來源盤點／回復演練](S52-RELEASE-PREPARATION.md)：五種本機資料的指定版本回退與前進證據，授權與Release仍待本人決定。
 - [固定桌規](../taiwan-mahjong-m0/RULES.md)、[台灣用詞](LOCAL-TERMS.md)：規則與玩家文字的權威。
 
 - [決策題試讀](https://zhai2liu.github.io/taiwan-mahjong/training.html)：9題草案，牌效／吃碰取捨／安全牌／莊家連莊四類導引；手動保存後下次同版續答，匯出全部九題，先作答再看推導，不計牌技總分；[續答與曝光](S33-VALIDATION.md)、[內容版本](S31-VALIDATION.md)、[最初驗收](L3B0-TRIAL-VALIDATION.md)。
