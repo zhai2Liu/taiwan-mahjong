@@ -2,6 +2,8 @@
 
 2026-10-17。**技術準備與回復演練完成；尚未建立GitHub Release或tag，公開授權由專案擁有者決定。** 最新提交與PR依[HANDOFF](HANDOFF.md)。本包只整理可審閱交付，不改runtime或重部署正常網站。
 
+來源d8e8701，[PR#10](https://github.com/zhai2Liu/taiwan-mahjong/pull/10)指定head Actions39020532423成功365／26（Linux33.7秒），合併b265a83；純Markdown沒有新Pages部署。再次核對正式三頁與全部4／3／4份JS／CSS雜湊，仍為4bb87cd（work/s52-live-unchanged.log）。無外部真人程式審查、未改分支保護。
+
 ## 可用的發布草稿
 
 建議版本名稱：`v0.1.0-learning-preview.1`（草稿名稱，尚未建立）。標題：**青竹牌室學習試用版：吃碰解釋、作答續存與前三課入門**。
