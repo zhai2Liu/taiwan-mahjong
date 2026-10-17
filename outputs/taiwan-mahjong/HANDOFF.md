@@ -12,7 +12,9 @@
 
 發布核對包已完成：來源543cf3b、[PR#18](https://github.com/zhai2Liu/taiwan-mahjong/pull/18)合併3b3f4da。PR39047211722成功399／44（34.5秒），main39047332167成功399／44（44.2秒）、build117438598260／deploy117438932626成功。正式三頁HTML與8份獨立JS／CSS經新命令比對相符；十個公開修改檔雜湊與git blob相符。`npm run verify:release -- <明確網址/>`、限定三入口LF及觸發已落盤，三個HTML git blob／runtime未變。子路徑正例及HTML／資源不同、404、201、轉址五負例均驗；autocrlf=true匯出三入口仍0CR且等於git blob。83文件／525鏈通過。logs在work/release-check-{build,negative,live,after-deploy,pr-ci,main-ci,public}.log、html-line-endings-after.log及html-release-diff.log；只驗HTML直接引用，不宣稱動態資源或操作驗收。
 
-下一包將新發布工具的正反例接入既有Node回歸，改用隔離合成目錄與本機HTTP，不依賴先有site／外網或動玩家資料；目前負例工具仍在work/。另已完成Chrome155.0.8059.80真正BFCache跨頁更新檢查（pageshow.persisted=true）：舊牌桌停止操作、最新原文不變，work/play-bfcache-audit-after-wait.log；初次工具等load逾時已改等commit，並非遊戲故障，不把此單例當所有裝置驗收。
+目前分支codex/release-check-regression：新發布工具正反例已接`test/release-check.test.mjs`／`npm test`，本機400項通過。使用work/隔離生成目錄、本機HTTP與真CLI子程序，不依賴先有site／外網；核對子路徑三頁、共用資源只取一次、五種內容／HTTP反例及無參數／錯協定／查詢／無結尾斜線均在發出HTTP前拒絕。子程序逾時、清理僅限自己生成目錄，沒有改玩家資料。指定head CI／發布待核對；logs為work/release-regression-targeted.log及tests.log。
+
+另已完成Chrome155.0.8059.80真正BFCache跨頁更新檢查（pageshow.persisted=true）：舊牌桌停止操作、最新原文不變，work/play-bfcache-audit-after-wait.log；初次工具等load逾時已改等commit，並非遊戲故障，不把此單例當所有裝置驗收。後續可補入既有瀏覽器回歸，先實際核對練習／課程／試讀的快取返回，不憑API推定資料保護。
 
 完成本包後繼續處理可重現的操作／可及性／維護缺口，先驗證再修正。後五課教材與引擎牌例已備，正式互動整合仍沿前三課試用／修訂順序；不能為消耗額度跳過真人門檻。真人資料只阻擋相應理解／難度／成效與實機結論，不代表整個專案必須停工。
 
