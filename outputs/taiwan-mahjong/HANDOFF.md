@@ -4,11 +4,13 @@
 
 ## 現況與下一步
 
-本輪本機完成（2026-10-17）：S2.3第4–6課教材／引擎牌例準備，基線af4a94f、分支codex/lesson-4-6-preparation。交付[S23教材](S23-LESSON-PREPARATION.md)及test/learning-next.test.mjs：吃碰／三槓、過水正反例、逐條台項與按付款對象計莊連台，共26個牌例通過；全套391測試／check／build通過。首次核對發現改聽例有一／四／七筒三口，已用三種具體拆法修正教材及預期，未改引擎。五份文件83個本機連結全有效，git diff --check通過；正式三頁200、4／3／4份JS／CSS SHA-256與本輪site相同（仍4bb87cd功能內容）。logs：work/s23-lessons.log、s23-tests.log、s23-build.log、s23-live-before.log。未改src／依賴／三課進度／其他存檔；S2.3課程頁未整合、真人理解未驗。帳戶27%→34%，同窗口resetsAt1792247167，非精確token；無子代理／重設／自動續跑。下一步指定head PR檢查、合併與main發布核對，完成後再關閉準備包。
+本輪完成（2026-10-17）：S2.3第4–6課教材／引擎牌例準備，來源54d9e11、[PR#12](https://github.com/zhai2Liu/taiwan-mahjong/pull/12)合併aa02c78並回main。交付[S23教材](S23-LESSON-PREPARATION.md)及test/learning-next.test.mjs：吃碰／三槓、過水正反例、逐條台項與按付款對象計莊連台，共26個牌例通過；本機全套391測試／check／build通過。PR Actions39039769390指定head成功391／26（Linux29.5秒），上傳／deploy skipped；main Actions39039947228成功391／26（29.7秒），build117417193728與deploy117417482632成功。
+
+正式三頁200、4／3／4份JS／CSS SHA-256在部署後均與本輪site相同；最新發布提交aa02c78，網頁功能內容仍4bb87cd。六個公開檔案200且SHA-256與aa02c78 git blob相符，五份文件85個本機連結有效。首次核對發現改聽例有一／四／七筒三口，已用三種具體拆法修正教材及預期，未改引擎。logs：work/s23-lessons.log、s23-tests.log、s23-build.log、s23-live-before.log／after.log、s23-pr-ci.log、s23-main-ci.log、s23-public.log。未改src／依賴／三課進度／其他存檔，S2.3互動頁及真人理解尚未完成。帳戶27%→34%→40%，同窗口resetsAt1792247167，非精確token；無子代理／重設／自動續跑。
 
 上一包S5.1已完成：69.08秒字幕片／13段VTT與可重錄工具，來源cd0a778、合併daea897，PR#11指定head 365／26通過；七個公開檔案雜湊相符，詳[S51](S51-DEMO-VALIDATION.md)。分工本人已確認，不再重問。
 
-S3.2／S3.3已發布；S3.4審核準備、S5.1素材及S5.2技術準備已合併。最近功能改動來源4bb87cd，本包只有教材／測試，main原工作流仍會重發相同網頁產物；驗證後才記實際發布提交。S2.2真人仍0、S2.3互動頁未完成。
+S3.2／S3.3已發布；S3.4審核準備、S5.1素材及S5.2技術準備已合併。最近功能改動來源4bb87cd；本包只有教材／測試，main原工作流按測試路徑觸發，已重發相同網頁產物，發布提交aa02c78。S2.2真人仍0、S2.3互動頁未完成。
 
 下一個可獨立準備包為S2.4第7–8課腳本／實桌附錄，後五課正式整合仍沿前三課試用／修訂順序。S4.2亦有後續技術檢查。真人資料只阻擋相應理解／難度／成效及實機結論，不代表整個專案必須停工。S3.4正式放行、S5.2授權／Release及另擬履歷摘要仍待；S6需另外啟動，不從研究直接實裝。
 
@@ -43,14 +45,15 @@ S3.2／S3.3已發布；S3.4審核準備、S5.1素材及S5.2技術準備已合併
 | S3.4／S5.1 | 51e105c／6b8e5ea，[PR#9](https://github.com/zhai2Liu/taiwan-mahjong/pull/9) | PR39020052983成功365／26（28.8秒）；純文件／展示，無新Pages部署 |
 | S5.2 | d8e8701／b265a83，[PR#10](https://github.com/zhai2Liu/taiwan-mahjong/pull/10) | PR39020532423成功365／26（33.7秒）；純Markdown，無新Pages部署 |
 | S5.1補版 | cd0a778／daea897，[PR#11](https://github.com/zhai2Liu/taiwan-mahjong/pull/11) | PR39034074956成功365／26（30.3秒）；七個公開檔案雜湊相符，無新Pages部署 |
+| S2.3準備 | 54d9e11／aa02c78，[PR#12](https://github.com/zhai2Liu/taiwan-mahjong/pull/12) | PR39039769390成功391／26（29.5秒）；main39039947228成功391／26（29.7秒），部署成功且三頁資源相符 |
 
-五個PR均已附本chat。PR的Pages上傳／deploy skipped，無Pages產物；沒有外部真人程式審查或分支保護修改。不要只拿舊CI當新變更證據。
+六個PR均已附本chat。PR的Pages上傳／deploy skipped，無Pages產物；沒有外部真人程式審查或分支保護修改。不要只拿舊CI當新變更證據。
 
-正式站：https://zhai2liu.github.io/taiwan-mahjong/；origin：https://github.com/zhai2Liu/taiwan-mahjong.git。S3.3正式index／training／learn HTTP200、全部4／3／4份JS／CSS SHA-256與本機相符；S5.2再核對仍未變。當前training-vkOYxEaA.js、index-DbMxywyF.js／index-8F0VuNEV.css、view-BjMvH8LY.js、learn-D7cu7U9P.js。
+正式站：https://zhai2liu.github.io/taiwan-mahjong/；origin：https://github.com/zhai2Liu/taiwan-mahjong.git。S3.3正式index／training／learn HTTP200、全部4／3／4份JS／CSS SHA-256與本機相符；S5.2及本輪S2.3準備部署後再核對仍未變。當前training-vkOYxEaA.js、index-DbMxywyF.js／index-8F0VuNEV.css、view-BjMvH8LY.js、learn-D7cu7U9P.js。
 
 ## 驗證範圍與資料契約
 
-本輪365 Node／check／build、Chromium26項通過；Chrome155.0.8059.80／Edge155.0.4283.62受影響六項各通過。1440／390／320與Chrome原生200%（CSS720×450、dpr2）無橫向溢出，保存續答／schema3真實下載→本機審閱通過；正式Chrome1440／390／320亦0pageerror。全部是隔離合成資料，不能當真人理解、手機／Safari／螢幕閱讀器或普遍學習成效。
+S3.3既有功能驗收為365 Node／check／build、Chromium26項通過；Chrome155.0.8059.80／Edge155.0.4283.62受影響六項各通過。1440／390／320與Chrome原生200%（CSS720×450、dpr2）無橫向溢出，保存續答／schema3真實下載→本機審閱通過；正式Chrome1440／390／320亦0pageerror。全部是隔離合成資料，不能當真人理解、手機／Safari／螢幕閱讀器或普遍學習成效。
 
 S5.2同源4229演練032bc1c↔4bb87cd：有效結算、已有一捨一摸的練習、一筆合法決策、課程閱讀／提示完成、新版試讀保存；五鍵原文完全相同、結算不重付。舊版沒有試讀續存按鈕，但不覆寫新鍵，回新版恢復；只是指定版本／狀態，不保證未來格式。未回退正式站或動真人資料。
 
@@ -68,7 +71,7 @@ S5.2同源4229演練032bc1c↔4bb87cd：有效結算、已有一捨一摸的練�
 
 TW16-CLASSIC-v1規則唯一來源為[凍結RULES](../taiwan-mahjong-m0/RULES.md)，不混用港麻／日麻。AI及教練只讀單家getObservation，證據不讀其他暗牌／牆／種子；公開進牌比例不是實摸率、安全不等於阻止莊家自摸或流局續莊。S6離線研究不是實裝授權。
 
-本輪服務4226／4227／4229及驗收Chrome／Edge均已關閉；不動使用者原4173或日常profile。work/保留合成logs／原始影片／zoom profile／舊版隔離建置，全部忽略，不提交真人資料。主要logs為s32-*、s33-*、s51-*、s52-*；無新套件或子代理。
+先前服務4226／4227／4229及驗收Chrome／Edge已關閉；本輪未開本機服務或桌面瀏覽器，不動使用者原4173或日常profile。work/保留合成logs／原始影片／zoom profile／舊版隔離建置，全部忽略，不提交真人資料。主要logs為s32-*、s33-*、s51-*、s52-*；無新套件或子代理。
 
 上輪S3.2–S5.2帳戶起始1%、最後檢查64%，舊窗口resetsAt1792229095。當前窗口與用量以本輪檢查點為準，比例不是精確對話剩餘token；未使用重設額度或自動續跑。分工已依S51確認，真人學習試用仍無新資料。
 
