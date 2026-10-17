@@ -4,7 +4,7 @@
 
 ## 本輪進行中
 
-使用者要求投入新的五小時帳戶額度並優先改善首頁。啟動讀值0%已用，resetsAt=1792284614；最近檢查28%。這是帳戶共享百分比，不是精確對話剩餘token。建立持續工作目標，每包落盤；不使用重設或自動續跑。6.1 Sol主導，Luna限定唯讀首頁／試讀審查，未使用Astra。
+使用者要求投入新的五小時帳戶額度並優先改善首頁。啟動讀值0%已用，resetsAt=1792284614；最近檢查55%。這是帳戶共享百分比，不是精確對話剩餘token。建立持續工作目標，每包落盤；不使用重設或自動續跑。6.1 Sol主導，Luna限定唯讀首頁／試讀／教學及錄製工具審查，未使用Astra。
 
 S1.4首頁已由[PR#22](https://github.com/zhai2Liu/taiwan-mahjong/pull/22)合併並發布b384764505ec63e798b01ca49ca239b637eae7cc。最終來源3c5d1db32d3a804fd44c77bc26a9baf679d12704的Actions39065024289／build117490738456成功400／50（42.1秒）；main39065175077／build117491194356成功400／50（47.9秒）、deploy117491609398成功。85份文件／582連結0問題。真別頁更新時的入口焦點遺失已先重現再修復；沒有改保存格式。
 
@@ -12,9 +12,11 @@ S1.4首頁已由[PR#22](https://github.com/zhai2Liu/taiwan-mahjong/pull/22)合�
 
 S1.5[試讀工作區](TRIAL-WORKSPACE-20261018.md)已由[PR#23](https://github.com/zhai2Liu/taiwan-mahjong/pull/23)合併並發布e76070291e9e59f30ee5c87ba0e235f5d7e68ec4。來源9a35c350e0a24ee48dede9461d18507e3801b650的Actions39065728154／build117492861570成功400／52（45.3秒）；main39065890220／build117493353587成功400／52（44.0秒）、deploy117493723484成功。正式三頁資源相符；Chrome1440px／Edge390px實際作答、保存／重載原游標、schema3真實下載及取消離頁保留通過，0pageerror。training-BH5dEc_t.js／training-Ddyr2V09.css。本機另外Chrome／Edge各四項、Chrome四模式真快取返回通過。未改題目／答案／內容版本、曝光或保存邏輯；只補手動保存位置說明，不增加切題離頁警告。原始證據在work/entry-pages-20261018/。
 
-S1.6[前三課排版](LEARNING-LAYOUT-20261018.md)已由[PR#24](https://github.com/zhai2Liu/taiwan-mahjong/pull/24)合併51f35773a25162ffddecf333352f97a52d5e5881。來源80f7546bfef18297808413a40a04d7430d449960的Actions39066375904／build117494810165成功400／52（52.0秒）；main CI／Pages及正式核對待驗。本機learning／accessibility16／16，最後Chrome／Edge各6／6；只改learn.html／learning.css，未改learning.ts、課文、示例與三筆進度格式。原始證據在work/entry-pages-20261018/learning-*。
+S1.6[前三課排版](LEARNING-LAYOUT-20261018.md)已由[PR#24](https://github.com/zhai2Liu/taiwan-mahjong/pull/24)合併並發布51f35773a25162ffddecf333352f97a52d5e5881。來源80f7546bfef18297808413a40a04d7430d449960的Actions39066375904／build117494810165成功400／52（52.0秒）；main39066578543／build117495408948成功400／52（50.7秒）、deploy117495801813成功。正式三頁資源相符；Chrome1440／Edge390認牌完成、組牌收組、重載三筆v1進度／未完成不誤計與其他鍵保留通過，0pageerror。learn-pMwkekFN.js／learn-Bv3fDrzy.css。本機learning／accessibility16／16，最後Chrome／Edge各6／6。只改HTML／CSS，未改learning.ts、課文、示例與保存格式；原始證據在work/entry-pages-20261018/learning-*。
 
-下一包重錄作品展示，待S1.6正式發布核對後才錄。generate-demo.mjs已加錄製前重用verify-release的檢查，尚未提交；以尚未發布的本機learn.html差異已確認非零退出，且發生在建立候選／瀏覽器之前。錄的是正式站，不能把單獨npm build當成會錄本機頁。預計只更新工具、展示素材與文件，不改遊戲行為。
+在codex/showcase-refresh-20261018重錄作品展示（執行中session67402，log=work/entry-pages-20261018/showcase-capture.log）。generate-demo.mjs已加錄製前重用verify-release的檢查，未提交；發布前自然差異曾被拒絕，現正核對後錄正式51f3577。下一步候選完整解碼／原生播放／13段字幕及畫面檢視，再放入展示目錄、更新README／S51與PR。錄的是正式站，單獨npm build不會錄本機頁；不改遊戲行為。
+
+另外同一建置的221個一次性跨畫面檢查通過：13種寬度、17狀態／寬，含新／續局、返回深色對戰／練習、九題、三課與組牌。原始viewport-matrix.mjs／json／log在work/entry-pages-20261018；不計入CI52，也不代表221張逐一人工目視、手機實機或真人理解。
 
 正式網址[青竹牌室](https://zhai2liu.github.io/taiwan-mahjong/)，origin=https://github.com/zhai2Liu/taiwan-mahjong.git。前輪九包與來源8e43f87已保留歷史；純MD狀態提交不另部署。不要使用舊CI代替本輪指定提交。
 
