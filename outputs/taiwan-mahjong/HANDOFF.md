@@ -16,7 +16,7 @@
 
 具名快取驗證包已完成：來源2689f17、[PR#20](https://github.com/zhai2Liu/taiwan-mahjong/pull/20)合併8e43f87。PR39048408460成功400／44（44.4秒），main39048560730成功400／44（46.1秒）、build117442170407／deploy117442552232成功。正式三頁HTML／8份資源相符、六個公開修改檔雜湊相符。`test:history`的Chrome155.0.8059.80／Edge155.0.4283.62各四模式真BFCache、衝突處理／明確重讀、其他鍵及0pageerror通過，負例非零拒絕；不計入一般CI回歸。詳[S42](S42-ACCESSIBILITY.md)，logs為work/browser-history-{chrome,msedge,negative,pr-ci,main-ci,public,live-assets}.log；4231與context都關閉，未改runtime／全域瀏覽器設定／依賴／存檔。
 
-下一包僅補S2.3擴課進度相容候選規格，work/S23-PROGRESS-COMPATIBILITY-DRAFT.md已備：新八課另鍵、舊三課原文不動、語義相同才逐位帶入、固定鎖順序及單次新鍵寫入、回退／失敗／12個待驗案例。需連入正式教材／保存／維護入口，核對既有規格一致及指定提交文件CI；不實裝v2、不跳過S2.2真人修訂。
+目前分支codex/learning-progress-compatibility：[擴課進度相容候選規格](S23-PROGRESS-COMPATIBILITY.md)已備並連入S23教材／前三課保存／維護／ROADMAP：新八課另鍵、舊原文不動、語義相同才逐位帶入、固定鎖順序及單次新鍵寫入，等待中停用進度修改、不覆蓋本頁未存完成；回復／失敗／C01–C12待驗清單。僅文件，未新增v2鍵／程式／功能，須待S2.2修訂後凍結對照及實際測試，不跳過真人門檻。指定提交文件CI待核對。
 
 完成本包後繼續處理可重現的操作／可及性／維護缺口，先驗證再修正。後五課教材與引擎牌例已備，正式互動整合仍沿前三課試用／修訂順序；不能為消耗額度跳過真人門檻。真人資料只阻擋相應理解／難度／成效與實機結論，不代表整個專案必須停工。
 

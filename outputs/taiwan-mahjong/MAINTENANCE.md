@@ -24,6 +24,8 @@ S2.1新手課：learn.html／src/learning.ts與learning.css是獨立頁；learni
 
 S2.3準備：第4–6課課文／示範／換例／回饋與整合先決事項集中於[S23教材](S23-LESSON-PREPARATION.md)；test/learning-next.test.mjs以L4／L5／L6具名牌例核對固定引擎與逐條結算。尚未接課程頁或擴三筆進度；改教材先對照該牌例及RULES，不新增教學專用仲裁／過水／計台算法。
 
+S2.3保存準備：[相容候選規格](S23-PROGRESS-COMPATIBILITY.md)管新八課另鍵、舊原文保留、條件式帶入、固定鎖順序及單次寫入；C01–C12為尚未實裝的待驗清單。現行learning-progress.ts仍只接受三課v1，不能把候選格式當作已支援；S2.2內容修訂後先凍結可帶入課次，再實作與驗版本回復。
+
 S2.4準備：[第7–8課腳本／實桌附錄](S24-LESSON-PREPARATION.md)對應test/learning-round.test.mjs。從完整144張牌堆經真實DEAL，逐步跑示範及換例的13／34吃法、他家胡與過；是固定教學劇本，不是正常AI。引擎序列化檢查不代表課程中途進度已保存，正式整合仍先處理前三課修訂及擴課相容。
 
 S4.2牌面語意／選取：[限定驗收](S42-ACCESSIBILITY.md)。共用view.tile以role=img呈現名稱，裝飾牌及他家暗手維持隱藏；不能為可及性把暗槓未知牌種填回DOM。learning.css在forced-colors用雙線框，保持內距／邊框總尺寸及獨立焦點；對應test/e2e/accessibility.spec.js，含light／dark、暗槓遮罩與未推進牌局。
