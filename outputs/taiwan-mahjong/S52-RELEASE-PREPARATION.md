@@ -12,7 +12,7 @@
 
 本次整理的學習功能包括前三課認牌／摸打補花／五組加眼睛、九題四能力試讀、手動保存同版續答及schema3曝光自陳。原選擇、仲裁實際結果與公開資訊能支持的結論分開呈現；不提供整體牌技總分或未校準放槍機率。
 
-[立即遊玩](https://zhai2liu.github.io/taiwan-mahjong/) · [前三課](https://zhai2liu.github.io/taiwan-mahjong/learn.html) · [決策題](https://zhai2liu.github.io/taiwan-mahjong/training.html) · [33秒展示與文字導覽](../taiwan-mahjong-showcase/README.md)。所有展示牌局及作答是合成資料。
+[立即遊玩](https://zhai2liu.github.io/taiwan-mahjong/) · [前三課](https://zhai2liu.github.io/taiwan-mahjong/learn.html) · [決策題](https://zhai2liu.github.io/taiwan-mahjong/training.html) · [操作展示與文字導覽](../taiwan-mahjong-showcase/README.md)。所有展示牌局及作答是合成資料。
 
 正式runtime來源4bb87cd，展示／審核準備提交合併6b8e5ea；本文件提交另依HANDOFF。型別／365項Node測試、26項桌面及窄畫面瀏覽器回歸通過，Chrome／Edge、320寬與原生200%的適用範圍見[S3.3](S33-VALIDATION.md)。不把測試數當玩家學習成效。
 
