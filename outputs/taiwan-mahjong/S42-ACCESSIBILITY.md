@@ -43,3 +43,13 @@
 [play-save.spec.js](test/e2e/play-save.spec.js)在桌面／窄畫面分別驗對戰、純練習、待存檢討：配額失敗保留舊原文，取消真實重載保留16張手牌，恢復寫入後重試只保存當前狀態、不多打牌／摸牌；解除提醒後能正常重載並續局／續練。也核對另一種遊玩存檔及新手／試讀鍵原文不變。修前桌面三例均因缺少離頁防護失敗，trace與log保留於work/play-leave-before-evidence/及play-leave-before-tests.log。
 
 不新增存檔鍵、格式、依賴或自訂確認視窗，不在離頁時臨時搶存資料；沿用明確重試。原生警告依賴瀏覽器及使用者操作，不能保證攔住手機關閉、程序終止或崩潰，亦不代表檔案已跨來源備份。
+
+## 真正快取返回與跨分頁更新
+
+2026-10-18補上可重跑的`npm run test:history -- chrome`／`msedge`。命令沿用Vite與Playwright，在隔離4231來源、全新headless context及合成資料依序驗對戰、純練習、新手進度、試讀保存；服務及context在成功／失敗後都關閉，不用日常瀏覽器profile。
+
+原頁有已存紀錄時離開，由另一頁寫入合法的新版本，再返回上一頁。必須實際觀察`pageshow.persisted=true`才可通過，不能只看網址或把重新載入算成BFCache。原對戰／練習的舊17張手牌全停用，最新原文不變；課程能明確重讀新紀錄；試讀先停用覆寫、保留原頁理由，確認後才採用新理由。四類其他鍵均保持原文，頁面錯誤為0。
+
+本機Chrome155.0.8059.80與Edge155.0.4283.62各四條通過。另以自有scratch副本刻意關閉BFCache，第一條以非零狀態及「未確實進入BFCache」拒絕；失敗亦關閉4231，未改正式腳本或玩家資料。
+
+這是具名桌面驗證命令，沒有加入既有CI的核心回歸計數或改全域瀏覽器設定。本機預設Chromium headless shell未觸發真正快取返回；[Playwright官方文件](https://playwright.dev/docs/browsers#chromium-new-headless-mode)也區分shell與具名瀏覽器的headless模式。未進快取、未安裝具名瀏覽器或被企業政策停用時應報失敗／未驗，不能改成一般重載後填通過。未驗手機／Safari／真人輔具，不能宣稱所有快取情況已覆蓋。
