@@ -1,6 +1,6 @@
 # S3.3：手動續答、曝光與版本
 
-2026-10-17，本機完成，正式發布待驗；最新狀態依[HANDOFF](HANDOFF.md)。本包只處理九題試讀，不改牌局、規則、AI或前三課進度。
+2026-10-17，完成並驗證發布；最新狀態依[HANDOFF](HANDOFF.md)。本包只處理九題試讀，不改牌局、規則、AI或前三課進度。
 
 ## 契約
 
@@ -18,6 +18,10 @@
 - 已安裝Chrome155.0.8059.80與Edge155.0.4283.62新增六項各通過；正式構建Chrome1440／390／320及原生200%（CSS720×450、dpr2）續答、已見自陳、匯出審閱、未知skill回全部、0pageerror、無橫向溢出。畫面為合成資料，未操作日常profile、真人作答或Downloads。
 - 最終logs：work/s33-unit-final.log、s33-browser-final.log、s33-chrome.log、s33-edge.log、s33-visual.log。首次四項瀏覽器失敗為測試未重開重繪後的原生管理details；補正後完整回歸通過，不以隱藏控制項強點取代操作。保存狀態同文字不反覆重設live區域，減少輸入時重複播報。
 
-## 仍待
+## 正式發布與界線
 
-指定head PR CI、main發布與正式三頁資源／保存續答驗收。真人理解、手機／Safari／螢幕閱讀器實機仍待，不把本機旗標當研究或防作弊證據。手動保存只保留一份，沒有跨裝置、任意舊版自動遷移或外部匯入；清除本機保存保留本頁內容，離開後不保證可復原。
+來源52e68f5，[PR#8](https://github.com/zhai2Liu/taiwan-mahjong/pull/8)指定head Actions39019416117通過365／26（Linux33.8秒），Pages上傳與deploy skipped、0 artifact。合併4bb87cd；[main Actions39019565456](https://github.com/zhai2Liu/taiwan-mahjong/actions/runs/39019565456)的365／26（30.5秒）、build及deploy成功。沒有外部真人程式審查，未改分支保護。
+
+正式index／training／learn HTTP200，4／3／4份JS／CSS SHA-256與本機全相符（work/s33-live.log）。只改試讀training-vkOYxEaA.js（eb9f815cf99e7af0bb948ec7a2440912c4db1313a575dec0a4e49d802c7886ec），其他正式資源不變。隔離Chrome1440／390／320完成保存→次訪續答／曝光鎖定→schema3真實下載再審閱，未知skill回全部、原資料仍在、0pageerror、無溢出（work/s33-production.log）。全為合成，未使用真人存檔或日常profile。
+
+真人理解、手機／Safari／螢幕閱讀器實機仍待，不把本機旗標當研究或防作弊證據。手動保存只保留一份，沒有跨裝置、任意舊版自動遷移或外部匯入；清除本機保存保留本頁內容，離開後不保證可復原。

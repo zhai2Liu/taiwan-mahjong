@@ -4,7 +4,11 @@
 
 2026-10-14人工待辦整理：[HUMAN-FEEDBACK-CHECKLIST](HUMAN-FEEDBACK-CHECKLIST.md)區分現在可試用的新手／熟手／操作／實機、後續正式評量與作品試讀、本人貢獻／授權／公開同意／S6決定。新增最小回報格式並沿用既有任務及JSON接收流程。純文件、未收到新資料或啟動新功能；S3.1發布與下一包S3.2不變。
 
-## 目前工作包：S3.3 進行中
+## 目前工作包：S3.3 已完成並驗證發布
+
+正式完成：main Actions39019565456的365／26（30.5秒）、build117358485491與deploy117358754799均成功。正式三頁200、4／3／4份資源雜湊全相符；只改training-vkOYxEaA.js，其餘對戰與教學資源不變。正式隔離Chrome1440／390／320保存、次訪續答、已揭示曝光鎖定、schema3真實下載→本機審閱、未知skill保留存檔均通過，0pageerror／無溢出，work/s33-live.log及production.log。詳細[S33](S33-VALIDATION.md)。帳戶47%，原窗口resetsAt1792229095未變；不跨重設續跑。下一包S3.4只有準備文件與候選缺口盤點；可接獨立S5.1示範素材，真人驗證／本人貢獻確認維持待驗。4227本輪服務仍開，後續關閉；所有正式驗收Chrome已關。
+
+發布檢查點：來源52e68f5，[PR#8](https://github.com/zhai2Liu/taiwan-mahjong/pull/8)已附chat，指定head Actions39019416117成功，365／26項（Linux33.8秒），Pages上傳與deploy skipped、0 artifact；合併4bb87cd並已回main。main Actions39019565456尚在進行，正式驗收不得先稱完成。Chrome／Edge最終來源新六項各通過（7.8／8.0秒），logs改s33-chrome-final／s33-edge-final。S3.4準備稿已落盤但未提交，沒有改題或宣稱真人放行。
 
 本機檢查點：365 Node／check／build、Chromium26項通過，Chrome／Edge新增六項各通過。1440／390／320及原生200%續答、schema3真實下載審閱、未知skill保留已存作答、0pageerror與無橫向溢出；畫面已檢視、全合成。原檔與其他鍵不變、故障／衝突／確認保護見[S33](S33-VALIDATION.md)。文件同步續答與schema3，內容版本不變。帳戶用量41%，原窗口不變；4227本輪preview仍在，發布後關閉。下一動作指定head PR CI→main deploy→正式三頁資源與續答，再準備獨立S3.4規準；真人／實機／S6不代填。以下早期檢查點保留過程，未提交／未驗的描述由本段現況覆蓋。
 
