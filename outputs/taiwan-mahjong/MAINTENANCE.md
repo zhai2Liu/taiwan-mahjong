@@ -102,6 +102,7 @@ exactPool只接剩餘一般牌的唯一實體ID；publicPool扣自家牌、公�
 | npm run build | check後由Vite產生site/；base目前為./ |
 | npm run dev -- --port 4183 | 獨立開發／fixture來源，避免覆寫實際遊玩的4173存檔 |
 | npm run preview -- --port 4173 | 預覽已建置site/，修改後須重新build |
+| npm run verify:release -- https://zhai2liu.github.io/taiwan-mahjong/ | 指定提交部署成功後，比對本機site與正式三頁HTML／引用資源，非零退出表示尚未核對通過 |
 | npm run simulate -- --hands 1000 --matches 3 --seed 20261004 | M1測試策略長模擬，輸出SIMULATION.json；不是正式AI策略驗收 |
 | node scripts/verify-m3.mjs M5.1-SIMULATION.json | 正式策略3完整將驗證，需先check；指定輸出檔名以保留歷史；省略時更新M3-SIMULATION.json，非每次修改必跑 |
 

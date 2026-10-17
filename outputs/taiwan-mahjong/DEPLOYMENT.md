@@ -16,11 +16,13 @@
 
 初始化／上傳時只明確加入上述專案來源、文件、lockfile及workflow；不加入node_modules、dist、site、work、其他專案檔案或個人資料。遊戲資料夾現有.gitignore排除三份生成目錄。若接到既有repository，先檢查內容及分支再整合，不覆寫既有歷史。
 
-流程在main推送遊戲來源／測試／建置設定／workflow修改、M0 cases.json／RULES.md變更或手動執行時啟動。遊戲根目錄Markdown、JPG截圖、*SIMULATION.json維護證據仍排除；M0 RULES.md是明確例外。src／public內素材仍觸發，勿把發布素材放在被排除路徑。使用GitHub原生paths，不另寫判定程式；符合[官方路徑篩選](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#onpushpull_requestpull_request_targetpathspaths-ignore)。執行：lockfile安裝 → npm test（已含型別檢查） → build → 上傳site → 部署；測試／建置失敗不發布。測試數與當輪來源依HANDOFF。
+流程在main推送遊戲來源／測試／建置設定／workflow修改、M0 cases.json／RULES.md變更或手動執行時啟動。遊戲根目錄Markdown、JPG截圖、*SIMULATION.json維護證據仍排除；M0 RULES.md是明確例外。src／public內素材仍觸發，勿把發布素材放在被排除路徑。使用GitHub原生paths，不另寫判定程式；符合[官方路徑篩選](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#onpushpull_requestpull_request_targetpathspaths-ignore)。執行：lockfile安裝 → npm run check:docs → npm test（已含型別檢查） → build → 上傳site → 部署；測試／建置失敗不發布。測試數與當輪來源依HANDOFF。
 
 S1.2a新增指向main的pull_request檢查，不設PR路徑排除，文件PR也取得build結果；此名稱供日後設定required status check。PR跳過Pages artifact／deploy，非main手動分支亦僅檢查。全域contents:read，checkout不保留憑證，只有受main條件保護的deploy取得Pages／OIDC權限。各PR的群組與main分開；PR新提交可取消過期檢查，main維持序列發布。見[S1.2a驗收](S12A-VALIDATION.md)。目前未配置分支保護，本包不改合併門檻。
 
 Vite保留`base: './'`與`outDir: 'site'`，建置資源使用相對路徑，支援帶repository子路徑的首頁；沒有前端路由或深層網址。dist是測試編譯，不能誤作發布產物。
+
+根目錄`.gitattributes`僅固定三個入口HTML為`text eol=lf`；本機實測CRLF經現用Vite可產生部分CRCRLF，與Linux產物有換行差異。Git屬性讓Windows與雲端checkout沿相同LF，[官方eol說明](https://git-scm.com/docs/gitattributes#_eol)為依據；不重寫其他來源或全域Git設定。該檔亦列入main發布觸發。舊checkout的現存CRLF檔需在確認無本機未存編輯後換成LF，再建置；不要強制重置整個工作區。
 
 S1.2b在共同build內先安裝Chromium（CI含系統依賴），建置後執行核心瀏覽器回歸，再允許main上傳Pages及部署。檢查失敗時保留test-results的截圖／trace七天；這是測試證據artifact，PR仍不產生Pages artifact或取得Pages／OIDC權限。首次下載瀏覽器需要網路，失敗時不得跳過回歸發布。正式site只含index.html／training.html／learn.html與assets，測試範例由Node端注入隔離瀏覽器，不發布。見[S1.2b驗收](S12B-VALIDATION.md)。
 
@@ -36,6 +38,10 @@ S1.2b在共同build內先安裝Chromium（CI含系統依賴），建置後執行
 ## 後續更新與回復
 
 修改src及相應文件／案例，先驗證；以PR提交時檢查通過後再合併到main，main亦會重新驗證／發布。既有直接main推送仍依路徑規則執行，未由本包禁止；不要直接改site產物。每次部署以提交SHA追蹤，正式驗收後記下該SHA。
+
+指定提交的main部署成功後，在同一來源與依賴版本下建置，執行`npm run verify:release -- https://zhai2liu.github.io/taiwan-mahjong/`。工具從script位置找site/，比對三個HTML（僅將CRLF正規化為LF）及HTML直接引用JS／CSS的SHA-256；共用資源只讀一次，不假定固定資源數。缺檔、內容／資源不同、無JS／CSS、非預期資源路徑、HTTP非200、逾時或轉址均非零退出，不會自動重試或發布。網址須為明確、以斜線結尾的HTTP(S)專案目錄；帳號或網域異動時傳入最終網址，不由工具猜測或跟隨轉址。只針對目前Vite產物，不遍歷動態載入或其他素材；新增此類資源時改用Vite manifest擴充。
+
+這項檢查證明「目前網址回傳內容與目前site相符」，不單獨證明Git來源、CI、畫面操作或存檔相容。先核對提交SHA／Actions，通過後仍驗受影響操作並更新HANDOFF；不要以重跑舊site得到成功當新版已上線。工具只讀公開頁面，不讀登入資訊或玩家localStorage；測試頁仍不發布。
 
 回復先確認問題提交，使用Git revert建立反向提交、推送main並走相同驗證／部署流程；不要reset或強制推送抹掉歷史。workflow失敗時先查看失敗步驟，保持目前成功網站；不要以跳過測試修復發布。
 

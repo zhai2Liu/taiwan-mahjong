@@ -9,6 +9,7 @@
     "check:docs": "node scripts/check-doc-links.mjs",
     "build": "npm run check && vite build",
     "preview": "vite preview --host 127.0.0.1",
+    "verify:release": "node scripts/verify-release.mjs",
     "test": "npm run check && node --test test/*.test.mjs",
     "test:browser": "npm run build && playwright test",
     "benchmark:browser": "npm run build && node scripts/browser-baseline.mjs",
