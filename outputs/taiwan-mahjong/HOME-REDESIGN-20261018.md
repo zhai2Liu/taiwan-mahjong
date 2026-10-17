@@ -1,6 +1,6 @@
 # 首頁重設計與入口整理
 
-2026-10-18｜S1.4。依使用者「首頁畫面重新設計、UI 位置不舒服」的回饋，改善入口辨識與視覺層級。[PR#22](https://github.com/zhai2Liu/taiwan-mahjong/pull/22)最終來源3c5d1db、Actions39065024289成功400／50，合併b384764；main CI／正式發布結果以 [HANDOFF](HANDOFF.md) 更新為準。
+2026-10-18｜S1.4。依使用者「首頁畫面重新設計、UI 位置不舒服」的回饋，改善入口辨識與視覺層級。[PR#22](https://github.com/zhai2Liu/taiwan-mahjong/pull/22)最終來源3c5d1db、Actions39065024289成功400／50，已合併並發布b384764；main39065175077成功400／50（47.9秒）、Pages成功，三頁資源與正式新局／三路往返／續玩通過。最新版本以 [HANDOFF](HANDOFF.md) 更新為準。
 
 ## 調整結果
 

@@ -6,9 +6,13 @@
 
 使用者要求投入新的五小時帳戶額度並優先改善首頁。啟動讀值0%已用，resetsAt=1792284614；最近檢查6%。這是帳戶共享百分比，不是精確對話剩餘token。建立持續工作目標，每包落盤；不使用重設或自動續跑。6.1 Sol主導，Luna限定唯讀首頁審查，未使用Astra。
 
-S1.4首頁已由[PR#22](https://github.com/zhai2Liu/taiwan-mahjong/pull/22)合併b384764505ec63e798b01ca49ca239b637eae7cc。最終來源3c5d1db32d3a804fd44c77bc26a9baf679d12704的Actions39065024289／build117490738456成功：400 Node／型別／build、50瀏覽器（42.1秒）、85份文件／582連結0問題。含真別頁更新時保留首頁連結焦點，已先重現失敗再修復；沒有改存檔。完整範圍、兩張圖與契約見[首頁驗收](HOME-REDESIGN-20261018.md)。main CI／Pages及正式操作核對中，不能把合併當發布完成。
+S1.4首頁已由[PR#22](https://github.com/zhai2Liu/taiwan-mahjong/pull/22)合併並發布b384764505ec63e798b01ca49ca239b637eae7cc。最終來源3c5d1db32d3a804fd44c77bc26a9baf679d12704的Actions39065024289／build117490738456成功400／50（42.1秒）；main39065175077／build117491194356成功400／50（47.9秒）、deploy117491609398成功。85份文件／582連結0問題。真別頁更新時的入口焦點遺失已先重現再修復；沒有改保存格式。
 
-前輪最近正式來源8e43f87（main Actions39048560730成功400／44，Pages成功）；純MD主線之後到44c9b00不另部署。正式網址[青竹牌室](https://zhai2liu.github.io/taiwan-mahjong/)，origin=https://github.com/zhai2Liu/taiwan-mahjong.git。不要使用舊CI代替本輪指定提交。
+正式三頁HTML與全部引用JS／CSS和指定site相符。正式隔離桌面新局、390px學習／試讀／練習往返、取消新局原文保留與續玩還原全部通過、0pageerror；另有320／820及強制色彩截圖。完整範圍、兩張圖與契約見[首頁驗收](HOME-REDESIGN-20261018.md)。功能資源index-w9IuzQfR.js／view-BlHMN2jy.js／index-BOwf8lyn.css。
+
+下一包S1.5在codex/trial-workspace-20261018整理試讀頁牌例／作答／保存工具位置。已修改training.html與training.ts／css，尚未建置驗證，不能稱已發布；題目、答案、內容版本與保存邏輯不改。先完成本機檢查與畫面核對，再走PR及正式驗收。原始前圖已在work/entry-pages-20261018/。獨立審查確認切題不觸發離頁提醒符合手動快照契約，只補保存位置說明，不增加警告。
+
+正式網址[青竹牌室](https://zhai2liu.github.io/taiwan-mahjong/)，origin=https://github.com/zhai2Liu/taiwan-mahjong.git。前輪九包與來源8e43f87已保留歷史；純MD狀態提交不另部署。不要使用舊CI代替本輪指定提交。
 
 首頁沒有修改固定桌規、計台、AI、課程內容、保存格式或三頁路徑。S2.3互動整合仍先依S2.2真人試用／修訂；目前真人0。其他獨立操作與維護缺口可繼續修，S6仍須另行啟動。
 
