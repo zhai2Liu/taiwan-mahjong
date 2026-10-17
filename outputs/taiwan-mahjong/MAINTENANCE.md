@@ -110,6 +110,8 @@ test/browser.html與test/runner.html為開發來源工具；browser-fixtures、c
 
 純文件修改跑`npm run check:docs`，再人工核對命令與現況一致性。檢查器只用Node標準函式庫，從script位置找Git根目錄，涵蓋根README／AGENTS及遊戲、M0、showcase內追蹤的md；略過圍欄程式碼、外部網址及頁內錨點。檢查本機行內／圖片連結的檔案或追蹤目錄，不驗外部網站、標題錨點、參照式或巢狀連結。新增檔先加入Git索引；只存在本機／被忽略的目標也會失敗，避免發布後才斷鏈。與型別／build分開，讓不含.git的原始碼仍可建置；不為此新增Markdown依賴。
 
+發布工具回歸在`test/release-check.test.mjs`，隨`npm test`執行；可單跑`node --test test/release-check.test.mjs`。複製真實CLI到work/內獨立生成目錄、以合成三頁／資源及本機HTTP驗子路徑、共用資源只取一次、內容不同／非200／轉址與錯誤參數；不依賴先有site或外網。清理前核對生成目錄仍在work/，子程序有逾時，原遊戲／正式網址／玩家資料不會被測試改寫。
+
 行為修改跑受影響測試，跨模組或正式交付再跑全套及build；只有AI／回合／續局改動需要相應完整牌局驗證，不反覆長模擬消耗額度。測試失敗先保存重現資料；simulate會把seed、狀態與動作記至工作區work/taiwan-mahjong/。
 
 ## 提交工作包與發布
