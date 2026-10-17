@@ -4,11 +4,13 @@
 
 ## 現況與正在做的工作
 
-使用者要求「把五小時的額度全部用來推進專案進度」，持續目標有效。當前窗口resetsAt1792266558，起始0%、最近檢查46%；比例是帳戶用量，不能推算精確對話剩餘token。逐包驗證、提交、發布及落盤，接近耗盡先收斂交接；不使用重設額度或新增自動續跑。
+使用者要求「把五小時的額度全部用來推進專案進度」，持續目標有效。當前窗口resetsAt約1792266558（工具有1秒浮動），起始0%、最近檢查61%；比例是帳戶用量，不能推算精確對話剩餘token。逐包驗證、提交、發布及落盤，接近耗盡先收斂交接；不使用重設額度或新增自動續跑。
 
 文件維護包已完成：來源8f097b8、[PR#16](https://github.com/zhai2Liu/taiwan-mahjong/pull/16)合併8ec8b9b。`npm run check:docs`使用Node標準函式庫，83份文件／520個本機連結0問題；四個負例均拒絕、fixture已移除。PR39045918296成功399／38（34.0秒），main39046061000成功399／38（31.8秒）、build117434907375／deploy117435191400成功；三頁及全部引用資源與site相符，八個公開修改檔與合併git blob相符。最新Pages提交8ec8b9b，功能資源仍f994fa2。logs為work/doc-links-negative.log、positive.log、pr-ci.log、main-ci.log、live-assets.log、public.log（皆doc-links-前綴）。
 
-目前分支codex/unsaved-play-warning：已補對戰／練習保存失敗與待存檢討的原生離頁提醒；paint及檢討非同步通知同步，任一未存內容仍在便保留，成功重試後解除。不改牌局、存檔格式或新增自訂離頁視窗。修前桌面三例均重現缺防護；修後399 Node／check／build、Chromium44項（35.0秒）及Chrome／Edge受影響各6項（6.5／6.7秒）通過。83份文件／523鏈0問題；指定head PR／發布尚待。詳[S42](S42-ACCESSIBILITY.md)，logs為work/play-leave-before.log、after.log、before-tests.log、before-evidence/、targeted.log、tests.log、build.log、browser.log、chrome.log、msedge.log（皆play-leave-前綴）。
+遊玩離頁保護已發布：來源fdc2879、[PR#17](https://github.com/zhai2Liu/taiwan-mahjong/pull/17)合併65dc22f。PR39046540677成功399／44（46.1秒），main39046718938成功399／44（38.0秒）、build117436802677／deploy117437135648成功。正式三頁200、4／3／4份JS／CSS SHA-256與site相符；正式三種隔離context實際取消原生重載、原檔保留、成功重試解除，0pageerror。八個公開修改檔雜湊相符。本機399／44（35.0秒）、Chrome／Edge受影響各6項（6.5／6.7秒），83份文件／524鏈0問題。詳[S42](S42-ACCESSIBILITY.md)；work/play-leave-*涵蓋before／after、before-tests／evidence、targeted／tests／build／browser／chrome／msedge、pr-ci／main-ci／public／live-ui／live-assets-existing。npm audit同日0已知漏洞，原始JSON在work/dependencies-audit-20261017.json，非未來保證。
+
+下一維護包：將反覆用於發布核對的work腳本收斂為正式命令。原型work/verify-release-prototype.mjs及verify-release-negative-cases.mjs已驗HTML／資源不符、404與轉址拒絕；正式HTML核對另重現Windows CRLF經Vite產生CRCRLF、Linux為LF，詳work/html-line-endings-audit.mjs及html-release-diff.log。接著以Git屬性固定三個入口HTML的LF及涵蓋其發布觸發，避免放寬內容比對來掩蓋差異；本包尚未改來源。既有資源核對及正式行為均已通過，HTML差異限換行。
 
 完成本包後繼續處理可重現的操作／可及性／維護缺口，先驗證再修正。後五課教材與引擎牌例已備，正式互動整合仍沿前三課試用／修訂順序；不能為消耗額度跳過真人門檻。真人資料只阻擋相應理解／難度／成效與實機結論，不代表整個專案必須停工。
 
@@ -36,10 +38,11 @@
 | S2.4準備 | 7f7e291／36aa912，[PR#13](https://github.com/zhai2Liu/taiwan-mahjong/pull/13) | PR39042980660：399／26；main39043175446：399／26、部署與三頁資源通過 |
 | S4.2牌面／強制色彩 | 69439e8／1f91996，[PR#14](https://github.com/zhai2Liu/taiwan-mahjong/pull/14) | PR39044088421：399／32；main39044234956：399／32、正式限定UI／資源通過 |
 | S4.2重讀保留 | 8fe4564／f994fa2，[PR#15](https://github.com/zhai2Liu/taiwan-mahjong/pull/15) | PR39045048994：399／38（40.1秒）；main39045246989：399／38（35.2秒）、build117432567895／deploy117432905099成功 |
+| S4.2遊玩離頁 | fdc2879／65dc22f，[PR#17](https://github.com/zhai2Liu/taiwan-mahjong/pull/17) | PR39046540677：399／44；main39046718938：399／44、部署及正式三類失敗／重試通過 |
 
 最近本機399 Node／check／build、Chromium38項（31.2秒）通過；重讀故障受影響Chrome155.0.8059.80／Edge155.0.4283.62各6項通過。三種故障為讀取錯誤、壞檔、未知格式；保留本頁進度／原文／離頁提醒，修復後成功重讀才取代記憶體。不是存檔遷移或真人試用證據。
 
-正式站：[青竹牌室](https://zhai2liu.github.io/taiwan-mahjong/)，origin為https://github.com/zhai2Liu/taiwan-mahjong.git。最新功能發布f994fa227594c32e380ec137aad1af2e3c3b64c2；三頁HTTP200，全部4／3／4份JS／CSS SHA-256與site一致。正式隔離context核對先寫入失敗再讀取失敗，進度／原文保留、0pageerror；八個公開檔案雜湊與git blob相符。最新learn-By-3MGNT.js、view-BptEx-mj.js；其他資源清單及舊PR證據見歷史交接。
+正式站：[青竹牌室](https://zhai2liu.github.io/taiwan-mahjong/)，origin為https://github.com/zhai2Liu/taiwan-mahjong.git。最新功能發布65dc22f42ad0e4d39099d9c2a25fe8f39e728623；三頁HTTP200，全部4／3／4份JS／CSS SHA-256與site一致。最新index-Cb42fmnp.js、learn-By-3MGNT.js、view-BptEx-mj.js；其他資源清單及舊PR證據見歷史交接。
 
 PR均已附本chat；PR的Pages上傳與deploy跳過，沒有Pages產物。沒有外部真人程式審查或分支保護修改；不要以舊CI充當新提交證據。全為隔離合成資料，不代表手機／Safari／真人理解或普遍學習成效。
 
