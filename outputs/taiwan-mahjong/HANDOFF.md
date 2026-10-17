@@ -4,9 +4,11 @@
 
 ## 現況與下一步
 
-S4.2本機修正完成、待PR發布核對：基線1014d9f、分支codex/accessibility-tile-states。共用tile補role=img，首頁裝飾牌隱藏、他家暗手／暗槓仍遮罩；learning.css強制色彩用雙線框且補償內距。新回歸先驗原版兩項失敗，再驗399 Node／check／build、Chromium32項（28.7秒）、Chrome155.0.8059.80與Edge155.0.4283.62各6項通過；Chromium156.0.8078.4。light／dark、1440／390、選取／焦點分離與尺寸不變、海底圖片語意／暗槓不洩漏及局面不變已核對，截圖見[S42](S42-ACCESSIBILITY.md)。logs work/s42-before-tests.log、s42-before-evidence/、s42-tests.log、s42-browser-final.log、s42-chrome-final.log、s42-msedge-final.log、s42-forced-colors-before／after.log、s42-tile-before／after.log。無規則／AI／存檔格式變更；尚未PR，不先稱正式發布。4230隔離preview仍在（session80087），本機4226回歸均已結束，Chrome／Edge需依次跑以免占同埠。最近帳戶19%，非精確token；持續目標有效，發布後繼續檢查保存失敗／操作缺口。
+S4.2牌面／強制色彩修正已發布：來源69439e8、[PR#14](https://github.com/zhai2Liu/taiwan-mahjong/pull/14)合併1f91996。PR Actions39044088421成功399／32（36.7秒），main39044234956成功399／32（29.3秒）、build117429668346／deploy117429929423成功。正式三頁200、引用4／3／4份JS／CSS SHA-256與site相同；正式隔離Chrome系context驗海底圖片名稱、暗槓遮罩、強制色彩雙線選取、原牌局保存不變及0pageerror。九個公開檔案雜湊與1f91996 git blob相符。限定範圍見[S42](S42-ACCESSIBILITY.md)，本機Chrome155.0.8059.80及Edge155.0.4283.62各6項通過；尚無手機／Safari／真人輔具驗收。
 
-本輪S2.4準備完成（2026-10-17）：來源7f7e291、[PR#13](https://github.com/zhai2Liu/taiwan-mahjong/pull/13)合併36aa912。第7–8課固定整局腳本／實桌附錄及8個從真實DEAL到結算／合法選過的分支已備；全套399／26，PR Actions39042980660成功（34.8秒），main39043175446成功（33.0秒），build117426596946／deploy117426915027成功。正式三頁200及4／3／4份JS／CSS SHA-256與本輪site相同，網頁仍4bb87cd功能內容；六個公開檔案與36aa912 git blob相符。教材／牌例見[S24](S24-LESSON-PREPARATION.md)，logs為work/s24-tests.log、s24-build.log、s24-pr-ci.log、s24-main-ci.log、s24-public.log、s24-live-after.log。未改runtime／依賴／三課進度，S2.4互動頁、真正暫停／中途保存及正常對戰連接未整合；實桌附錄未加入外部罰則。
+本輪持續目標有效。下一包已重現：寫入失敗後重讀也失敗，學習頁會先清空本頁進度及dirty離頁提醒；原存檔未改。work/s42-learning-read-before.log及work/s42-learning-read-audit.mjs可重跑。接著改為讀取／驗證成功才替換記憶體，失敗保留本頁紀錄與提醒。4230隔離preview仍在（session80087），4226回歸及額外context均結束；不動原4173或日常profile。A包logs：work/s42-before-tests.log、s42-before-evidence/、s42-tests.log、s42-browser-final.log、s42-chrome-final.log、s42-msedge-final.log、s42-pr-ci.log、s42-main-ci.log、s42-live-assets.log、s42-live-ui.log、s42-public.log，before／after視覺及語意log亦保留。
+
+前包S2.4準備完成（2026-10-17）：來源7f7e291、[PR#13](https://github.com/zhai2Liu/taiwan-mahjong/pull/13)合併36aa912。第7–8課固定整局腳本／實桌附錄及8個從真實DEAL到結算／合法選過的分支已備；全套399／26，PR Actions39042980660成功（34.8秒），main39043175446成功（33.0秒），build117426596946／deploy117426915027成功。正式三頁200及4／3／4份JS／CSS SHA-256與本輪site相同，網頁仍4bb87cd功能內容；六個公開檔案與36aa912 git blob相符。教材／牌例見[S24](S24-LESSON-PREPARATION.md)，logs為work/s24-tests.log、s24-build.log、s24-pr-ci.log、s24-main-ci.log、s24-public.log、s24-live-after.log。未改runtime／依賴／三課進度，S2.4互動頁、真正暫停／中途保存及正常對戰連接未整合；實桌附錄未加入外部罰則。
 
 使用者要求用本次五小時額度持續推進；新窗口起始0%、最近15%、resetsAt1792266558，不沿用上輪40%，非精確token。每包完成驗證、提交及更新本檔；下一包S4.2已重現：強制色彩下組牌選取只剩顏色、靜態牌面無圖片語意。work/s42-forced-colors-before.log／png及s42-tile-before.log；4230隔離preview仍在，session80087，測試context已關，尚未改runtime。後五課正式整合仍沿前三課試用／修訂順序，真人0、S6未啟動。無子代理、重設額度或新增排程／自動續跑，持續目標有效。
 
@@ -16,7 +18,7 @@ S4.2本機修正完成、待PR發布核對：基線1014d9f、分支codex/accessi
 
 上一包S5.1已完成：69.08秒字幕片／13段VTT與可重錄工具，來源cd0a778、合併daea897，PR#11指定head 365／26通過；七個公開檔案雜湊相符，詳[S51](S51-DEMO-VALIDATION.md)。分工本人已確認，不再重問。
 
-S3.2／S3.3已發布；S3.4審核準備、S5.1素材及S5.2技術準備已合併。最近功能改動來源4bb87cd；本包只有教材／測試，main原工作流按測試路徑觸發，已重發相同網頁產物，發布提交aa02c78。S2.2真人仍0、S2.3互動頁未完成。
+S3.2／S3.3已發布；S3.4審核準備、S5.1素材及S5.2技術準備已合併。教材包S2.3／S2.4沿4bb87cd內容重發；目前正式呈現修正已是1f91996，不再用4bb87cd當最新資源基準。S2.2真人仍0、S2.3互動頁未完成。
 
 S2.4腳本／附錄準備及發布核對已完成，下一包為S4.2桌面可及性／操作檢查；後五課正式整合仍沿前三課試用／修訂順序。真人資料只阻擋相應理解／難度／成效及實機結論，不代表整個專案必須停工。S3.4正式放行、S5.2授權／Release及另擬履歷摘要仍待；S6需另外啟動，不從研究直接實裝。
 
@@ -55,10 +57,11 @@ S2.4腳本／附錄準備及發布核對已完成，下一包為S4.2桌面可及
 | S5.1補版 | cd0a778／daea897，[PR#11](https://github.com/zhai2Liu/taiwan-mahjong/pull/11) | PR39034074956成功365／26（30.3秒）；七個公開檔案雜湊相符，無新Pages部署 |
 | S2.3準備 | 54d9e11／aa02c78，[PR#12](https://github.com/zhai2Liu/taiwan-mahjong/pull/12) | PR39039769390成功391／26（29.5秒）；main39039947228成功391／26（29.7秒），部署成功且三頁資源相符 |
 | S2.4準備 | 7f7e291／36aa912，[PR#13](https://github.com/zhai2Liu/taiwan-mahjong/pull/13) | PR39042980660成功399／26（34.8秒）；main39043175446成功399／26（33.0秒），部署及三頁資源通過 |
+| S4.2牌面／強制色彩 | 69439e8／1f91996，[PR#14](https://github.com/zhai2Liu/taiwan-mahjong/pull/14) | PR39044088421成功399／32（36.7秒）；main39044234956成功399／32（29.3秒），正式資源／限定UI通過 |
 
-七個PR均已附本chat。PR的Pages上傳／deploy skipped，無Pages產物；沒有外部真人程式審查或分支保護修改。不要只拿舊CI當新變更證據。
+八個PR均已附本chat。PR的Pages上傳／deploy skipped，無Pages產物；沒有外部真人程式審查或分支保護修改。不要只拿舊CI當新變更證據。
 
-正式站：https://zhai2liu.github.io/taiwan-mahjong/；origin：https://github.com/zhai2Liu/taiwan-mahjong.git。S3.3正式index／training／learn HTTP200、全部4／3／4份JS／CSS SHA-256與本機相符；S5.2及本輪S2.3準備部署後再核對仍未變。當前training-vkOYxEaA.js、index-DbMxywyF.js／index-8F0VuNEV.css、view-BjMvH8LY.js、learn-D7cu7U9P.js。
+正式站：https://zhai2liu.github.io/taiwan-mahjong/；origin：https://github.com/zhai2Liu/taiwan-mahjong.git。S3.3正式index／training／learn HTTP200、全部4／3／4份JS／CSS SHA-256與本機相符；S5.2及本輪S2.3準備部署後再核對仍未變。最新index-QYDJZATp.js／index-8F0VuNEV.css、view-BptEx-mj.js、learn-CbiWUkPF.js／learn-s-i9bbyn.css，training-vkOYxEaA.js未變。
 
 ## 驗證範圍與資料契約
 
