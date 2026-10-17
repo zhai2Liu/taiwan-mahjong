@@ -16,6 +16,7 @@ on:
       - 'outputs/taiwan-mahjong-m0/cases.json'
       - 'outputs/taiwan-mahjong-m0/RULES.md'
       - '.github/workflows/pages.yml'
+      - '.gitattributes'
   workflow_dispatch:
 
 permissions:

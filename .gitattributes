@@ -1,0 +1,2 @@
+# Keep Vite HTML output identical in Windows and Linux checkouts.
+outputs/taiwan-mahjong/*.html text eol=lf

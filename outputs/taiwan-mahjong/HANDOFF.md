@@ -10,7 +10,7 @@
 
 遊玩離頁保護已發布：來源fdc2879、[PR#17](https://github.com/zhai2Liu/taiwan-mahjong/pull/17)合併65dc22f。PR39046540677成功399／44（46.1秒），main39046718938成功399／44（38.0秒）、build117436802677／deploy117437135648成功。正式三頁200、4／3／4份JS／CSS SHA-256與site相符；正式三種隔離context實際取消原生重載、原檔保留、成功重試解除，0pageerror。八個公開修改檔雜湊相符。本機399／44（35.0秒）、Chrome／Edge受影響各6項（6.5／6.7秒），83份文件／524鏈0問題。詳[S42](S42-ACCESSIBILITY.md)；work/play-leave-*涵蓋before／after、before-tests／evidence、targeted／tests／build／browser／chrome／msedge、pr-ci／main-ci／public／live-ui／live-assets-existing。npm audit同日0已知漏洞，原始JSON在work/dependencies-audit-20261017.json，非未來保證。
 
-下一維護包：將反覆用於發布核對的work腳本收斂為正式命令。原型work/verify-release-prototype.mjs及verify-release-negative-cases.mjs已驗HTML／資源不符、404與轉址拒絕；正式HTML核對另重現Windows CRLF經Vite產生CRCRLF、Linux為LF，詳work/html-line-endings-audit.mjs及html-release-diff.log。接著以Git屬性固定三個入口HTML的LF及涵蓋其發布觸發，避免放寬內容比對來掩蓋差異；本包尚未改來源。既有資源核對及正式行為均已通過，HTML差異限換行。
+目前分支codex/release-verification：`npm run verify:release -- <明確網址/>`正式命令及入口HTML的LF屬性已備，.gitignore允許追蹤.gitattributes、workflow亦涵蓋其發布觸發。無runtime／依賴／存檔變更；三個HTML git blob未變，只讓checkout換行一致。已驗建置、正式三頁HTML及8份獨立JS／CSS相符，合成子路徑正例及HTML／資源不同、404、201、轉址五負例拒絕；強制core.autocrlf=true匯出三入口仍0CR且與git blob相同。83文件／525鏈通過；指定提交CI／發布待核對。logs：work/release-check-build.log、negative.log、live.log；work/html-line-endings-after.log、html-release-diff.log及原型stale.log保留修正前證據。工具僅核對目前HTML直接引用，未宣稱動態資源或操作驗收。
 
 完成本包後繼續處理可重現的操作／可及性／維護缺口，先驗證再修正。後五課教材與引擎牌例已備，正式互動整合仍沿前三課試用／修訂順序；不能為消耗額度跳過真人門檻。真人資料只阻擋相應理解／難度／成效與實機結論，不代表整個專案必須停工。
 
