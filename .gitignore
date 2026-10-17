@@ -7,4 +7,5 @@
 /outputs/*
 !/outputs/taiwan-mahjong/
 !/outputs/taiwan-mahjong-m0/
+!/outputs/taiwan-mahjong-showcase/
 outputs/taiwan-mahjong/*-draft.jpg

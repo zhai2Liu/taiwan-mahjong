@@ -2,7 +2,7 @@
 
 一款可直接在瀏覽器玩的台灣十六張麻將產品：一位真人與三位本地電腦，搭配牌效練習、打牌與吃碰回應後的解釋、局後檢討。採明確桌規，讓合法行牌、資訊公平與資料保存都能驗證。
 
-**[立即遊玩](https://zhai2liu.github.io/taiwan-mahjong/) · [決策題試讀](https://zhai2liu.github.io/taiwan-mahjong/training.html) · [開發與維護入口](outputs/taiwan-mahjong/README.md)**
+**[立即遊玩](https://zhai2liu.github.io/taiwan-mahjong/) · [從零入門](https://zhai2liu.github.io/taiwan-mahjong/learn.html) · [決策題試讀](https://zhai2liu.github.io/taiwan-mahjong/training.html) · [33秒示範與三圖](outputs/taiwan-mahjong-showcase/README.md) · [開發與維護入口](outputs/taiwan-mahjong/README.md)**
 
 此專案使用 AI 協作開發。開發工具與遊戲內電腦是不同概念：遊戲內使用本地策略，無需模型 API、登入或後端。
 
@@ -30,9 +30,9 @@
 
 完整對戰可選「打牌／吃碰後解釋」；打牌後或吃碰回應完成仲裁後暫停比較，關閉後自行繼續。結算可看本局少量決策檢討與同類練習入口。回饋留在瀏覽器，匯出由玩家自行交回。
 
-![出牌後解釋示例](outputs/taiwan-mahjong/AFTER-DISCARD-REVIEW.jpg)
+![台灣十六張實際牌桌，真人手牌與吃碰選項在下方](outputs/taiwan-mahjong-showcase/01-table.jpg)
 
-上圖為 2026-10-13 的功能驗收示例，後續在地用詞已調整；最新操作以正式網站為準。短版錄影與完整展示素材排在 S5。
+上圖及[33秒操作短片／解釋與新手課畫面](outputs/taiwan-mahjong-showcase/README.md)來自2026-10-17正式版本，使用合成牌例與作答；[文字版導覽](outputs/taiwan-mahjong-showcase/README.md#文字版導覽)可不看影片直接閱讀。這些是功能示範，未代表真人學習成效；最新驗證以HANDOFF為準。
 
 ## 架構與資訊邊界
 

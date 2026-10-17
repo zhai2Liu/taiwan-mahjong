@@ -4,7 +4,13 @@
 
 2026-10-14人工待辦整理：[HUMAN-FEEDBACK-CHECKLIST](HUMAN-FEEDBACK-CHECKLIST.md)區分現在可試用的新手／熟手／操作／實機、後續正式評量與作品試讀、本人貢獻／授權／公開同意／S6決定。新增最小回報格式並沿用既有任務及JSON接收流程。純文件、未收到新資料或啟動新功能；S3.1發布與下一包S3.2不變。
 
-## 目前工作包：S3.3 已完成並驗證發布
+## 目前工作包：S3.4 準備／S5.1 素材完成，待文件PR
+
+素材完成：outputs/taiwan-mahjong-showcase/內三張實際圖與33.04秒H.264短片（653382bytes）、文字導覽已備；正式4bb87cd／Chrome155.0.8059.80／隔離合成情境，無真人或音樂。MP4實際解碼播放及7／14／20／29秒定位通過，圖與代表畫面已檢視；第3圖另截整個組牌lesson。根README新版圖／影片／新手入口接線，[S51](S51-DEMO-VALIDATION.md)列來源、支援與本人貢獻確認仍待。依工作區規則交付皆在outputs，.gitignore只追加此展示資料夾；沒有runtime／題庫改動。下一動作文件／資產連結與原始碼差異→PR完整CI，通過後收斂；可接S5.2無破壞的版本回復演練，不自行選授權或宣稱正式Release。
+
+2026-10-17，分支codex/assessment-demo-preparation，基線cbc90a3。[S3.4準備稿](S34-ASSESSMENT-PREPARATION.md)盤點HE01／HS01／HC01／HD01的題族及難度負荷、人工理由錨點／流程／空模板；13題／12題族、四候選與原reviewStatus已核對，121個文件連結有效。未改題庫、runtime、accepted或assessmentFamilies，沒有外部真人審核／正式測驗放行。缺真人期間推進獨立S5.1：正式4bb87cd合成牌例的三圖／操作短片，來源與限制將另記。帳戶47%，原窗口未變；4227本輪preview仍開，製作與正式驗收使用隔離Chrome。尚未提交本包，素材製作中，下一動作驗影片／畫面→同步README／支援及貢獻界線→文件PR與收尾。
+
+## 前包：S3.3 已完成並驗證發布
 
 正式完成：main Actions39019565456的365／26（30.5秒）、build117358485491與deploy117358754799均成功。正式三頁200、4／3／4份資源雜湊全相符；只改training-vkOYxEaA.js，其餘對戰與教學資源不變。正式隔離Chrome1440／390／320保存、次訪續答、已揭示曝光鎖定、schema3真實下載→本機審閱、未知skill保留存檔均通過，0pageerror／無溢出，work/s33-live.log及production.log。詳細[S33](S33-VALIDATION.md)。帳戶47%，原窗口resetsAt1792229095未變；不跨重設續跑。下一包S3.4只有準備文件與候選缺口盤點；可接獨立S5.1示範素材，真人驗證／本人貢獻確認維持待驗。4227本輪服務仍開，後續關閉；所有正式驗收Chrome已關。
 
