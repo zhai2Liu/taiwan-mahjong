@@ -49,7 +49,7 @@ function controller(raw = null, confirm = true, faults = {}) {
       throw Error(name);
     },
     exports: {}, console, crypto, document: { querySelector: () => ({}) },
-    window: { confirm: () => { confirmations++; return confirm; }, addEventListener: (name, handler) => handlers.set(name, handler) },
+    window: { confirm: () => { confirmations++; return confirm; }, addEventListener: (name, handler) => handlers.set(name, handler), removeEventListener: (name, handler) => { if (handlers.get(name) === handler) handlers.delete(name); } },
     localStorage: {
       getItem: k => { if (faults.read) throw faults.read; return storage.get(k) ?? null; },
       setItem: (k, v) => { writeKeys.push(k); if (k !== reviewStore.REVIEW_KEY) writes++; if (faults.write || k === key && faults.gameWrite || k === practices.PRACTICE_KEY && faults.practiceWrite || k === reviewStore.REVIEW_KEY && faults.reviewWrite) throw faults.write || faults.gameWrite || faults.practiceWrite || faults.reviewWrite; storage.set(k, v); },
