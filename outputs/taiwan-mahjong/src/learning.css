@@ -7,6 +7,8 @@ button:disabled{opacity:.6;cursor:default}button[aria-pressed=true],button[aria-
 section{min-width:0}#lesson{padding:20px;background:white;border:1px solid #a1b3a4;border-radius:12px;margin-block:20px}
 .learn-tile{display:inline-flex;width:36px;height:51px;box-sizing:border-box;background:#fffdf4;border:1px solid #aaa99a;border-bottom:3px solid #799581;border-radius:4px;vertical-align:middle;flex:none}
 .learn-tiles button{padding:7px}.learn-tiles button[aria-pressed=true]{box-shadow:0 0 0 2px #195d49}
+/* ponytail: compensate the current 7px padding/1px border; keep sizing in sync if base tiles change. */
+@media(forced-colors:active){.learn-tiles button[aria-pressed=true]{border:3px double ButtonText;padding:5px}}
 .learn-table{display:grid;grid-template-areas:'. across .' 'upper sea lower' '. self .';grid-template-columns:1fr 1.2fr 1fr;gap:8px;background:#195d49;color:white;padding:12px;border-radius:10px;text-align:center;max-width:460px;margin-block:16px}
 .learn-table>div{align-self:center}.learn-table .across{grid-area:across}.learn-table .upper{grid-area:upper}.learn-table .lower{grid-area:lower}.learn-table .self{grid-area:self}.learn-table .sea{grid-area:sea}
 .learn-table .learn-tile{margin:4px}.learn-note,#lesson-feedback{padding:12px;border-left:4px solid #a77924;background:#f3eedf}.muted{color:#506557;font-size:.9rem}

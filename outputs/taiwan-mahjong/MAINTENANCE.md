@@ -26,6 +26,8 @@ S2.3準備：第4–6課課文／示範／換例／回饋與整合先決事項�
 
 S2.4準備：[第7–8課腳本／實桌附錄](S24-LESSON-PREPARATION.md)對應test/learning-round.test.mjs。從完整144張牌堆經真實DEAL，逐步跑示範及換例的13／34吃法、他家胡與過；是固定教學劇本，不是正常AI。引擎序列化檢查不代表課程中途進度已保存，正式整合仍先處理前三課修訂及擴課相容。
 
+S4.2牌面語意／選取：[限定驗收](S42-ACCESSIBILITY.md)。共用view.tile以role=img呈現名稱，裝飾牌及他家暗手維持隱藏；不能為可及性把暗槓未知牌種填回DOM。learning.css在forced-colors用雙線框，保持內距／邊框總尺寸及獨立焦點；對應test/e2e/accessibility.spec.js，含light／dark、暗槓遮罩與未推進牌局。
+
 S1.3：結算固定底部用scroll-padding保護焦點，新增控制時先重新驗高度；結算回歸含320px命中檢查。該包四條共八項，最新範圍以README及當輪驗收為準；可選已安裝Chrome／Edge。`npm run benchmark:browser -- chrome`／msedge只作同場景量測，方法與支援界線見[S13](S13-VALIDATION.md)。不為較慢單筆直接引入worker／全域快取。
 
 S1.2b：`test/e2e/core.spec.js`與`playwright.config.js`管理真實瀏覽器核心路徑，後續另擴練習、教學與分類。改出牌解釋、結算／續局或試讀匯出／離頁時，用`npm run test:browser`核對正式建置；首次安裝Chromium，最初步驟／隔離／未涵蓋範圍見[S12B](S12B-VALIDATION.md)，最新範圍見README。CI在既有build內執行，不改Pages權限；失敗證據保留七天。新合法動作／故障仍依原規則與控制器測試，不將端到端檢查當完整覆蓋。
