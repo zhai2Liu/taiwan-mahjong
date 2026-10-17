@@ -1,63 +1,61 @@
 # 現行交接入口
 
-更新：2026-10-18（Asia/Taipei）。方向依[PRODUCT-DIRECTION](PRODUCT-DIRECTION.md)，排程依[ROADMAP](ROADMAP.md)；前輪九包與完整CI證據見[歷史交接](HANDOFF-HISTORY-20261017.md)。
+更新：2026-10-18（Asia/Taipei）。方向依[PRODUCT-DIRECTION](PRODUCT-DIRECTION.md)，排程依[ROADMAP](ROADMAP.md)，修改位置依[MAINTENANCE](MAINTENANCE.md)。本輪以前及展開的CI證據保留[歷史交接](HANDOFF-HISTORY-20261017.md)；不要沿歷史「下一步」自動開工。
 
-## 本輪進行中
+## 目前網站與本輪交付
 
-使用者要求投入新的五小時帳戶額度並優先改善首頁。啟動讀值0%已用，resetsAt=1792284614；最近檢查55%。這是帳戶共享百分比，不是精確對話剩餘token。建立持續工作目標，每包落盤；不使用重設或自動續跑。6.1 Sol主導，Luna限定唯讀首頁／試讀／教學及錄製工具審查，未使用Astra。
+正式入口：[青竹牌室](https://zhai2liu.github.io/taiwan-mahjong/)。repository／origin為zhai2Liu/taiwan-mahjong。**目前runtime仍為51f35773a25162ffddecf333352f97a52d5e5881；純文件／展示提交不等於新runtime。**
 
-S1.4首頁已由[PR#22](https://github.com/zhai2Liu/taiwan-mahjong/pull/22)合併並發布b384764505ec63e798b01ca49ca239b637eae7cc。最終來源3c5d1db32d3a804fd44c77bc26a9baf679d12704的Actions39065024289／build117490738456成功400／50（42.1秒）；main39065175077／build117491194356成功400／50（47.9秒）、deploy117491609398成功。85份文件／582連結0問題。真別頁更新時的入口焦點遺失已先重現再修復；沒有改保存格式。
-
-正式三頁HTML與全部引用JS／CSS和指定site相符。正式隔離桌面新局、390px學習／試讀／練習往返、取消新局原文保留與續玩還原全部通過、0pageerror；另有320／820及強制色彩截圖。完整範圍、兩張圖與契約見[首頁驗收](HOME-REDESIGN-20261018.md)。功能資源index-w9IuzQfR.js／view-BlHMN2jy.js／index-BOwf8lyn.css。
-
-S1.5[試讀工作區](TRIAL-WORKSPACE-20261018.md)已由[PR#23](https://github.com/zhai2Liu/taiwan-mahjong/pull/23)合併並發布e76070291e9e59f30ee5c87ba0e235f5d7e68ec4。來源9a35c350e0a24ee48dede9461d18507e3801b650的Actions39065728154／build117492861570成功400／52（45.3秒）；main39065890220／build117493353587成功400／52（44.0秒）、deploy117493723484成功。正式三頁資源相符；Chrome1440px／Edge390px實際作答、保存／重載原游標、schema3真實下載及取消離頁保留通過，0pageerror。training-BH5dEc_t.js／training-Ddyr2V09.css。本機另外Chrome／Edge各四項、Chrome四模式真快取返回通過。未改題目／答案／內容版本、曝光或保存邏輯；只補手動保存位置說明，不增加切題離頁警告。原始證據在work/entry-pages-20261018/。
-
-S1.6[前三課排版](LEARNING-LAYOUT-20261018.md)已由[PR#24](https://github.com/zhai2Liu/taiwan-mahjong/pull/24)合併並發布51f35773a25162ffddecf333352f97a52d5e5881。來源80f7546bfef18297808413a40a04d7430d449960的Actions39066375904／build117494810165成功400／52（52.0秒）；main39066578543／build117495408948成功400／52（50.7秒）、deploy117495801813成功。正式三頁資源相符；Chrome1440／Edge390認牌完成、組牌收組、重載三筆v1進度／未完成不誤計與其他鍵保留通過，0pageerror。learn-pMwkekFN.js／learn-Bv3fDrzy.css。本機learning／accessibility16／16，最後Chrome／Edge各6／6。只改HTML／CSS，未改learning.ts、課文、示例與保存格式；原始證據在work/entry-pages-20261018/learning-*。
-
-codex/showcase-refresh-20261018已完成[新版展示](S51-DEMO-VALIDATION.md)的70.52秒影片／13段字幕／三圖本機驗收：最終work/showcase-AaZOE7，完整解碼、原生播放、VTT13段、重載狀態及理由實際可見、0pageerror，原牌局保持不變。檔案已放展示目錄，工具加錄製前資源核對（自然差異拒絕及正式版本成功均已驗），README及S51已同步，舊影片保留。尚未提交／公開，下一步check:docs、PR完整CI及公開原檔雜湊。全部合成，未改遊戲行為；logs在work/entry-pages-20261018/showcase-*。
-
-另外同一建置的221個一次性跨畫面檢查通過：13種寬度、17狀態／寬，含新／續局、返回深色對戰／練習、九題、三課與組牌。原始viewport-matrix.mjs／json／log在work/entry-pages-20261018；不計入CI52，也不代表221張逐一人工目視、手機實機或真人理解。
-
-正式網址[青竹牌室](https://zhai2liu.github.io/taiwan-mahjong/)，origin=https://github.com/zhai2Liu/taiwan-mahjong.git。前輪九包與來源8e43f87已保留歷史；純MD狀態提交不另部署。不要使用舊CI代替本輪指定提交。
-
-首頁沒有修改固定桌規、計台、AI、課程內容、保存格式或三頁路徑。S2.3互動整合仍先依S2.2真人試用／修訂；目前真人0。其他獨立操作與維護缺口可繼續修，S6仍須另行啟動。
-
-## 產品進度與人工門檻
-
-| 範圍 | 實際狀態 |
+| 工作包 | 結果與指定來源 |
 |---|---|
-| M0–M5.4、S0／S1 | 完整台灣16張行牌、1真人＋3公平本地AI、逐項結算、續局、牌效練習、六步導覽、檢討與作品／工程基礎已發布 |
-| S2.1／S2.2 | 前三課可操作／獨立進度已發布；[T0–T5試用](BEGINNER-TRIAL.md)準備完成，真人0、修訂待驗 |
-| S2.3／S2.4 | [第4–6課教材與26牌例](S23-LESSON-PREPARATION.md)、第7–8課腳本與8分支、相容候選規格已備；後五課UI、新格式、中途保存／正常對戰連接未實裝 |
-| S3.1–S3.3 | 九題四能力導引、局後同類練習、吃碰事後解釋、手動保存／同版續答與曝光自陳已發布；不自動上傳 |
-| S3.4 | [候選缺口／人工錨點／流程](S34-ASSESSMENT-PREPARATION.md)已備；13題／12題族、四候選不進試讀，assessmentFamilies空；真人題族／難度／內容審閱與正式放行待驗 |
-| S4.2 | 本輪限定技術檢查／修正完成；[人工回饋清單](HUMAN-FEEDBACK-CHECKLIST.md)的手機、Safari、輔具與理解仍待，不能稱完整WCAG符合 |
-| S5.1／S5.2 | [69.08秒字幕片、三圖與案例](../taiwan-mahjong-showcase/README.md)完成，分工本人已確認不再重問；[發布／回復技術準備](S52-RELEASE-PREPARATION.md)完成，LICENSE、tag／Release及另擬履歷摘要仍待本人決定 |
-| S6 | 人格AI保留離線研究，未授權實裝；不能從研究直接接入正式策略 |
+| S1.4 首頁 | [PR#22](https://github.com/zhai2Liu/taiwan-mahjong/pull/22)合併b384764；來源3c5d1db，PR Actions39065024289／build117490738456成功400／50（42.1秒），main39065175077／build117491194356成功400／50（47.9秒）、deploy117491609398成功。淺色／深綠三路入口、有存檔優先續玩；真別頁更新曾造成入口焦點遺失，先重現再修。詳[首頁驗收](HOME-REDESIGN-20261018.md) |
+| S1.5 試讀 | [PR#23](https://github.com/zhai2Liu/taiwan-mahjong/pull/23)合併e760702；來源9a35c35，PR39065728154／build117492861570成功400／52（45.3秒），main39065890220／build117493353587成功400／52（44.0秒）、deploy117493723484成功。牌例／作答並排、窄畫面堆疊，詳[試讀驗收](TRIAL-WORKSPACE-20261018.md) |
+| S1.6 前三課 | [PR#24](https://github.com/zhai2Liu/taiwan-mahjong/pull/24)合併51f3577；來源80f7546，PR39066375904／build117494810165成功400／52（52.0秒），main39066578543／build117495408948成功400／52（50.7秒）、deploy117495801813成功。任務／獨立進度並排，詳[教學排版驗收](LEARNING-LAYOUT-20261018.md) |
+| S5.1 展示刷新 | [PR#25](https://github.com/zhai2Liu/taiwan-mahjong/pull/25)合併87e52836f61571f8732865349aad3872e043f1c7；來源7c4a2ec，PR39067503251／build117498099655成功400／52（42.2秒）。70.52秒／13段字幕／三圖已公開，九檔HTTP200及git blob雜湊相符。錄製工具先核對正式三頁資源，舊片保留；[完整證據](S51-DEMO-VALIDATION.md) |
 
-真人資料接收依[TRIAL-REVIEW](TRIAL-REVIEW.md)，不代填人數／理解或自行公開回饋。已確認分工為「本人負責需求、方向與操作回饋；AI協助規格、程式、測試、發布與文件」。
+三次UI發布均核對正式三HTML及全部引用JS／CSS，並實際驗受影響操作。首頁新局／取消／續玩、試讀真實作答／保存重載／schema3下載／取消離頁、前三課認牌完成與組牌／三筆v1進度及其他鍵保留均通過，0pageerror。Chrome155.0.8059.80／Edge155.0.4283.62的指定操作範圍見各包，不宣稱手機實機通過。
 
-## 修改與資料界線
+目前資源：index-w9IuzQfR.js／index-BOwf8lyn.css、training-BH5dEc_t.js／training-Ddyr2V09.css、learn-pMwkekFN.js／learn-Bv3fDrzy.css、view-BlHMN2jy.js、tile-face-CG76dTyt.js。展示合併後再次verify:release相符、main沒有新run；網站未重部署。
 
-先按[MAINTENANCE](MAINTENANCE.md)找修改位置；發布／回復依[DEPLOYMENT](DEPLOYMENT.md)，不全讀歷史研究。
+同一建置另有[S4.2限定驗證](S42-ACCESSIBILITY.md)：13種寬度×17狀態＝221項，以及Chrome原生200%放大19狀態，無頁面橫向溢出或焦點中心被遮；0pageerror。這些一次性檢查不併入CI52，也不是221張逐一目視或完整WCAG證明。原生縮放的Playwright截圖裁切異常已用同頁CDP畫面釐清，未因此改網站。
 
-- main只安排一個自動計時器；吃碰解釋等正常RESOLVE並核對原快照，關閉保持暫停，不重送動作，見[S3.2](S32-VALIDATION.md)。
-- learning.loadProgress成功驗證才換記憶體；main.syncSaveLeaveGuard依saveFailed／practiceSaveFailed／檢討pending啟閉原生提醒，paint及非同步檢討通知都同步。不要只因目前模式存好就解除其他未存內容。
-- view.tile提供圖片語意；裝飾／他家暗手隱藏、暗槓四張未知，不為朗讀揭露牌種。強制色彩選取與焦點保持可分辨。
+## 本輪尚在收尾
 
-| 本機鍵 | 現行格式與限制 |
+分支codex/release-docs-refresh-20261018：S52可編輯發布草稿／來源盤點更新到51f3577，明確保留032bc1c→4bb87cd回復演練為舊證據，未假稱新版本重演；回復程序改依當前完整瀏覽器回歸，不固定沿歷史26項。S51／ROADMAP同步公開完成，S42補原生放大範圍，交接收斂。Luna唯讀複核S52無問題。下一步文件檢查、PR完整CI、合併後確認runtime不變。
+
+使用者要求本次五小時額度持續推進，6.1 Sol主導、Luna限定唯讀審查，未使用Astra。啟動帳戶讀值0%，本窗口resetsAt=1792284614，曾讀到66%；其後工具改回0%且resetsAt=1792287639／週額度也回0，原因未確認。**沒有呼叫額度重設或新增續跑；不能把讀值變動算成已用完100%，也不能得知精確對話剩餘token。** 每包先落盤，不為消耗額度新增受人工門檻阻擋的功能。
+
+## 進度與不能代理的門檻
+
+| 範圍 | 真正狀態 |
 |---|---|
-| tw16:TW16-CLASSIC-v1:save | Session／GameState v1；decodeSession→engine.restore，已結算不重付 |
-| tw16:practice:v1 | 練習v1；重播種子／日誌核對 |
-| tw16:review:v2 | 檢討v2；白名單快照、容量／版本／Web Locks |
-| tw16:learn:v1 | schema1、beginner-1-3-v1，只三課；相容文件的v2是候選，現行不支援 |
-| tw16:trial:v1 | 保存封套schema1含schema3報告；128KiB、Web Locks ifAvailable＋expectedRaw，只同版自動載入 |
+| M0–M5.4、S0／S1 | 台灣16張、1真人＋3公平本地AI、逐項結算、續局、牌效練習、六步導覽、局後檢討與工程基礎已發布；本輪三入口改版也已發布 |
+| S2.1／S2.2 | 前三課與獨立進度已發布；[T0–T5試用](BEGINNER-TRIAL.md)準備完成，真人0、內容修訂待驗 |
+| S2.3／S2.4 | [第4–6課26牌例](S23-LESSON-PREPARATION.md)、[第7–8課腳本及8分支](S24-LESSON-PREPARATION.md)、[相容候選規格](S23-PROGRESS-COMPATIBILITY.md)已備；後五課UI／新格式／中途保存／正常對戰連接未實裝。正式整合仍依S2.2試用修訂 |
+| S3.1–S3.3 | 九題四類導引、同類練習、吃碰事後解釋、手動保存／同版續答與曝光自陳已發布；不自動上傳 |
+| S3.4 | [人工錨點／缺口／流程](S34-ASSESSMENT-PREPARATION.md)已備；13題／12題族、四候選不進試讀、assessmentFamilies空；真人題族／難度／內容及正式放行待驗 |
+| S4 | 限定技術檢查已完成；[人工回饋清單](HUMAN-FEEDBACK-CHECKLIST.md)中的手機／Safari／輔具／理解仍待，程式或模型不能代填 |
+| S5 | 新展示已公開；[發布技術準備](S52-RELEASE-PREPARATION.md)完成、草稿更新待本分支合併。LICENSE、tag／Release、另擬履歷摘要仍待本人決定 |
+| S6 | 人格AI僅離線研究，使用者未授權實裝，需另行啟動 |
 
-教練偏好tw16:coach:v1為on／off／after。壞檔、未知版、讀寫失敗及跨頁衝突保留原文與本頁內容，不清空localStorage修復。trial曝光為自陳、揭示後鎖定，不證明首次；CLI讀schema1／2／3、異版人工核對，審閱輸出reportVersion2。保存原封套不是一般作答匯出，未授權任意匯入或靜默遷移。
+分工本人已確認「本人負責需求、方向與操作回饋；AI協助規格、程式、測試、發布與文件」，不重問、不推定手寫比例／個人技能。真人資料接收依[TRIAL-REVIEW](TRIAL-REVIEW.md)，不代填、不自行公開回饋。其他新重現操作／維護缺口可獨立修，不代表必須停工或放行上述功能。
 
-唯一桌規為[凍結TW16-CLASSIC-v1](../taiwan-mahjong-m0/RULES.md)，144張、五組加眼睛，不混港麻／日麻。AI／教練只讀單家getObservation，不讀他家暗手、牌牆或種子；公開未知牌改善比例不是真實摸牌率，安全不等於阻止莊家自摸或流局續莊。沒有後端、帳號、多人或多桌規擴充。
+## 必須保留的資料與規則界線
 
+| 本機鍵 | 現行格式／讀取 |
+|---|---|
+| tw16:TW16-CLASSIC-v1:save | Session／GameState v1；decodeSession→engine.restore，結算已付款，不重付 |
+| tw16:practice:v1 | 練習v1；種子與日誌重播核對 |
+| tw16:review:v2 | 白名單快照、容量／版本、Web Locks |
+| tw16:learn:v1 | schema1、beginner-1-3-v1、只三課；v2是候選規格，現行不支援 |
+| tw16:trial:v1 | 保存封套schema1含schema3報告、128KiB、Web Locks ifAvailable＋expectedRaw，只自動讀同版 |
 
-## 現場與證據
+教練偏好tw16:coach:v1為on／off／after。壞檔、未知版、讀寫失敗及跨頁衝突保留原文與本頁內容，不清空localStorage修復。試讀保存位置只在按鈕保存時更新，切題不自動寫入；曝光自陳不是首次證明，揭示後鎖定。CLI讀schema1／2／3、審閱reportVersion2；未授權任意匯入、靜默遷移或後端。
 
-隔離預覽4232（session44614）供本輪使用；4226由Playwright自行管理。原4173與日常瀏覽器profile未操作。根目錄work/home-redesign-20261018/保留前後截圖、unit.log、browser.log、home-focused.log及capture-local.log，全部合成資料；已清除誤放遊戲子目錄的暫存資料夾，沒有提交work。後續每包重新更新正式SHA、CI與本段。
+main只安排一個自動計時器，吃碰解釋等正常RESOLVE並核對原快照，關閉保持暫停、不重送。syncSaveLeaveGuard統一檢查牌局／練習失敗與檢討pending，不能只因當前模式保存成功解除其他未存提醒。learning.loadProgress先驗候選成功才換記憶體。view.tile保留圖片名稱與強制色彩選取；他家暗手／暗槓牌種仍未知。
+
+唯一桌規為[凍結TW16-CLASSIC-v1](../taiwan-mahjong-m0/RULES.md)：144張、五組加眼睛，不混港麻／日麻。AI／教練只讀自家getObservation，不讀別家暗手、牌牆或種子；公開未知牌改善比例不是真實摸牌率，安全不等於阻止莊家自摸或流局續莊。沒有帳號／後端／多人／多桌規。
+
+## 現場與原始證據
+
+本輪隔離預覽4232（session44614），4226由Playwright自行管理；原4173與日常瀏覽器profile未動。work/home-redesign-20261018/、work/entry-pages-20261018/與work/showcase-AaZOE7保留本輪合成資料、截圖／錄影與logs，全部忽略不提交。最新原生放大證據zoom-9Xip9x、zoom-native-final.log；展示公開showcase-public.log，正式未變showcase-live-unchanged.log。先保留收尾證據，再關閉自己啟動的4232；不廣泛終止Node或瀏覽器。

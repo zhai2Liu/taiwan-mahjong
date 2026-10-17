@@ -2,7 +2,9 @@
 
 ## 2026-10-18：三入口改版後重錄
 
-依正式網站51f35773a25162ffddecf333352f97a52d5e5881重錄[目前示範影片](../taiwan-mahjong-showcase/DEMO-20261018.mp4)、[13段VTT](../taiwan-mahjong-showcase/DEMO-20261018.vtt)與三圖，涵蓋新首頁、試讀與前三課。影片70.52秒、1920×1080、H.264、1706895bytes，無聲音／音樂或真人資料。S5.1原先交付仍成立，本次刷新已通過本機檢視，指定PR／公開核對依HANDOFF；未建立Release或更改授權。
+依正式網站51f35773a25162ffddecf333352f97a52d5e5881重錄[目前示範影片](../taiwan-mahjong-showcase/DEMO-20261018.mp4)、[13段VTT](../taiwan-mahjong-showcase/DEMO-20261018.vtt)與三圖，涵蓋新首頁、試讀與前三課。影片70.52秒、1920×1080、H.264、1706895bytes，無聲音／音樂或真人資料。S5.1原先交付仍成立，本次刷新已完成本機、指定PR及公開核對；未建立Release或更改授權。
+
+來源7c4a2ecc64e2da833795f80a3bca9ff2911c86cc，[PR#25](https://github.com/zhai2Liu/taiwan-mahjong/pull/25)的[Actions39067503251](https://github.com/zhai2Liu/taiwan-mahjong/actions/runs/39067503251)／build117498099655成功400／52（Linux42.2秒），PR無Pages上傳／部署；合併87e52836f61571f8732865349aad3872e043f1c7。展示九檔公開HTTP200、SHA-256逐一等於該提交git blob，含舊兩檔，見work/entry-pages-20261018/showcase-public.log。此範圍不觸發main Pages；正式三頁／全部引用資源再次相符，runtime仍51f3577，不將未部署的文件提交誤稱新版runtime。
 
 - 產生器錄的是正式網站；新增重用verify-release的前置檢查，三頁HTML與全部引用資源相符才建立候選／啟動錄影，指紋寫入capture.json。曾以尚未部署的learn.html自然差異驗得非零退出，沒有把本機build當成拍攝來源。
 - 最終候選work/showcase-AaZOE7，13段實際操作、0pageerror；真實另開分頁，最後原牌局原文與暫停狀態相同。所有context均為新建，未碰日常profile或真人存檔。
