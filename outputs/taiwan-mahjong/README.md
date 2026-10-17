@@ -100,11 +100,14 @@ npm run preview -- --port 4173
 
 ```powershell
 npm run dev -- --port 4183
+npm run check:docs
 npm test
 npm run build
 ```
 
 `npm test`編譯後執行Node內建測試；`npm run build`先編譯再產生正式site/。dist/供測試匯入，test/頁面與fixture不屬正式遊玩入口。依改動選擇驗證範圍，詳見維護指南，不為文件或CSS細節重跑長模擬。
+
+`npm run check:docs`檢查Git追蹤文件中的本機行內連結及圖片路徑，包含大小寫與目標是否追蹤；新增文件／圖片先加入Git索引再執行。需在Git checkout中使用，不影響下載原始碼後的遊戲建置。CI亦執行；範圍與限制見[維護指南](MAINTENANCE.md)。
 
 瀏覽器核心回歸：首次 `npx playwright install chromium`，再執行 `npm run test:browser`。目前test/e2e案例在桌面／390px各驗一次，結算、練習、分類與檢討另驗320px，使用正式建置、隔離本機4226來源與合成資料；不取代手機／Safari實機或真人試用。CI亦執行，失敗證據機制見[S1.2b](S12B-VALIDATION.md)；範圍見[S2.1](S21-VALIDATION.md)、[S3.1](S31-VALIDATION.md)、[S3.2](S32-VALIDATION.md)、[S3.3](S33-VALIDATION.md)及[S4.2可及性／重讀保留](S42-ACCESSIBILITY.md)，最新項目數及指定提交結果只記[HANDOFF](HANDOFF.md)，不在此重複維護計數；歷史效能基準見[S1.3](S13-VALIDATION.md)。
 

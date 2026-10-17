@@ -95,6 +95,7 @@ exactPool只接剩餘一般牌的唯一實體ID；publicPool扣自家牌、公�
 |---|---|
 | npm ci | 依lockfile安裝開發依賴；已有可用安裝時不必每次重裝 |
 | npm run check | TypeScript檢查並產生dist/，不是僅無輸出檢查 |
+| npm run check:docs | Git checkout內檢查追蹤文件的本機行內連結／圖片、大小寫及目標是否追蹤，CI同樣執行 |
 | npm test | check後跑test/*.test.mjs；涵蓋規則、存檔、AI及控制器 |
 | npm run build | check後由Vite產生site/；base目前為./ |
 | npm run dev -- --port 4183 | 獨立開發／fixture來源，避免覆寫實際遊玩的4173存檔 |
@@ -104,7 +105,9 @@ exactPool只接剩餘一般牌的唯一實體ID；publicPool扣自家牌、公�
 
 test/browser.html與test/runner.html為開發來源工具；browser-fixtures、chi-fixtures、layout-fixtures提供續局、吃法、長牌河與結算場景。使用前先看對應test及scripts，不把測試頁上線；fixture會寫測試來源存檔，測試完成後關閉該來源頁面／伺服器。
 
-純文件修改檢查連結、路徑、命令與現況一致性。行為修改跑受影響測試，跨模組或正式交付再跑全套及build；只有AI／回合／續局改動需要相應完整牌局驗證，不反覆長模擬消耗額度。測試失敗先保存重現資料；simulate會把seed、狀態與動作記至工作區work/taiwan-mahjong/。
+純文件修改跑`npm run check:docs`，再人工核對命令與現況一致性。檢查器只用Node標準函式庫，從script位置找Git根目錄，涵蓋根README／AGENTS及遊戲、M0、showcase內追蹤的md；略過圍欄程式碼、外部網址及頁內錨點。檢查本機行內／圖片連結的檔案或追蹤目錄，不驗外部網站、標題錨點、參照式或巢狀連結。新增檔先加入Git索引；只存在本機／被忽略的目標也會失敗，避免發布後才斷鏈。與型別／build分開，讓不含.git的原始碼仍可建置；不為此新增Markdown依賴。
+
+行為修改跑受影響測試，跨模組或正式交付再跑全套及build；只有AI／回合／續局改動需要相應完整牌局驗證，不反覆長模擬消耗額度。測試失敗先保存重現資料；simulate會把seed、狀態與動作記至工作區work/taiwan-mahjong/。
 
 ## 提交工作包與發布
 

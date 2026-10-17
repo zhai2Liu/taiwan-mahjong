@@ -41,6 +41,8 @@ jobs:
           cache: npm
           cache-dependency-path: outputs/taiwan-mahjong/package-lock.json
       - run: npm ci
+      - name: Check local documentation links
+        run: npm run check:docs
       - name: Typecheck and tests
         run: npm test
       - run: npm run build
