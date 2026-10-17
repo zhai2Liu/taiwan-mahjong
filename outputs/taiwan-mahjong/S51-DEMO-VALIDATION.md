@@ -18,6 +18,8 @@
 
 ## 支援與尚待
 
+來源51e105c，[PR#9](https://github.com/zhai2Liu/taiwan-mahjong/pull/9)的Actions39020052983指定head成功，365／26（Linux28.8秒），Pages上傳／deploy skipped、0 artifact；合併6b8e5ea。三圖、MP4與README公開原檔HTTP200且SHA-256與該提交全相符，文字以git blob避免CRLF差異（work/s51-public.log）。沒有新Pages部署，正式runtime仍4bb87cd。無外部真人程式審查或分支保護修改。
+
 桌面優先；本輪Windows Chrome155.0.8059.80、Edge155.0.4283.62、Chromium回歸，以及390／320與原生200%的適用證據見[S3.3](S33-VALIDATION.md)。手機／Safari／螢幕閱讀器仍待實機；前三課及新版題目仍待真人觀察，四評量候選不作正式能力測驗。
 
 根目錄README已列專案擁有者需求與方向決策、AI實作／測試／文件角色；本人需確認是否適合對外履歷使用。缺這項確認不阻擋提供可審閱素材，但不將它標為本人獨立完成或能力已證明。來源／授權決策、Release與回復演練屬S5.2，未由這份短片代替。
