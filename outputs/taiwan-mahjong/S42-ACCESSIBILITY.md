@@ -63,3 +63,11 @@
 同一建置另以Chrome155.0.8059.80的全新暫存profile，在瀏覽器設定選原生200%放大：1440×900實體、720×450 CSS、devicePixelRatio=2。首頁、六步導覽、練習、九題、保存、離頁視窗、前三課閱讀、組牌與進度共19狀態，無橫向溢出，聚焦控制在視窗內且中心可命中、0pageerror。原始zoom-check.mjs／zoom-native-final.log與zoom-9Xip9x/result.json、截圖在work/entry-pages-20261018/；代表性首頁、組牌及離頁視窗已目視。一般Playwright截圖在此原生縮放產生捲動裁切異常，另以同一頁CDP原生畫面擷取核對，未為工具截圖問題改網站。這19項不計入CI52，不取代手機、Safari或真人輔具驗證。
 
 此221項不加入CI52項，也不表示221張畫面皆逐張目視，更不是手機、文字放大、Safari或真人輔具驗證。當輪原始腳本／結果保留在根目錄忽略的`work/entry-pages-20261018/viewport-matrix.mjs`、`viewport-matrix.json`與log；沒有為此另加長期框架或新依賴。日常重跑仍以既有Playwright回歸為主，新增CSS斷點時再針對相鄰寬度補查。
+
+## 入口補修：綠底文字與保存焦點
+
+2026-10-18。Chrome155.0.8059.80正式建置實際computed style與Luna獨立計算均確認，首頁綠底對戰卡11px小標籤`#64765e`／`#eaf0e3`的比值為4.207749，低於一般文字4.5門檻。只對該卡標籤沿用既有muted色`#58695f`，實際提升至5.018787；白底兩卡原本4.842205保持。其他註記`#63705f`在綠底為4.502800，沒有把它誤判為失敗。依[W3C文字對比說明](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html)用未取整數值判定；這是指定扁平底色文字核對，不是整站或完整WCAG檢查。
+
+同時以真實鍵盤保存／清除試讀重現：busy停用原生按鈕後，操作完成焦點停在body、沒有焦點指示；下一次Tab仍到附近控制，未誇稱須從頁首重走。training.restoreStorageFocus只在焦點仍為body、原按鈕仍連在目前畫面時還原；若原控制已停用（如清除成功），回到管理summary。等待期間玩家移到理由欄或切題後不搶回。同步重讀原本就聚焦新題標題，維持該行為。
+
+新增一條桌面／窄畫面鍵盤回歸（兩項）：成功保存、配額失敗保留原檔、延後鎖完成時仍保留新焦點與較新未存理由、清除後回管理summary。先在原版以toBeFocused失敗重現，修後連同原首頁／保存回歸14／14（10.6秒）；Chrome155.0.8059.80／Edge155.0.4283.62的新鍵盤兩項各通過（3.4／3.8秒），新總項目數54的指定CI依HANDOFF。沒有為純配色新增單元測試，保存鎖、資料版本及題目／答案未改。原始home-contrast-before／after.json、trial-focus-before.log、trial-focus-red.log、entry-polish-browser.log與trial-focus-chrome／msedge.log在work/entry-pages-20261018/。

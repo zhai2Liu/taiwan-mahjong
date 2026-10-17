@@ -38,6 +38,37 @@ test('手動保存 → 重載同版續答／曝光鎖定 → 真實schema3下載
   expect(await page.evaluate(keys => Object.fromEntries(keys.map(key => [key, localStorage.getItem(key)])), Object.keys(markers))).toEqual(markers);
 });
 
+test('鍵盤保存與清除保留焦點，等待期間的新焦點不被搶回', async ({ page }) => {
+  await page.goto('/training.html'); await page.locator('#reason').fill('合成焦點檢查');
+  await save(page).focus(); await page.keyboard.press('Enter');
+  await expect(page.locator('#storage-status')).toContainText('已保存作答'); await expect(save(page)).toBeFocused();
+  const original = await raw(page);
+  await page.evaluate(key => { window.__nativeFocusSet = Storage.prototype.setItem; Storage.prototype.setItem = function(k, v) { if (k === key) throw new DOMException('full', 'QuotaExceededError'); return window.__nativeFocusSet.call(this, k, v); }; }, TRIAL_KEY);
+  await page.locator('#reason').fill('按下保存時'); await save(page).focus(); await page.keyboard.press('Enter');
+  await expect(page.locator('#storage-status')).toContainText('保存未成功'); await expect(save(page)).toBeFocused(); expect(await raw(page)).toBe(original);
+  await page.evaluate(key => {
+    Storage.prototype.setItem = window.__nativeFocusSet;
+    window.__nativeFocusRequest = navigator.locks.request.bind(navigator.locks);
+    navigator.locks.request = (name, options, callback) => window.__nativeFocusRequest(name, options, async lock => {
+      if (name === key) await new Promise(resolve => window.__finishFocusSave = resolve);
+      return callback(lock);
+    });
+  }, TRIAL_KEY);
+  await save(page).focus(); await page.keyboard.press('Enter'); await expect(save(page)).toBeDisabled();
+  await expect.poll(() => page.evaluate(() => typeof window.__finishFocusSave)).toBe('function');
+  await page.locator('#reason').fill('等待時新增'); await page.evaluate(() => window.__finishFocusSave());
+  await expect(save(page)).toBeEnabled(); await expect(page.locator('#reason')).toBeFocused();
+  await expect(page.locator('#storage-status')).toContainText('還有新修改未保存');
+  expect(JSON.parse(await raw(page)).report.questions[0].reason).toBe('按下保存時');
+  await page.evaluate(() => navigator.locks.request = window.__nativeFocusRequest);
+  await save(page).focus(); await page.keyboard.press('Enter'); await expect(page.locator('#storage-status')).toContainText('已保存作答');
+  await manage(page); const clear = page.getByRole('button', { name: '清除本機保存（保留本頁）', exact: true });
+  await clear.focus(); confirm(page, true); await page.keyboard.press('Enter');
+  await expect(page.locator('#storage-status')).toContainText('已清除');
+  await expect(page.getByText('管理本機保存／回復原檔', { exact: true })).toBeFocused();
+  expect(await raw(page)).toBeNull(); await expect(page.locator('#reason')).toHaveValue('等待時新增');
+});
+
 test('配額／鎖忙／缺鎖／讀取失敗保留原檔，恢復後可重試', async ({ page, context }) => {
   await page.goto('/training.html'); await page.locator('#reason').fill('原作答'); await save(page).click(); await expect(page.locator('#storage-status')).toContainText('已保存作答');
   const original = await raw(page);
