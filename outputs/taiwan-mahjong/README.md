@@ -7,7 +7,7 @@
 ## 入口
 
 - [目前交接與發布狀態](HANDOFF.md)：最新完成、驗證範圍與下一包。
-- [首頁三路入口](HOME-REDESIGN-20261018.md)與[試讀工作區](TRIAL-WORKSPACE-20261018.md)：最新畫面分組、續玩位置與排版回歸契約；正式狀態依HANDOFF。
+- [首頁三路入口](HOME-REDESIGN-20261018.md)、[試讀工作區](TRIAL-WORKSPACE-20261018.md)與[前三課畫面](LEARNING-LAYOUT-20261018.md)：最新分組、續玩位置與排版回歸契約；正式狀態依HANDOFF。
 - [人工回饋清單](HUMAN-FEEDBACK-CHECKLIST.md)：目前需要的新手／熟手／實機回饋，後續評量及本人決定事項。
 - [操作示範與三張畫面](../taiwan-mahjong-showcase/README.md)：正式版本的合成牌例、文字導覽與支援界線；不是學習成效證據。
 - [評量候選審核準備](S34-ASSESSMENT-PREPARATION.md)：四候選缺口、人工理由規準、流程及空模板；真人審核與正式放行仍待。

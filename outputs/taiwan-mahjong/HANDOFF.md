@@ -12,7 +12,7 @@ S1.4首頁已由[PR#22](https://github.com/zhai2Liu/taiwan-mahjong/pull/22)合�
 
 S1.5[試讀工作區](TRIAL-WORKSPACE-20261018.md)已由[PR#23](https://github.com/zhai2Liu/taiwan-mahjong/pull/23)合併並發布e76070291e9e59f30ee5c87ba0e235f5d7e68ec4。來源9a35c350e0a24ee48dede9461d18507e3801b650的Actions39065728154／build117492861570成功400／52（45.3秒）；main39065890220／build117493353587成功400／52（44.0秒）、deploy117493723484成功。正式三頁資源相符；Chrome1440px／Edge390px實際作答、保存／重載原游標、schema3真實下載及取消離頁保留通過，0pageerror。training-BH5dEc_t.js／training-Ddyr2V09.css。本機另外Chrome／Edge各四項、Chrome四模式真快取返回通過。未改題目／答案／內容版本、曝光或保存邏輯；只補手動保存位置說明，不增加切題離頁警告。原始證據在work/entry-pages-20261018/。
 
-S1.6在codex/learning-layout-20261018只整理learn.html／learning.css：現有前三課任務與獨立進度桌面並排、窄畫面照任務→回饋→進度排列，品牌與入口一致；不改learning.ts、課文或三筆進度格式。兩檔已改但尚未建置；下一步build、現有learning／accessibility回歸與三課畫面，再文件／PR／正式驗收。
+S1.6在codex/learning-layout-20261018完成[前三課排版](LEARNING-LAYOUT-20261018.md)：只改learn.html／learning.css，桌面任務與獨立進度並排、窄畫面照任務→回饋→進度排列。型別／build、現有learning／accessibility16／16（16.0秒）通過；最後標題框微調後Chrome／Edge各6／6（11.3／11.9秒）。三課組牌／強制色彩尺寸與320px通過，截圖0pageerror／無溢出。learning.ts、課文、示例與三筆進度格式不改。下一步提交PR、指定來源CI及正式驗收；原始證據在work/entry-pages-20261018/learning-*。
 
 正式網址[青竹牌室](https://zhai2liu.github.io/taiwan-mahjong/)，origin=https://github.com/zhai2Liu/taiwan-mahjong.git。前輪九包與來源8e43f87已保留歷史；純MD狀態提交不另部署。不要使用舊CI代替本輪指定提交。
 
