@@ -4,7 +4,7 @@
 
 ## 目前網站與本輪交付
 
-正式入口：[青竹牌室](https://zhai2liu.github.io/taiwan-mahjong/)。repository／origin為zhai2Liu/taiwan-mahjong。**目前runtime仍為51f35773a25162ffddecf333352f97a52d5e5881；純文件／展示提交不等於新runtime。**
+正式入口：[青竹牌室](https://zhai2liu.github.io/taiwan-mahjong/)。repository／origin為zhai2Liu/taiwan-mahjong。**目前功能來源51f35773a25162ffddecf333352f97a52d5e5881；最近Pages建置為8de3bf37bf72f5ffbaadee21a36e38649df2a781（固定workflow來源，正式內容相同）。純文件／展示提交不等於新runtime。**
 
 | 工作包 | 結果與指定來源 |
 |---|---|
@@ -23,7 +23,9 @@
 
 [PR#26](https://github.com/zhai2Liu/taiwan-mahjong/pull/26)已合併95e06ec1bcfa3abe4b68af6c9a2c316058d0b63c：S52草稿／來源更新到51f3577，明確保留032bc1c→4bb87cd為指定歷史演練；回復程序不固定沿26項。S51／ROADMAP同步公開完成、S42補放大驗證、交接收斂。Luna唯讀核對無問題；來源2c8e7df的Actions39067926469／build117499341466成功400／52（51.1秒），87份文件／629連結0問題，PR無Pages。純MD不重部署。
 
-目前分支codex/pin-actions-20261018：只固定workflow五個官方Action直接引用到已核對的commit，原版本保留旁註；DEPLOYMENT記來源與更新方式。原PR#26日誌的checkout／setup-node／兩個上傳SHA與目前官方ref相同，沒有改事件／權限／Pages隔離。下一步本機差異／文件核對、指定head PR CI，通過後main發布並核對三頁仍同內容。不是遊戲／教學／保存格式改版，也沒有放行S2或S6。
+[PR#27](https://github.com/zhai2Liu/taiwan-mahjong/pull/27)已合併並發布8de3bf37bf72f5ffbaadee21a36e38649df2a781：五個官方Action直接引用固定commit，原版本旁註及來源／升級程序在DEPLOYMENT，事件／權限／Pages隔離未改。來源ba0bfe2的PR39068225911／build117500219011成功400／52（50.9秒）；main39068383426／build117500680291成功400／52（40.0秒）、deploy117500995456成功，五個下載SHA正確。正式三頁／引用資源與原51f3577相符（pinned-actions-live.log）。deploy-pages仍有Node20宣告被runner轉Node24的既有警告，實際部署成功，未假稱整套runner固定。沒有遊戲／保存格式改動。
+
+目前分支codex/home-contrast-20261018：Chrome實際重現綠底對戰卡11px小標籤4.207749，Luna獨立算同值；只對該卡沿用既有muted色，建置後實際5.018787，其他兩卡／註記不改。另重現試讀鍵盤保存／清除後BODY焦點無指示（Tab仍在附近，未誇稱頁首重走），加最小回焦：若玩家已移去理由或換題則不搶回。原版先紅，修後首頁／保存14／14（10.6秒），Chrome／Edge新鍵盤各2／2（3.4／3.8秒）、build通過；完整CI預計54項，尚未提交／發布。資料鎖／schema／題目答案不改，限定證據見[S42](S42-ACCESSIBILITY.md)，不重錄版本化展示以免為小色差反覆刷新素材。
 
 使用者要求本次五小時額度持續推進，6.1 Sol主導、Luna限定唯讀審查，未使用Astra。啟動帳戶讀值0%，本窗口resetsAt=1792284614，曾讀到66%；其後工具改回0%且resetsAt=1792287639／週額度也回0，原因未確認。**沒有呼叫額度重設或新增續跑；不能把讀值變動算成已用完100%，也不能得知精確對話剩餘token。** 每包先落盤，不為消耗額度新增受人工門檻阻擋的功能。
 

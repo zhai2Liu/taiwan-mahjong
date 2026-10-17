@@ -18,6 +18,8 @@ S1.4首頁：view.header／home及style.css首頁區段管理品牌、三路入�
 
 S1.5試讀排版：training.render將分類／保存狀態、本題牌例／作答及保存／交回分區；DOM仍依牌例→作答→推導→換題→保存／交回排列，900px以下直列。`test/e2e/trial-layout.spec.js`巡覽九題／320px，原有trial-save／training-guidance／core保護狀態契約。詳[試讀工作區](TRIAL-WORKSPACE-20261018.md)；調排版不能改題目／內容版本、標準答案或保存語義。
 
+試讀保存焦點：training.restoreStorageFocus在saveLocal／clearLocal結束時，只於焦點仍body且原控制未因換題被移除才回焦，若原按鈕已停用則回管理summary。等待期間的新焦點不搶回；同步重讀仍依新題標題。trial-save.spec.js含鍵盤成功／失敗、延後鎖與清除的回歸；首頁綠底小標籤另沿既有muted色，限定驗收見[S42](S42-ACCESSIBILITY.md)。
+
 S1.6前三課排版：learn.html／learning.css管理任務左欄與進度右欄，1000px以下按DOM順序直列。空的lesson-feedback仍保留status/live語意；不得以隱藏整區取代只移除空白樣式。按鈕選取的強制色彩邊線與內距補償仍須等值，回歸沿learning／accessibility，不新增保存格式或課程常數。見[學習頁排版](LEARNING-LAYOUT-20261018.md)。
 
 S3.3試讀續答：src/training-draft.ts管新鍵tw16:trial:v1，封套schema1存schema3作答及題號／分類，手動寫入、同版自動讀取。src/trial-record.ts是無I/O的共用格式驗證；review-trial.mjs用Node24原生型別移除直接讀它，不能加入只能編譯後讀取的執行期TS語法或瀏覽器依賴。CLI仍讀schema1／2／3，輸出reportVersion2；舊曝光未知、版本不符人工核對。Web Locks ifAvailable＋expectedRaw，保存前捕捉報告，忙碌／缺鎖／跨頁／壞檔／配額失敗不覆寫，明確清除只動此鍵。本機原檔封套與一般作答匯出不同，接收依TRIAL-REVIEW。改動驗training-draft、training-page、trial-review及e2e/trial-save；[契約與證據](S33-VALIDATION.md)。下方S1.1等段落保留當時版本，離頁防護現以本機確認保存且未修改為解除條件，下載本身不解除。

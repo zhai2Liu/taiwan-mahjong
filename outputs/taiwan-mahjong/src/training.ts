@@ -44,20 +44,27 @@ function checkOtherSave(): void {
   try { if (savedRaw !== undefined && storage.getItem(TRIAL_KEY) !== savedRaw) { saveBlocked = true; saveMessage = '另一頁已變更本機保存，停止覆寫；本頁作答保留。重讀前請先匯出未存內容。'; } }
   catch { saveBlocked = true; saveMessage = '無法核對本機保存；本頁內容仍保留，請匯出。'; }
 }
+function restoreStorageFocus(control: Element | null): void {
+  // Disabling a busy button blurs it; keep a focus the player moved elsewhere while waiting.
+  if (document.activeElement !== document.body || !(control instanceof HTMLButtonElement) || !control.isConnected) return;
+  (control.disabled ? root.querySelector<HTMLElement>('.trial-storage summary') : control)?.focus();
+}
 async function saveLocal(): Promise<void> {
   if (saveBusy || saveBlocked || savedRaw === undefined) return;
+  const focused = document.activeElement;
   const captured: StoredTrial = { schemaVersion: 1, questionId: trainingQuestions[index].id, skill, report: currentRecord() };
   saveBusy = true; updateDraftStatus();
   try { savedRaw = await saveTrialDraft(storage, savedRaw, captured); savedData = JSON.stringify(captured.report.questions); saveMessage = safelySaved() ? '已保存作答到此瀏覽器，下次會自動載入；不會上傳。' : '已保存按下按鈕時的作答，還有新修改未保存。'; }
   catch (error) { if (error instanceof Error && error.message === 'TRIAL_CONFLICT') { saveBlocked = true; saveMessage = '另一頁已變更保存，停止覆寫；本頁作答仍保留，請先匯出再重讀。'; } else saveMessage = '本次保存未成功，原檔與本頁作答仍保留；可重試或匯出。'; }
-  finally { saveBusy = false; updateDraftStatus(); }
+  finally { saveBusy = false; updateDraftStatus(); restoreStorageFocus(focused); }
 }
 async function clearLocal(): Promise<void> {
   if (saveBusy || savedRaw === undefined || !window.confirm('清除這個瀏覽器保存的試讀作答？本頁內容先保留供匯出；牌局、練習及新手進度不變。')) return;
+  const focused = document.activeElement;
   saveBusy = true; updateDraftStatus();
   try { await clearTrialDraft(storage, savedRaw); savedRaw = null; savedData = undefined; saveBlocked = false; saveMessage = '本機保存已清除；本頁作答仍保留，離頁前可匯出。'; }
   catch { saveMessage = '清除未成功或原檔已更動，原資料與本頁作答保留；請重新讀取再決定。'; }
-  finally { saveBusy = false; updateDraftStatus(); }
+  finally { saveBusy = false; updateDraftStatus(); restoreStorageFocus(focused); }
 }
 // ponytail: native leave warnings are best effort; manual local save is independent of browser downloads.
 function warnBeforeLeave(event: BeforeUnloadEvent): void { event.preventDefault(); event.returnValue = 'true'; }
