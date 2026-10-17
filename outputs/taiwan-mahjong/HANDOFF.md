@@ -4,7 +4,11 @@
 
 2026-10-14人工待辦整理：[HUMAN-FEEDBACK-CHECKLIST](HUMAN-FEEDBACK-CHECKLIST.md)區分現在可試用的新手／熟手／操作／實機、後續正式評量與作品試讀、本人貢獻／授權／公開同意／S6決定。新增最小回報格式並沿用既有任務及JSON接收流程。純文件、未收到新資料或啟動新功能；S3.1發布與下一包S3.2不變。
 
-## 目前工作包：S3.4 準備／S5.1 素材已提交
+## 目前工作包：S5.2 技術準備完成，待文件PR
+
+2026-10-17，分支codex/release-recovery-preparation，基線dd35656。[S52準備](S52-RELEASE-PREPARATION.md)有可審閱發布／履歷草稿、來源與直接開發依賴metadata、無破壞回復指引。指定032bc1c／4bb87cd正式建置在同源4229隔離Chrome回退→前進，含一捨一摸練習／一筆合法快照／課程已讀提示／新版試讀保存；五鍵原文完全相同，兩版重開結算無二次付款，舊schema2匯出不覆寫schema3，0pageerror。4229已關；work/s52-build-old.log及recovery.log，全合成、不動正式站／日常profile。未新增套件、runtime或測驗；沒有建立Release／tag／授權。下一動作文件連結及PR CI→合併→核對正式站未變與清理4227，再落盤交接。真人試用／本人貢獻及授權決定仍待。
+
+## 前包：S3.4 準備／S5.1 素材已提交
 
 來源51e105c，[PR#9](https://github.com/zhai2Liu/taiwan-mahjong/pull/9)已附chat，指定head Actions39020052983成功，365／26（Linux28.8秒）、Pages上傳及deploy skipped、0 artifact；已合併6b8e5ea並回main。三JPG／MP4／README公開原始檔HTTP200與提交SHA-256逐一相符（work/s51-public.log，文字以git blob核對避免Windows CRLF差異）。無runtime變動，正式站仍S3.3 4bb87cd；沒有新Pages部署。S3.4真人審核與S5.1本人貢獻確認仍待。帳戶56%，原窗口未變；接S5.2技術準備：隔離同源回退／前進已通過五鍵原文、結算不重付、練習／課程續讀、舊schema2匯出不覆寫schema3。尚未提交該演練文件，下一動作整理發布／來源／授權待決與回復指引；不自行授權或宣稱Release已發布。
 
