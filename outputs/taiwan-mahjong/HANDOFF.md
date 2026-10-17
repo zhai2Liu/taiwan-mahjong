@@ -4,11 +4,11 @@
 
 ## 現況與下一步
 
-本輪本機完成（2026-10-17）：S5.1影片補足，分支codex/showcase-walkthrough-completion，基線8a8ec7d。已替換候選為69.08秒／1920×1080／13段字幕及VTT，實際另開同類題、原局原文保持暫停、續答與組牌均核對。FFmpeg全片解碼、Chrome播放／七時點定位、原生VTT讀13段通過，畫面與控制列字幕已檢視；答案推導及已載入狀態完整呈現。generate-demo.mjs提供可重錄流程，只在work/產候選，不自動覆寫公開片；未改遊戲／桌規／依賴。logs為work/s51-complete-capture-final.log及check-final.log、候選work/showcase-MPEUDS。帳戶開工2%，新窗口resetsAt1792247167，不沿用上一輪64%。下一動作文件檢查→指定head PR CI→合併及公開MP4／VTT／生成器雜湊核對，尚未提交，不先稱正式交付完成。
+本輪完成（2026-10-17）：S5.1補版來源cd0a778，[PR#11](https://github.com/zhai2Liu/taiwan-mahjong/pull/11)指定head Actions39034074956成功365／26（Linux30.3秒），Pages上傳／deploy skipped、0 artifact；合併daea897並回main。69.08秒／1920×1080／13段字幕與VTT、真正另開同類題、原局保存不變、續答／組牌／反例已核對；完整解碼、Chrome播放及原生字幕解析、控制列不遮字幕均通過。三圖／MP4／VTT／生成器／展示README共七檔公開200且SHA-256與git blob相符，見[S51](S51-DEMO-VALIDATION.md)。正式三頁及資源仍4bb87cd，沒有新Pages部署或runtime改動。候選work/showcase-MPEUDS；logs為work/s51-complete-capture-final.log、check-final.log、public.log、live-before／after.log。全部驗收瀏覽器已關、沒有本輪暫存服務；未動日常profile或真人資料。帳戶快照2%→18%→23%，新窗口resetsAt1792247167，非精確token；無子代理／重設／自動續跑。下一包可準備S2.3第4–6課課文／引擎牌例，正式整合仍沿原前三課試用修訂順序；未開發後五課或S6。
 
 S3.2／S3.3已發布；S3.4審核準備、S5.1素材及S5.2技術準備已合併。最新功能來源4bb87cd，文件／展示合併6b8e5ea，發布準備合併b265a83。主線main；工作區應乾淨，最後純文件狀態提交不觸發Pages。
 
-原33秒片漏驗60–90秒規格，現已補足本機候選，發布核對後才關閉S5.1。上一輪「沒有可獨立下一包」判斷過於保守：下一個可獨立準備包為S2.3第4–6課課文／引擎牌例，正式整合沿原前三課試用／修訂順序；S2.4及S4.2亦有後續工作。真人資料只阻擋相應理解／難度／成效及實機結論，不代表整個專案必須停工。既有分工已由本人確認，不重問；S3.4正式放行、S5.2授權／Release及另擬履歷摘要仍待，S6需另外啟動。本輪未開發後五課或替真人填結果。
+原33秒片漏驗60–90秒規格，現已補為69.08秒並完成公開核對，S5.1已關閉。上一輪「沒有可獨立下一包」判斷過於保守：下一個可獨立準備包為S2.3第4–6課課文／引擎牌例，正式整合沿原前三課試用／修訂順序；S2.4及S4.2亦有後續工作。真人資料只阻擋相應理解／難度／成效及實機結論，不代表整個專案必須停工。既有分工已由本人確認，不重問；S3.4正式放行、S5.2授權／Release及另擬履歷摘要仍待，S6需另外啟動。本輪未開發後五課或替真人填結果。
 
 | 範圍 | 實際完成／限制 |
 |---|---|
@@ -19,7 +19,7 @@ S3.2／S3.3已發布；S3.4審核準備、S5.1素材及S5.2技術準備已合併
 | S3.2 | 局後同類練習另開頁；有吃碰選項的吃／碰／過正常仲裁後才解釋，關閉保持暫停。實際取得牌與原快照證據分開 |
 | S3.3 | 手動本機保存／同版自動續答、重讀／清除確認、原檔回復下載、schema3曝光自陳；CLI仍讀1／2／3。不自動上傳、未授權匯入或靜默遷移 |
 | S3.4 | 四候選缺口、人工理由錨點／審閱流程／空模板完成；13題／12題族、四候選不進正式試讀，assessmentFamilies仍空，無正式評量放行 |
-| S5.1 | 三圖／案例／分工確認已備；69.08秒字幕片及重錄工具本機核對通過，待PR與公開檔案驗證 |
+| S5.1 | 三圖／案例／分工確認已備；69.08秒字幕片及重錄工具已通過本機／PR／公開檔案核對，S5.1完成 |
 | S5.2 | 發布／履歷草稿、來源盤點、指定版本同源回退與前進完成；未建立Release／tag／LICENSE，相關決定待本人 |
 
 ## 本輪交付與修改入口
@@ -38,8 +38,9 @@ S3.2／S3.3已發布；S3.4審核準備、S5.1素材及S5.2技術準備已合併
 | S3.3 | 52e68f5／4bb87cd，[PR#8](https://github.com/zhai2Liu/taiwan-mahjong/pull/8) | PR39019416117成功365／26（33.8秒）；main39019565456成功365／26（30.5秒）、build117358485491及deploy117358754799成功 |
 | S3.4／S5.1 | 51e105c／6b8e5ea，[PR#9](https://github.com/zhai2Liu/taiwan-mahjong/pull/9) | PR39020052983成功365／26（28.8秒）；純文件／展示，無新Pages部署 |
 | S5.2 | d8e8701／b265a83，[PR#10](https://github.com/zhai2Liu/taiwan-mahjong/pull/10) | PR39020532423成功365／26（33.7秒）；純Markdown，無新Pages部署 |
+| S5.1補版 | cd0a778／daea897，[PR#11](https://github.com/zhai2Liu/taiwan-mahjong/pull/11) | PR39034074956成功365／26（30.3秒）；七個公開檔案雜湊相符，無新Pages部署 |
 
-四個PR均已附本chat。PR的Pages上傳／deploy skipped，無Pages產物；沒有外部真人程式審查或分支保護修改。不要只拿舊CI當新變更證據。
+五個PR均已附本chat。PR的Pages上傳／deploy skipped，無Pages產物；沒有外部真人程式審查或分支保護修改。不要只拿舊CI當新變更證據。
 
 正式站：https://zhai2liu.github.io/taiwan-mahjong/；origin：https://github.com/zhai2Liu/taiwan-mahjong.git。S3.3正式index／training／learn HTTP200、全部4／3／4份JS／CSS SHA-256與本機相符；S5.2再核對仍未變。當前training-vkOYxEaA.js、index-DbMxywyF.js／index-8F0VuNEV.css、view-BjMvH8LY.js、learn-D7cu7U9P.js。
 

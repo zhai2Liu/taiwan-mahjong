@@ -1,6 +1,6 @@
 # S5.1：目前版本的展示素材與核對
 
-2026-10-17。三圖、三案例與本人分工確認已備；本輪將影片補為**69.08秒**、13段中文字幕及文字導覽，符合[企畫第10節](MASTER-IMPROVEMENT-PLAN.md)的60–90秒規格。**本機影片驗證完成，PR及公開檔案待核對；S5整體仍未完成。** 未修改遊戲或宣稱新的學習成效。
+2026-10-17。三圖、三案例與本人分工確認已備；本輪將影片補為**69.08秒**、13段中文字幕及文字導覽，符合[企畫第10節](MASTER-IMPROVEMENT-PLAN.md)的60–90秒規格。**指定head CI及公開檔案核對完成，S5.1完成；S5整體仍未完成。** 未修改遊戲或宣稱新的學習成效。
 
 本人確認紀錄：2026-10-17，針對「你負責需求、方向與實際操作回饋；AI協助規格、程式實作、測試、發布與文件」，使用者回覆「符合，可沿用」。不推定個人技術熟練程度、手寫比例，也不代表公開授權或Release決定。
 
@@ -26,6 +26,10 @@
 本輪無遊戲行為或依賴變更，未為素材新增遊戲測試。指定head PR仍依既有流程跑完整檢查，不能把歷史365／26直接當本次CI；PR／公開來源以HANDOFF為準。展示資料夾不在main的Pages輸入範圍，無需重部署正常網站。
 
 ## 歷史基線與界線
+
+本輪來源cd0a778，[PR#11](https://github.com/zhai2Liu/taiwan-mahjong/pull/11)指定head [Actions39034074956](https://github.com/zhai2Liu/taiwan-mahjong/actions/runs/39034074956)成功：365／26（Linux30.3秒）、Pages上傳／deploy skipped、0 artifact；合併daea897並回main。三圖、MP4、VTT、生成器、展示README共七檔公開HTTP200，SHA-256逐一與該提交git blob相符（work/s51-complete-public.log）；文字不以Windows換行差異誤判。MP4 SHA-256為e22a1158f614d923833b6f96134d919de06784f1b3164cf6b659de88b3f21c94。
+
+錄製後正式三頁與引用JS／CSS再次核對仍為4bb87cd（work/s51-complete-live-after.log）；本包沒有新Pages部署、外部真人程式審查或分支保護修改。
 
 原包來源51e105c，[PR#9](https://github.com/zhai2Liu/taiwan-mahjong/pull/9)／Actions39020052983的365／26通過，合併6b8e5ea；當時三圖、舊33.04秒影片與README公開原檔雜湊相符。原影片不足60秒，曾將S5.1標全數完成屬漏驗，已先校正狀態，本輪補足；歷史紀錄不作新片證據。
 
