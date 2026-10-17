@@ -38,6 +38,8 @@ S1限定範圍、S2.1及S3.1–S3.3已完成並發布；S2.2與S3.4準備完成�
 
 發布維護：`npm run verify:release -- <網址/>`核對指定建置與公開三頁HTML／引用資源；入口HTML以Git屬性固定LF，避免Windows／Linux產物換行不一致。實作、正反例與指定提交發布狀態依HANDOFF，不取代正式操作或真人驗證。
 
+發布來源維護：五個直接引用的官方Action固定完整commit SHA，原版本旁註與升級流程見[DEPLOYMENT](DEPLOYMENT.md)。不改現有權限／事件或合併條件，指定提交雲端驗收與發布狀態依HANDOFF。
+
 ## 既有 L 線與驗證界線
 
 | 階段 | 交付與驗收 | 現況／排除 |

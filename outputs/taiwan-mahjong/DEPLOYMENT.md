@@ -26,6 +26,20 @@ Vite保留`base: './'`與`outDir: 'site'`，建置資源使用相對路徑，支
 
 S1.2b在共同build內先安裝Chromium（CI含系統依賴），建置後執行核心瀏覽器回歸，再允許main上傳Pages及部署。檢查失敗時保留test-results的截圖／trace七天；這是測試證據artifact，PR仍不產生Pages artifact或取得Pages／OIDC權限。首次下載瀏覽器需要網路，失敗時不得跳過回歸發布。正式site只含index.html／training.html／learn.html與assets，測試範例由Node端注入隔離瀏覽器，不發布。見[S1.2b驗收](S12B-VALIDATION.md)。
 
+## 官方Action來源固定（2026-10-18）
+
+五個直接引用改用完整commit SHA，旁註保留原主版本。SHA由各官方repository的Git ref／commit API核對；checkout、setup-node及兩個上傳工具亦與PR#26成功job的實際下載SHA相同。只固定既有來源，沒有升級主版本、改觸發／權限／main與PR條件或加入新工具。
+
+| Action | 原ref | 固定的官方commit |
+|---|---|---|
+| checkout | v7 | [3d3c42e5aac5ba805825da76410c181273ba90b1](https://github.com/actions/checkout/commit/3d3c42e5aac5ba805825da76410c181273ba90b1) |
+| setup-node | v7 | [949feb2413d6458794dcd2491c4babbbce0c15c1](https://github.com/actions/setup-node/commit/949feb2413d6458794dcd2491c4babbbce0c15c1) |
+| upload-artifact | v4 | [ea165f8d65b6e75b540449e92b4886f43607fa02](https://github.com/actions/upload-artifact/commit/ea165f8d65b6e75b540449e92b4886f43607fa02) |
+| upload-pages-artifact | v4 | [7b1f4a764d45c48632c6b24a0339c27f5614fb0b](https://github.com/actions/upload-pages-artifact/commit/7b1f4a764d45c48632c6b24a0339c27f5614fb0b) |
+| deploy-pages | v4 | [d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e](https://github.com/actions/deploy-pages/commit/d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e) |
+
+維護時先查看官方版本／commit與相容需求，再同時更新SHA、旁註與本表；走正常PR完整檢查、main部署與正式資源核對，不只把版本名稱改大。新來源仍從官方repository核對，不能取同名fork。固定直接引用沿[GitHub安全使用文件](https://docs.github.com/en/actions/reference/security/secure-use#using-third-party-actions)的SHA方案；若需要包含傳遞依賴與來源身分的完整鎖定，再評估該文件所列workflow lockfile。此次不承諾hosted runner映像、外部下載或整套環境完全不變。指定提交及CI／發布結果依HANDOFF，不能以較早的浮動ref成功代替本次驗證。
+
 ## 首次部署的剩餘步驟
 
 1. 確認目標repository網址、現有內容及main分支；若尚未建立，確認名稱與可見性。免費方案使用公開repository的Pages；來源公開範圍須明確。
