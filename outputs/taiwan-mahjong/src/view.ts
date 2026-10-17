@@ -103,7 +103,7 @@ function header(model: ViewModel, send: Send): HTMLElement {
   if (model.game) {
     const coachLabel = node('label', 'speed-label', '提示');
     const coachSelect = node('select'); coachSelect.dataset.focus = 'coach-mode'; coachSelect.setAttribute('aria-label', '對戰提示模式');
-    for (const [value, label] of [['off', '不提示'], ['after', '出牌後解釋'], ['on', '即時輔助']]) {
+    for (const [value, label] of [['off', '不提示'], ['after', '打牌／吃碰後解釋'], ['on', '即時輔助']]) {
       const option = node('option', '', label); option.value = value; coachSelect.append(option);
     }
     coachSelect.value = model.coachMode ?? (model.coachEnabled === false ? 'off' : 'on');

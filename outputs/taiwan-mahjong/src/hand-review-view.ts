@@ -8,6 +8,21 @@ type Card = Review['cards'][number];
 type Row = Card['rows'][number];
 type Metrics = NonNullable<Row['candidate']['efficiency']>;
 const seatName = (seat: number, own: number) => ['你', '下家', '對家', '上家'][(seat - own + 4) % 4];
+export function reviewClaimText(card: Card): string {
+  const result = card.claimResolution;
+  if (!result) return '';
+  if (result.status === 'pending') return '仲裁結果：回應已送出，仍在等待其他家回應與仲裁；尚未取得牌。';
+  if (result.status === 'unavailable') return '仲裁結果：沒有可核對的同局公開結果；此快照只記錄當時提出的選擇。';
+  if (result.seat === null) return '仲裁結果：各家過，這張牌沒有被取走。';
+  const action = { chi: '吃牌', pon: '碰牌', exposedKong: '明槓', win: '胡牌' }[result.action!];
+  return `仲裁結果：${seatName(result.seat, card.snapshot.observation.seat)}${action}成立。${result.seat === card.snapshot.observation.seat ? '你已取得這張牌。' : card.snapshot.chosen.type === 'PASS' ? '你這次選擇過。' : '你送出的吃碰未取得這張牌。'}`;
+}
+/** Small topic map, not a weakness score or evidence of unfamiliar-question transfer. */
+export function reviewPracticeSkills(card: Card): string[] {
+  const skills = card.rows.some(r => r.candidate.postClaim) ? ['claim-cost'] : ['efficiency', 'safety-scope'];
+  if (card.snapshot.observation.streak > 0) skills.push('dealer-continuation');
+  return skills;
+}
 export function reviewActionName(intent: Intent): string {
   switch (intent.type) {
     case 'DISCARD': return `打${tileName(intent.tileId)}`;
@@ -69,18 +84,22 @@ function visibleContext(card: Card): HTMLElement {
   }
   return detail;
 }
-export function showHandReview(root: HTMLElement, review: Review | null, pending: number, error = '', context: 'hand' | 'decision' = 'hand', saveWarning = ''): void {
+export function showHandReview(root: HTMLElement, review: Review | null, pending: number, error = '', context: 'hand' | 'decision' | 'claim' = 'hand', saveWarning = ''): void {
   if (document.querySelector('dialog[data-hand-review]')) return;
   const dialog = node('dialog', 'review-panel'); dialog.dataset.handReview = ''; dialog.setAttribute('aria-labelledby', 'hand-review-title');
   const top = node('div', 'review-top');
-  const title = node('h2', '', context === 'decision' ? '出牌後解釋' : '本局決策檢討'); title.id = 'hand-review-title'; title.tabIndex = -1;
+  const resolution = review?.cards[0]?.claimResolution;
+  const finished = context === 'claim' && resolution?.status === 'resolved' && resolution.finished;
+  const title = node('h2', '', context === 'decision' ? '出牌後解釋' : context === 'claim' ? '吃碰回應後解釋' : '本局決策檢討'); title.id = 'hand-review-title'; title.tabIndex = -1;
   top.append(title, button('關閉檢討', 'review-close', () => dialog.close(), 'button button-secondary')); dialog.append(top);
-  dialog.append(node('p', '', context === 'decision' ? '出牌已生效，牌局已暫停。看完關閉後，按「繼續牌局」；關閉或 Escape 不會自動行牌。' : '回看你當時知道的資訊。這裡比較候選差異，不以後來輸贏判定唯一正解。'));
+  dialog.append(node('p', '', context === 'decision' ? '出牌已生效，牌局已暫停。看完關閉後，按「繼續牌局」；關閉或 Escape 不會自動行牌。'
+    : context === 'claim' ? finished ? '本次回應已完成仲裁，牌局已結算。關閉解釋可回到結算，這裡不能重做選擇。' : '本次回應已完成仲裁，牌局已暫停。關閉或 Escape 不會自動行牌；看完按「繼續牌局」。'
+    : '回看你當時知道的資訊。這裡比較候選差異，不以後來輸贏判定唯一正解。'));
   if (saveWarning) { const warning = node('p', 'notice', saveWarning); warning.setAttribute('role', 'alert'); dialog.append(warning); }
   if (pending) dialog.append(node('p', 'notice', `此頁有${pending}筆尚未保存，未納入本次檢討；關閉後可在「決策記錄與保存」重試。`));
   if (error) { const notice = node('p', 'notice', error); notice.setAttribute('role', 'alert'); dialog.append(notice); }
   else if (review) {
-    dialog.append(node('p', 'muted', context === 'decision' ? review.limitation : `${review.limitation} 本局保留${review.retainedForHand}筆，顯示${review.shown}筆可比較決策。`));
+    dialog.append(node('p', 'muted', context !== 'hand' ? review.limitation : `${review.limitation} 本局保留${review.retainedForHand}筆，顯示${review.shown}筆可比較決策。`));
     if (!review.cards.length) dialog.append(node('p', '', '本局尚無可比較的已保存決策。舊牌局、尚未存妥或只有「過」的記錄可能不會出現在這裡。'));
     const cards: HTMLElement[] = [];
     if (review.cards.length > 1) {
@@ -94,6 +113,7 @@ export function showHandReview(root: HTMLElement, review: Review | null, pending
       const section = node('article', 'review-card');
       section.hidden = index !== 0; cards.push(section);
       section.append(node('h3', '', `決策 ${index + 1} · ${reviewActionName(card.snapshot.chosen)}`), node('p', 'muted', card.selectionNote));
+      if (card.claimResolution) section.append(node('p', 'notice', reviewClaimText(card)));
       const summary = reviewSummaryRows(card);
       summary.forEach(row => section.append(candidateView(row, card.snapshot.observation.seat)));
       const rest = card.rows.filter(row => !summary.includes(row));
@@ -104,10 +124,17 @@ export function showHandReview(root: HTMLElement, review: Review | null, pending
       section.append(node('p', 'review-limit', '依可見牌計的有效進牌／尚未看見的一般牌是可見資訊下的張數比，包含他家手牌與牌尾，並非實際摸牌率。安全證明只限當時對指定家普通放槍，不含未來自摸、花胡或續莊；未知不等於危險。'));
       section.append(node('p', 'review-limit', card.evidence.discardPreference.objective), node('p', 'review-limit', card.evidence.overallStrategy.explanation));
       if (card.rows.some(r => r.candidate.postClaim)) section.append(node('p', 'review-limit', card.claimNote));
-      section.append(visibleContext(card)); dialog.append(section);
+      section.append(visibleContext(card));
+      const practice = node('nav', 'review-practice'); practice.setAttribute('aria-label', '同類觀念練習');
+      practice.append(node('p', '', '接著練同類觀念：既有練習可能已看過，不是弱點診斷或陌生題測驗。'));
+      const names: Record<string, string> = { efficiency: '牌效', 'claim-cost': '吃碰取捨', 'safety-scope': '安全牌', 'dealer-continuation': '莊家連莊' };
+      for (const skill of reviewPracticeSkills(card)) {
+        const link = node('a', 'button button-secondary', `${names[skill]}練習（另開分頁）`); link.href = `./training.html?skill=${skill}`; link.target = '_blank'; link.rel = 'noopener'; practice.append(link);
+      }
+      section.append(practice); dialog.append(section);
     }
   }
-  dialog.append(button(context === 'decision' ? '關閉解釋，返回暫停牌桌' : '回到本局結算', 'review-done', () => dialog.close(), 'button button-primary'));
-  dialog.addEventListener('close', () => { dialog.remove(); root.querySelector<HTMLElement>(context === 'decision' ? '[data-focus="pause"]' : '[data-focus="review-open"]')?.focus({ preventScroll: true }); }, { once: true });
+  dialog.append(button(context !== 'hand' && !finished ? '關閉解釋，返回暫停牌桌' : '回到本局結算', 'review-done', () => dialog.close(), 'button button-primary'));
+  dialog.addEventListener('close', () => { dialog.remove(); root.querySelector<HTMLElement>(context === 'hand' || finished ? '[data-focus="review-open"]' : '[data-focus="pause"]')?.focus({ preventScroll: true }); }, { once: true });
   document.body.append(dialog); dialog.showModal(); title.focus();
 }

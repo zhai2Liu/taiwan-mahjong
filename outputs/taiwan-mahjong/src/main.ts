@@ -5,7 +5,8 @@ import { render, updateReviewStatus, confirmReviewClear } from './view.js';
 import { createReviewRecorder } from './review-recorder.js';
 import { REVIEW_KEY, readReviewArchive } from './review-store.js';
 import { captureDecision } from './decision-snapshot.js';
-import { buildHandReview, buildDecisionReview } from './hand-review.js';
+import type { DecisionSnapshot } from './decision-snapshot.js';
+import { buildHandReview, buildDecisionReview, claimResolution } from './hand-review.js';
 import { showHandReview } from './hand-review-view.js';
 import type { UICommand, CoachMode } from './view.js';
 import { PRACTICE_KEY, createPractice, drawPractice, discardPractice, encodePractice, decodePractice } from './practice.js';
@@ -48,6 +49,8 @@ let practiceRaw: string | null = null;
 let practiceUnreadable = false;
 let practiceNotice = '';
 let practiceBlocked = false;
+// ponytail: waiting explanations are page-local; persisted replay requires a separate versioned archive contract.
+let pendingClaimReview: DecisionSnapshot | null = null;
 const reviews = createReviewRecorder({ getItem: key => localStorage.getItem(key), setItem: (key, value) => localStorage.setItem(key, value) },
   () => { if (mode === 'game') updateReviewStatus(root, reviews.status(), send); });
 try {
@@ -111,7 +114,22 @@ function paint(): void {
 }
 function refresh(): void {
   stopTimer();
+  let claimReview: ReturnType<typeof buildDecisionReview> | null = null;
+  if (pendingClaimReview && session && mode === 'game' && coachMode === 'after' && !failed) {
+    try {
+      const after = getObservation(session.game, 0), result = claimResolution(pendingClaimReview, after);
+      if (result?.status !== 'pending') {
+        const snapshot = pendingClaimReview; pendingClaimReview = null; paused = true;
+        if (result?.status === 'resolved') claimReview = buildDecisionReview(snapshot, after);
+        else coachNotice = '吃碰回應已送出，但本次仲裁結果無法核對。牌局保持暫停，可按繼續牌局。';
+      }
+    } catch { pendingClaimReview = null; paused = true; coachNotice = '吃碰回應已生效，但本次解釋無法產生。牌局保持暫停，可按繼續牌局。'; }
+  }
   paint();
+  if (claimReview) {
+    try { showHandReview(root, claimReview, 0, '', 'claim', saveFailed ? '本次仲裁後牌局尚未儲存。請保持頁面開啟，關閉解釋後按「重試儲存」。' : ''); }
+    catch { coachNotice = '吃碰回應已生效，但解釋無法顯示。牌局保持暫停，可按繼續牌局。'; paint(); }
+  }
   if (!needsAutomation()) return;
   const scheduled = generation;
   timer = setTimeout(() => {
@@ -128,7 +146,7 @@ function refresh(): void {
       status = `${next.actor === 'engine' ? '' : `電腦 ${next.actor}・`}${labels[next.intent.type] ?? ''}`;
       persist();
     } catch (error) {
-      failed = true;
+      failed = true; pendingClaimReview = null;
       notice = '牌局遇到問題，已停止自動操作並保留上一步存檔。可重新整理後選擇繼續牌局。';
       console.error('Game paused after a rejected transition:', error);
     }
@@ -138,6 +156,7 @@ function refresh(): void {
 function start(): void {
   if ((session || rawSave !== null || unreadableSave) && !window.confirm('開始新一將會取代目前的本機存檔。確定重新開始？')) return;
   unreadableSave = false;
+  pendingClaimReview = null;
   session = createSession(); feedback = null; progress = null; selectedTile = null; paused = false; failed = false; status = '準備開局';
   persist(); refresh();
 }
@@ -145,7 +164,7 @@ function send(command: UICommand): void {
   if (command.type === 'review-open') {
     if (mode !== 'game' || !session || !['handResult', 'matchResult'].includes(session.game.phase)) return;
     const { matchId, handId } = session.game;
-    try { showHandReview(root, buildHandReview(readReviewArchive(localStorage).records, matchId, handId, 0), reviews.status().pending); }
+    try { showHandReview(root, buildHandReview(readReviewArchive(localStorage).records, matchId, handId, 0, getObservation(session.game, 0)), reviews.status().pending); }
     catch { showHandReview(root, null, reviews.status().pending, '本局檢討無法讀取或分析版本不受支援；原資料已保留，對戰與結算不受影響。'); }
     return;
   }
@@ -167,7 +186,7 @@ function send(command: UICommand): void {
   if (command.type === 'coach-mode') {
     if (!['on', 'off', 'after'].includes(command.value)) return;
     coachMode = command.value;
-    coachNotice = ''; feedback = null;
+    coachNotice = ''; feedback = null; pendingClaimReview = null;
     try { localStorage.setItem(COACH_KEY, coachMode); }
     catch { coachNotice = '教練設定本次已套用，但無法保存；重新開啟可能恢復預設。'; }
     refresh(); return;
@@ -200,7 +219,7 @@ function send(command: UICommand): void {
   }
   if (command.type === 'start' || command.type === 'new') { start(); return; }
   if (command.type === 'resume') {
-    if (saved) { session = decodeSession(encodeSession(saved)); feedback = null; progress = null; paused = false; failed = false; selectedTile = null; status = '已恢復牌局'; refresh(); }
+    if (saved) { session = decodeSession(encodeSession(saved)); feedback = null; progress = null; pendingClaimReview = null; paused = false; failed = false; selectedTile = null; status = '已恢復牌局'; refresh(); }
     return;
   }
   if (command.type === 'speed') { speed = command.value; refresh(); return; }
@@ -216,11 +235,17 @@ function send(command: UICommand): void {
     if (command.type === 'next') {
       if (session.game.phase !== 'handResult') return;
       session = advance(session, 'engine', { type: 'NEXT_HAND' }, session.game.version);
-      feedback = null; progress = null;
+      feedback = null; progress = null; pendingClaimReview = null;
     } else if (command.type === 'intent') {
       const before = getObservation(session.game, 0);
       session = advance(session, 0, command.intent, command.version);
       reviewInput = [before, command.intent, 'TW16-CLASSIC-v1'];
+      pendingClaimReview = null;
+      if (coachMode === 'after' && ['CHI', 'PON', 'PASS'].includes(command.intent.type)
+        && before.legalActions.some(a => a.type === 'CHI' || a.type === 'PON')) {
+        try { pendingClaimReview = captureDecision(...reviewInput); }
+        catch { paused = true; coachNotice = '吃碰回應已送出，但決策資料無法核對。牌局已暫停，可按繼續牌局。'; }
+      }
       feedback = null;
       if (coachMode === 'on' && command.intent.type === 'DISCARD') {
         try {
@@ -253,7 +278,7 @@ window.addEventListener('storage', event => {
     if (mode === 'practice') paint();
   }
   if (event.key === null || event.key === SAVE_KEY && event.newValue !== rawSave) {
-    stopTimer(); failed = true; saved = null; rawSave = event.key === null ? null : event.newValue;
+    stopTimer(); failed = true; pendingClaimReview = null; saved = null; rawSave = event.key === null ? null : event.newValue;
     notice = '另一個分頁已變更存檔。此頁已停止操作，請重新整理以使用最新進度。';
     paint();
   }

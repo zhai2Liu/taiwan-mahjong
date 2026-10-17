@@ -5,8 +5,9 @@ import type { TileKind } from './model.js';
 // ponytail: page-local drafts only; persistence needs a separate retention/clear contract.
 const drafts = trainingQuestions.map(() => ({ selected: new Set<string>(), reason: '', feedback: '', revealed: false }));
 const root = document.querySelector<HTMLElement>('#training')!;
-let index = 0;
-let skill = 'all';
+const requestedSkill = window.location?.search ? new URLSearchParams(window.location.search).get('skill') : null;
+let skill = trainingSkills.some(s => s.id === requestedSkill) ? requestedSkill! : 'all';
+let index = trainingQuestions.findIndex(q => skill === 'all' || q.skill === skill);
 let leaveGuardActive = false;
 let answersExportSnapshot: string | undefined, feedbackExportSnapshot: string | undefined;
 const answersSnapshot = () => JSON.stringify(drafts.map(d => [[...d.selected].sort(), d.reason, d.feedback, d.revealed]));
