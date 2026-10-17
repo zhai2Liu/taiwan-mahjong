@@ -4,9 +4,9 @@
 
 ## 現況與下一步
 
-本輪S2.4本機完成、待PR發布核對（2026-10-17）：來源基線cfb1977，分支codex/lesson-7-8-preparation。[第7–8課腳本／實桌附錄](S24-LESSON-PREPARATION.md)及test/learning-round.test.mjs已落盤；完整144張從DEAL發牌，示範／換例的13與34吃法、自摸／他家胡與選過共8分支通過，補花／回應／自摸／結算檢查點還原不重取或重付。全套399測試／check／build通過（work/s24-tests.log、s24-build.log），五份文件83個本機連結有效，正式JS／CSS仍4bb87cd內容。未改runtime／依賴／三課進度；S2.4互動頁、真正暫停／中途保存及正常對戰連接未整合。實桌附錄只教概念及要問的桌規，未加入相公／詐胡罰則。
+本輪S2.4準備完成（2026-10-17）：來源7f7e291、[PR#13](https://github.com/zhai2Liu/taiwan-mahjong/pull/13)合併36aa912。第7–8課固定整局腳本／實桌附錄及8個從真實DEAL到結算／合法選過的分支已備；全套399／26，PR Actions39042980660成功（34.8秒），main39043175446成功（33.0秒），build117426596946／deploy117426915027成功。正式三頁200及4／3／4份JS／CSS SHA-256與本輪site相同，網頁仍4bb87cd功能內容；六個公開檔案與36aa912 git blob相符。教材／牌例見[S24](S24-LESSON-PREPARATION.md)，logs為work/s24-tests.log、s24-build.log、s24-pr-ci.log、s24-main-ci.log、s24-public.log、s24-live-after.log。未改runtime／依賴／三課進度，S2.4互動頁、真正暫停／中途保存及正常對戰連接未整合；實桌附錄未加入外部罰則。
 
-使用者要求用本次五小時額度持續推進；新窗口起始0%、最近5%、resetsAt1792266558，不沿用上輪40%，非精確token。每包完成驗證、提交及更新本檔；本包發布完成後做S4.2桌面可及性／操作檢查，依重現缺口修正。後五課正式整合仍沿前三課試用／修訂順序，真人0、S6未啟動。無子代理、重設額度或新增排程／自動續跑，持續目標有效。
+使用者要求用本次五小時額度持續推進；新窗口起始0%、最近15%、resetsAt1792266558，不沿用上輪40%，非精確token。每包完成驗證、提交及更新本檔；下一包S4.2已重現：強制色彩下組牌選取只剩顏色、靜態牌面無圖片語意。work/s42-forced-colors-before.log／png及s42-tile-before.log；4230隔離preview仍在，session80087，測試context已關，尚未改runtime。後五課正式整合仍沿前三課試用／修訂順序，真人0、S6未啟動。無子代理、重設額度或新增排程／自動續跑，持續目標有效。
 
 前包完成（2026-10-17）：S2.3第4–6課教材／引擎牌例準備，來源54d9e11、[PR#12](https://github.com/zhai2Liu/taiwan-mahjong/pull/12)合併aa02c78並回main。交付[S23教材](S23-LESSON-PREPARATION.md)及test/learning-next.test.mjs：吃碰／三槓、過水正反例、逐條台項與按付款對象計莊連台，共26個牌例通過；本機全套391測試／check／build通過。PR Actions39039769390指定head成功391／26（Linux29.5秒），上傳／deploy skipped；main Actions39039947228成功391／26（29.7秒），build117417193728與deploy117417482632成功。
 
@@ -16,7 +16,7 @@
 
 S3.2／S3.3已發布；S3.4審核準備、S5.1素材及S5.2技術準備已合併。最近功能改動來源4bb87cd；本包只有教材／測試，main原工作流按測試路徑觸發，已重發相同網頁產物，發布提交aa02c78。S2.2真人仍0、S2.3互動頁未完成。
 
-S2.4腳本／附錄本機準備已完成，發布後下一包為S4.2桌面可及性／操作檢查；後五課正式整合仍沿前三課試用／修訂順序。真人資料只阻擋相應理解／難度／成效及實機結論，不代表整個專案必須停工。S3.4正式放行、S5.2授權／Release及另擬履歷摘要仍待；S6需另外啟動，不從研究直接實裝。
+S2.4腳本／附錄準備及發布核對已完成，下一包為S4.2桌面可及性／操作檢查；後五課正式整合仍沿前三課試用／修訂順序。真人資料只阻擋相應理解／難度／成效及實機結論，不代表整個專案必須停工。S3.4正式放行、S5.2授權／Release及另擬履歷摘要仍待；S6需另外啟動，不從研究直接實裝。
 
 | 範圍 | 實際完成／限制 |
 |---|---|
@@ -52,8 +52,9 @@ S2.4腳本／附錄本機準備已完成，發布後下一包為S4.2桌面可及
 | S5.2 | d8e8701／b265a83，[PR#10](https://github.com/zhai2Liu/taiwan-mahjong/pull/10) | PR39020532423成功365／26（33.7秒）；純Markdown，無新Pages部署 |
 | S5.1補版 | cd0a778／daea897，[PR#11](https://github.com/zhai2Liu/taiwan-mahjong/pull/11) | PR39034074956成功365／26（30.3秒）；七個公開檔案雜湊相符，無新Pages部署 |
 | S2.3準備 | 54d9e11／aa02c78，[PR#12](https://github.com/zhai2Liu/taiwan-mahjong/pull/12) | PR39039769390成功391／26（29.5秒）；main39039947228成功391／26（29.7秒），部署成功且三頁資源相符 |
+| S2.4準備 | 7f7e291／36aa912，[PR#13](https://github.com/zhai2Liu/taiwan-mahjong/pull/13) | PR39042980660成功399／26（34.8秒）；main39043175446成功399／26（33.0秒），部署及三頁資源通過 |
 
-六個PR均已附本chat。PR的Pages上傳／deploy skipped，無Pages產物；沒有外部真人程式審查或分支保護修改。不要只拿舊CI當新變更證據。
+七個PR均已附本chat。PR的Pages上傳／deploy skipped，無Pages產物；沒有外部真人程式審查或分支保護修改。不要只拿舊CI當新變更證據。
 
 正式站：https://zhai2liu.github.io/taiwan-mahjong/；origin：https://github.com/zhai2Liu/taiwan-mahjong.git。S3.3正式index／training／learn HTTP200、全部4／3／4份JS／CSS SHA-256與本機相符；S5.2及本輪S2.3準備部署後再核對仍未變。當前training-vkOYxEaA.js、index-DbMxywyF.js／index-8F0VuNEV.css、view-BjMvH8LY.js、learn-D7cu7U9P.js。
 
@@ -77,7 +78,7 @@ S5.2同源4229演練032bc1c↔4bb87cd：有效結算、已有一捨一摸的練�
 
 TW16-CLASSIC-v1規則唯一來源為[凍結RULES](../taiwan-mahjong-m0/RULES.md)，不混用港麻／日麻。AI及教練只讀單家getObservation，證據不讀其他暗牌／牆／種子；公開進牌比例不是實摸率、安全不等於阻止莊家自摸或流局續莊。S6離線研究不是實裝授權。
 
-先前服務4226／4227／4229及驗收Chrome／Edge已關閉；本輪未開本機服務或桌面瀏覽器，不動使用者原4173或日常profile。work/保留合成logs／原始影片／zoom profile／舊版隔離建置，全部忽略，不提交真人資料。主要logs為s32-*、s33-*、s51-*、s52-*；無新套件或子代理。
+先前服務4226／4227／4229及驗收Chrome／Edge已關閉；S2.4本包未開桌面瀏覽器；接S4.2的4230隔離preview仍在，不動使用者原4173或日常profile。work/保留合成logs／原始影片／zoom profile／舊版隔離建置，全部忽略，不提交真人資料。主要logs為s32-*、s33-*、s51-*、s52-*；無新套件或子代理。
 
 上輪S3.2–S5.2帳戶起始1%、最後檢查64%，舊窗口resetsAt1792229095。當前窗口與用量以本輪檢查點為準，比例不是精確對話剩餘token；未使用重設額度或自動續跑。分工已依S51確認，真人學習試用仍無新資料。
 
