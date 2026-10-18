@@ -182,7 +182,7 @@ test('練習鍵盤選牌 → 出牌 → 摸牌 → 返回，320px 控制可用',
   expect(practice.discards).toHaveLength(1);
   expect(practice.hand).toHaveLength(17);
   expect(practice.pool).toHaveLength(initial.pool.length - 1);
-  await page.getByRole('button', { name: '返回對戰', exact: true }).click();
+  await page.getByRole('button', { name: '返回首頁', exact: true }).click();
   await expect(page.locator('[data-focus="home-entry"]')).toBeFocused();
   expect(await savedText(page)).toBeNull();
 });

@@ -95,8 +95,8 @@ function rules(): HTMLDetailsElement {
 function header(model: ViewModel, send: Send): HTMLElement {
   const head = node('header', 'site-header');
   const brand = node('div', 'brand');
-  const mark = node('span', 'brand-mark', model.game ? '雀' : '青'); mark.setAttribute('aria-hidden', 'true');
-  const text = node('div'); text.append(node('h1', '', model.game ? '台灣十六張' : '青竹牌室'), node('p', '', model.game ? '一張一刻，好好打牌。' : '台灣十六張・學習與決策練習'));
+  const mark = node('span', 'brand-mark', '雀'); mark.setAttribute('aria-hidden', 'true');
+  const text = node('div'); text.append(node('h1', '', model.game ? '台灣十六張' : '從零到一百的麻將路'), node('p', '', model.game ? '一張一刻，好好打牌。' : '台灣十六張・學習與決策練習'));
   brand.append(mark, text); head.append(brand);
   const tools = node(model.game ? 'div' : 'nav', 'header-tools');
   if (model.game) tools.append(pill('本地公平 AI', 'fair-pill'));

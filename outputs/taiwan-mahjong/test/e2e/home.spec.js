@@ -13,7 +13,7 @@ async function focusIsVisible(page) {
 
 test('首頁三條路線可鍵盤到達，操作導覽回焦，窄畫面入口可點選', async ({ page }) => {
   await page.goto('/');
-  await expect(page.getByRole('heading', { name: '青竹牌室', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: '從零到一百的麻將路', exact: true })).toBeVisible();
   await expect(page.getByRole('navigation', { name: '牌室導覽', exact: true })).toBeVisible();
   const learn = page.getByRole('link', { name: '從零學台灣麻將（前三課）', exact: true });
   const trial = page.getByRole('link', { name: '決策題試讀', exact: true });

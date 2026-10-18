@@ -14,6 +14,8 @@ README是使用與開發總入口；HANDOFF只記目前進度、風險與下一�
 
 ## 修改位置
 
+名稱與返回導引：顯示名稱在view.header、三頁HTML及現行README／產品方向／企畫／發布草稿／展示生成腳本；只改固定文字，沒有新增品牌設定模組。網址、package名稱、存檔鍵與題庫版本不隨顯示名改動。歷史驗收、影片及VTT保留當時名稱，展示README註明版本。renderPractice的hasGame直接讀目前session是否存在，只決定「返回首頁／返回對戰」標籤，不改game命令、保存與暫停行為。
+
 S1.4首頁：view.header／home及style.css首頁區段管理品牌、三路入口和有存檔時的優先續玩。淺色按鈕／焦點／保存工具限定`.home-shell`；不要改成全域顏色而影響深色牌桌、練習或body上的dialog。保留home-entry焦點、UICommand、舊存檔確認及learn／training網址；`test/e2e/home.spec.js`驗三路鍵盤、教學回焦、320px／強制色彩、續玩和取消新局。詳[首頁重設計](HOME-REDESIGN-20261018.md)，不用替配色新增算法測試。
 
 S1.5試讀排版：training.render將分類／保存狀態、本題牌例／作答及保存／交回分區；DOM仍依牌例→作答→推導→換題→保存／交回排列，900px以下直列。`test/e2e/trial-layout.spec.js`巡覽九題／320px，原有trial-save／training-guidance／core保護狀態契約。詳[試讀工作區](TRIAL-WORKSPACE-20261018.md)；調排版不能改題目／內容版本、標準答案或保存語義。
