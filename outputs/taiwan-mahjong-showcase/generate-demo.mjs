@@ -33,7 +33,7 @@ try {
   started = performance.now(); main = await context.newPage();
   main.on('pageerror', error => errors.push(error.message));
   await main.goto(base);
-  await chapter(main, '01-room', '青竹牌室｜台灣十六張麻將學習與決策練習\n合成牌例示範：1位真人與3位本地公平電腦', 5000);
+  await chapter(main, '01-room', '台灣麻將練習室｜台灣十六張麻將學習與決策練習\n合成牌例示範：1位真人與3位本地公平電腦', 5000);
   await main.clock.install({ time: new Date('2026-10-17T00:00:00Z') }); await main.clock.pauseAt(new Date('2026-10-17T00:00:01Z'));
   await main.getByRole('button', { name: '繼續上次牌局', exact: true }).click();
   await main.locator('[data-focus^="action-PON-"]').hover();

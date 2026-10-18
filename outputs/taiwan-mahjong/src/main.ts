@@ -103,7 +103,7 @@ function paint(): void {
   syncSaveLeaveGuard();
   const screen = ++rendered;
   if (mode === 'practice') {
-    renderPractice(root, practice, practiceNotice, practiceSaved !== null, practiceBlocked, command => { if (screen === rendered) send(command); }, !!practice && !practiceBlocked && practiceSaveFailed);
+    renderPractice(root, practice, practiceNotice, practiceSaved !== null, practiceBlocked, command => { if (screen === rendered) send(command); }, !!practice && !practiceBlocked && practiceSaveFailed, session !== null);
     return;
   }
   const game = session ? getObservation(session.game, 0) : null;
