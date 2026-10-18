@@ -69,7 +69,7 @@ body:has(.home-shell){background:#f4f3ed}
 @media(max-width:760px){
   .app-shell.home-shell{padding:0 18px}
   .home-shell .site-header{min-height:90px;gap:12px;padding:16px 0}
-  .home-shell .brand h1{font-size:21px}
+  .home-shell .brand h1{font-size:17px;letter-spacing:1px}
   .home-shell .brand p{font-size:10px}
   .home-shell .header-tools{gap:12px}
   .home-nav-link{display:none}
