@@ -2,7 +2,7 @@
 
 更新：2026-10-20（Asia/Taipei）。方向依[PRODUCT-DIRECTION](PRODUCT-DIRECTION.md)，排程依[ROADMAP](ROADMAP.md)，修改位置依[MAINTENANCE](MAINTENANCE.md)。本輪以前及展開的CI證據保留[歷史交接](HANDOFF-HISTORY-20261017.md)；不要沿歷史「下一步」自動開工。
 
-## S5.1 現行名稱展示刷新：本機已驗，待公開
+## S5.1 現行名稱展示刷新：本機完成，PR待GitHub服務恢復
 
 使用者要求全力推進後，兩個限定Luna分別唯讀檢查對戰／練習／檢討與課程／試讀，沒有留下可證實的新缺陷。課程焦點疑點經核對共用button的data-focus及disabled回退後撤回，沒有為錯誤推論修改正常程式。**2026-10-20使用者明確選擇維持原順序，先等前三課真人回饋；後五課不提前整合。** 真人仍0，正式評量及S6也未放行。
 
@@ -10,7 +10,11 @@
 
 錄製前正式三頁HTML／八項唯一JS／CSS與本機build一致。Chrome155.0.8059.80隔離合成操作含真實另開題目、理由續答、第三課組牌，原牌局原文及暫停保持、0pageerror。完整MP4解碼、原生播放／13段VTT解析／七處定位通過；新名稱、答案／理由、控制列與三圖已目視。MP4 1920×1080／H.264／1725763bytes，SHA-256為3aefa755fc4c50cbc3389f0757ac07d1d9e126d4368dd3f286e0732464f4fc06。完整證據見[S51](S51-DEMO-VALIDATION.md)，候選work/showcase-WY36Mi，檢查與三圖work/showcase-refresh-20261019（跨日完成），瀏覽器contexts已關閉，未開預覽服務。
 
-分支codex/showcase-refresh-20261020，本機已驗、尚未提交／PR。下一步文件檢查、指定PR完整CI，合併後公開素材逐檔雜湊與正式runtime未變核對。展示目錄不觸發main Pages；不得把文件／影片提交當新runtime。帳戶本時段開始0%、中途48%，resetsAt1792443358；非精確token、未重設或自動續跑。
+[PR#31](https://github.com/zhai2Liu/taiwan-mahjong/pull/31)已建立，素材來源79915bc601620964cfaaaae967190c0c3d186e79；初版Actions39282627828／build118159721941多次核對均queued、尚未執行測試。2026-10-20查得[GitHub官方事件](https://stspg.io/nrv2k8s68bwn)仍investigating（UTC 10-19 15:49起，Actions／Pages／Webhooks degraded），其說明包含workflow processing延遲。保留PR，不繞過檢查合併；收尾文件提交後須重新讀PR最終head／對應run，不能沿用初版run當成功證據。
+
+已在本機補跑當前來源：400項Node與58項Chrome瀏覽器回歸全過（55.7秒），型別／build及87份文件連結檢查通過。素材來源提交的11個公開展示檔案HTTP200、SHA-256逐一等於git blob（branch-public.log）；這是分支公開核對，**不是main已合併**。正式遊戲三HTML及八資源再次相符（live-unchanged.log），runtime仍bdb63df。展示目錄不觸發main Pages，不需為影片重部署遊戲。
+
+下一次先核對PR#31最新head與CI。若成功，合併後對合併提交重跑work/s51-complete-public-check.mjs及verify:release，更新S51／ROADMAP／本交接，回main；若仍queued／官方異常，保留待驗，不反覆重跑。工作分支codex/showcase-refresh-20261020，所有交付及交接已提交，沒有未完成程式碼。驗收contexts及Playwright臨時4226已關閉，未動日常profile／原4173。帳戶本時段開始0%、收尾檢查點82%，resetsAt1792443358；非精確token、未重設或自動續跑。
 
 ## 前包：S2.2 回饋工具補強已發布
 
@@ -52,7 +56,7 @@
 | S3.1–S3.3 | 九題四類導引、同類練習、吃碰事後解釋、手動保存／同版續答與曝光自陳已發布；不自動上傳 |
 | S3.4 | [人工錨點／缺口／流程](S34-ASSESSMENT-PREPARATION.md)已備；13題／12題族、四候選不進試讀、assessmentFamilies空；真人題族／難度／內容及正式放行待驗 |
 | S4 | 限定技術檢查已完成；[人工回饋清單](HUMAN-FEEDBACK-CHECKLIST.md)中的手機／Safari／輔具／理解仍待，程式或模型不能代填 |
-| S5 | 新展示已公開；[發布技術準備](S52-RELEASE-PREPARATION.md)及草稿同步完成。LICENSE、tag／Release、另擬履歷摘要仍待本人決定 |
+| S5 | 既有展示已公開；現行名稱刷新PR#31待CI／合併，詳上方。[發布技術準備](S52-RELEASE-PREPARATION.md)及草稿同步完成。LICENSE、tag／Release、另擬履歷摘要仍待本人決定 |
 | S6 | 人格AI僅離線研究，使用者未授權實裝，需另行啟動 |
 
 分工本人已確認「本人負責需求、方向與操作回饋；AI協助規格、程式、測試、發布與文件」，不重問、不推定手寫比例／個人技能。真人資料接收依[TRIAL-REVIEW](TRIAL-REVIEW.md)，不代填、不自行公開回饋。其他新重現操作／維護缺口可獨立修，不代表必須停工或放行上述功能。
