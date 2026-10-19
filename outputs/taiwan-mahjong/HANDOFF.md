@@ -2,13 +2,17 @@
 
 更新：2026-10-19（Asia/Taipei）。方向依[PRODUCT-DIRECTION](PRODUCT-DIRECTION.md)，排程依[ROADMAP](ROADMAP.md)，修改位置依[MAINTENANCE](MAINTENANCE.md)。本輪以前及展開的CI證據保留[歷史交接](HANDOFF-HISTORY-20261017.md)；不要沿歷史「下一步」自動開工。
 
-## S2.2 回饋工具補強：本機完成，待發布
+## S2.2 回饋工具補強已發布
 
 2026-10-19使用者要求繼續推進。限定補齊前三課試用回饋入口：原生選填表單，下載TXT後自行附回專案對話；切課／重讀／重建保留本頁回饋，下載故障可複製內容，回饋與未存課程合併離頁提醒。沒有新保存鍵或後端；未改課程、答案、桌規／AI及任何舊存檔格式。TXT只附手動輸入與白名單課程快照，讀取失敗／衝突時不列未確認旗標；不是正式試用、首次曝光、理解或公開同意證明。詳[試用與接收流程](BEGINNER-TRIAL.md)。
 
 本機型別／正式建置、400項Node、58項瀏覽器回歸（51.5秒）通過；新增四項覆蓋實際TXT下載／舊鍵隔離／取消離頁／下載失敗／跨頁衝突與兩種未存狀態，沒有把合成回饋計入真人。Chrome155.0.8059.80與Edge155.0.4283.62各320／1440px經鍵盤開啟、輸入、下載與取消返回，無橫溢出、pageerror或網路寫入；強制色彩焦點可見，桌面及窄畫面表單已目視。證據work/learning-feedback-20261019/（build／node-tests／browser-tests.log、local-result.json與截圖）。Luna唯讀review指出未確認旗標風險，已修並回歸。
 
-目前分支codex/learning-feedback-20261019，尚未提交／PR／部署；正式網站仍為下述433e042。下一步提交、指定head的PR與main CI／Pages、正式資源與實際下載驗證。新learn-CenaBSFi.js／learn-YDGOvCA6.css，其餘六資源不變。預覽4234由本輪啟動（session85437），收尾只關閉此實例。帳戶開始五小時用量20%、中途58%，resetsAt1792400501；不能推算精確剩餘token，未重設／自動續跑。
+[PR#30](https://github.com/zhai2Liu/taiwan-mahjong/pull/30)最終head f4712d4ce04cdbf691db1a91650e15342892619f已合併；**正式Pages來源為main bdb63dffbdeefa0c7aca11b6ac75151aba586aff**。PR Actions39209949915／build117920884751成功400／58（49.4秒）、87份文件637個連結；PR沒有Pages。main Actions39210213859／build117921690366成功400／58（56.2秒），deploy117922315706成功。純文件收尾提交不代表另一次runtime發布。
+
+正式三頁HTML及八項唯一JS／CSS均HTTP200，SHA-256與指定建置相符（live-assets.log）。新learn-CenaBSFi.js／learn-YDGOvCA6.css，其餘六資源不變。正式Chrome／Edge各320／1440px重新經鍵盤開回饋、輸入、實際TXT下載核對預覽、取消返回牌室與強制色彩焦點檢查，無橫溢出、pageerror或網路寫入，窄版表單已目視；證據live-result.json／live-check.log與截圖。這些都是隔離合成驗收，不是手機實機、Safari或真人理解證據。
+
+預覽4234（session85437／PID23656）已核對命令及監聽後只關閉此實例，該port現無監聽，驗收contexts均關閉；原4173及日常profile未動。帳戶開始五小時用量20%、收尾檢查點90%，resetsAt1792400501；不能推算精確剩餘token，未重設／自動續跑。6.1 Sol主導、Luna唯讀限定檢查；本包無剩餘程式／發布待辦。
 
 真人仍0，S2.2內容修訂待驗，S2.3後五課整合與S6不因此放行。新的可重現維護缺口可獨立推進；不為填進度捏造試用或擴題。
 
@@ -33,7 +37,7 @@
 | 範圍 | 真正狀態 |
 |---|---|
 | M0–M5.4、S0／S1 | 台灣16張、1真人＋3公平本地AI、逐項結算、續局、牌效練習、六步導覽、局後檢討與工程基礎已發布；本輪三入口改版也已發布 |
-| S2.1／S2.2 | 前三課與獨立進度已發布；[T0–T5試用](BEGINNER-TRIAL.md)與選填TXT回饋工具已備，發布依上方狀態；真人0、內容修訂待驗 |
+| S2.1／S2.2 | 前三課、獨立進度與選填TXT回饋已發布；[T0–T5試用](BEGINNER-TRIAL.md)準備完成，真人0、內容修訂待驗 |
 | S2.3／S2.4 | [第4–6課26牌例](S23-LESSON-PREPARATION.md)、[第7–8課腳本及8分支](S24-LESSON-PREPARATION.md)、[相容候選規格](S23-PROGRESS-COMPATIBILITY.md)已備；後五課UI／新格式／中途保存／正常對戰連接未實裝。正式整合仍依S2.2試用修訂 |
 | S3.1–S3.3 | 九題四類導引、同類練習、吃碰事後解釋、手動保存／同版續答與曝光自陳已發布；不自動上傳 |
 | S3.4 | [人工錨點／缺口／流程](S34-ASSESSMENT-PREPARATION.md)已備；13題／12題族、四候選不進試讀、assessmentFamilies空；真人題族／難度／內容及正式放行待驗 |
