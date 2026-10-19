@@ -1,8 +1,18 @@
 # 現行交接入口
 
-更新：2026-10-19（Asia/Taipei）。方向依[PRODUCT-DIRECTION](PRODUCT-DIRECTION.md)，排程依[ROADMAP](ROADMAP.md)，修改位置依[MAINTENANCE](MAINTENANCE.md)。本輪以前及展開的CI證據保留[歷史交接](HANDOFF-HISTORY-20261017.md)；不要沿歷史「下一步」自動開工。
+更新：2026-10-20（Asia/Taipei）。方向依[PRODUCT-DIRECTION](PRODUCT-DIRECTION.md)，排程依[ROADMAP](ROADMAP.md)，修改位置依[MAINTENANCE](MAINTENANCE.md)。本輪以前及展開的CI證據保留[歷史交接](HANDOFF-HISTORY-20261017.md)；不要沿歷史「下一步」自動開工。
 
-## S2.2 回饋工具補強已發布
+## S5.1 現行名稱展示刷新：本機已驗，待公開
+
+使用者要求全力推進後，兩個限定Luna分別唯讀檢查對戰／練習／檢討與課程／試讀，沒有留下可證實的新缺陷。課程焦點疑點經核對共用button的data-focus及disabled回退後撤回，沒有為錯誤推論修改正常程式。**2026-10-20使用者明確選擇維持原順序，先等前三課真人回饋；後五課不提前整合。** 真人仍0，正式評量及S6也未放行。
+
+完成獨立展示補強：依正式runtime bdb63df重新錄製70秒影片、13段VTT與三圖，首頁與字幕現為「從零到一百的麻將路」；舊影片保留歷史。同步根README、展示導覽、S51／S52發布草稿及人工回饋入口。沒有runtime、依賴、課程／桌規／資料格式變更，未建立tag或Release。
+
+錄製前正式三頁HTML／八項唯一JS／CSS與本機build一致。Chrome155.0.8059.80隔離合成操作含真實另開題目、理由續答、第三課組牌，原牌局原文及暫停保持、0pageerror。完整MP4解碼、原生播放／13段VTT解析／七處定位通過；新名稱、答案／理由、控制列與三圖已目視。MP4 1920×1080／H.264／1725763bytes，SHA-256為3aefa755fc4c50cbc3389f0757ac07d1d9e126d4368dd3f286e0732464f4fc06。完整證據見[S51](S51-DEMO-VALIDATION.md)，候選work/showcase-WY36Mi，檢查與三圖work/showcase-refresh-20261019（跨日完成），瀏覽器contexts已關閉，未開預覽服務。
+
+分支codex/showcase-refresh-20261020，本機已驗、尚未提交／PR。下一步文件檢查、指定PR完整CI，合併後公開素材逐檔雜湊與正式runtime未變核對。展示目錄不觸發main Pages；不得把文件／影片提交當新runtime。帳戶本時段開始0%、中途48%，resetsAt1792443358；非精確token、未重設或自動續跑。
+
+## 前包：S2.2 回饋工具補強已發布
 
 2026-10-19使用者要求繼續推進。限定補齊前三課試用回饋入口：原生選填表單，下載TXT後自行附回專案對話；切課／重讀／重建保留本頁回饋，下載故障可複製內容，回饋與未存課程合併離頁提醒。沒有新保存鍵或後端；未改課程、答案、桌規／AI及任何舊存檔格式。TXT只附手動輸入與白名單課程快照，讀取失敗／衝突時不列未確認旗標；不是正式試用、首次曝光、理解或公開同意證明。詳[試用與接收流程](BEGINNER-TRIAL.md)。
 
