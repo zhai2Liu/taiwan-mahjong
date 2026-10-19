@@ -32,6 +32,8 @@ S3.1九題試讀：兩份TRAINING JSON負責題幹／答案／牌面／範圍；
 
 S2.1新手課：learn.html／src/learning.ts與learning.css是獨立頁；learning-model.ts沿用引擎與手牌驗證，learning-progress.ts處理新鍵／版本／容量／Web Locks。內容與保存規格見[BEGINNER-LEARNING](BEGINNER-LEARNING.md)，改課程先同步courseVersion及遷移；現在只三筆，不能直接增長判舊檔壞掉。回歸見[S21](S21-VALIDATION.md)，進度重建須確認且等待時停用課程動作，不動舊Session／練習／檢討。三頁HTML引用的全部preload／JS／CSS都要驗，不再假定固定三個資源。
 
+S2.2回饋：learn.html的原生details／form獨立於lesson及progress重繪，learning.ts僅匯出純文字白名單快照，沒有新保存鍵。beforeunload須同時考慮課程dirty與回饋欄；課程保存成功不能清除回饋提醒，清空回饋也不能清除課程未存提醒。URL下載失敗仍留下可複製預覽，blocked時不把預設旗標當有效進度。不能將開始下載稱作已確認落盤；不把回饋視為正式試用、公開同意或自動上傳。回歸test/e2e/learning-feedback.spec.js，接收界線見[試用紀錄](BEGINNER-TRIAL.md)。
+
 S2.3準備：第4–6課課文／示範／換例／回饋與整合先決事項集中於[S23教材](S23-LESSON-PREPARATION.md)；test/learning-next.test.mjs以L4／L5／L6具名牌例核對固定引擎與逐條結算。尚未接課程頁或擴三筆進度；改教材先對照該牌例及RULES，不新增教學專用仲裁／過水／計台算法。
 
 S2.3保存準備：[相容候選規格](S23-PROGRESS-COMPATIBILITY.md)管新八課另鍵、舊原文保留、條件式帶入、固定鎖順序及單次寫入；C01–C12為尚未實裝的待驗清單。現行learning-progress.ts仍只接受三課v1，不能把候選格式當作已支援；S2.2內容修訂後先凍結可帶入課次，再實作與驗版本回復。

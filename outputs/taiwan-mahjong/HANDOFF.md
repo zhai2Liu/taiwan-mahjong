@@ -1,8 +1,18 @@
 # 現行交接入口
 
-更新：2026-10-18（Asia/Taipei）。方向依[PRODUCT-DIRECTION](PRODUCT-DIRECTION.md)，排程依[ROADMAP](ROADMAP.md)，修改位置依[MAINTENANCE](MAINTENANCE.md)。本輪以前及展開的CI證據保留[歷史交接](HANDOFF-HISTORY-20261017.md)；不要沿歷史「下一步」自動開工。
+更新：2026-10-19（Asia/Taipei）。方向依[PRODUCT-DIRECTION](PRODUCT-DIRECTION.md)，排程依[ROADMAP](ROADMAP.md)，修改位置依[MAINTENANCE](MAINTENANCE.md)。本輪以前及展開的CI證據保留[歷史交接](HANDOFF-HISTORY-20261017.md)；不要沿歷史「下一步」自動開工。
 
-## S1.7 名稱與返回導引已發布
+## S2.2 回饋工具補強：本機完成，待發布
+
+2026-10-19使用者要求繼續推進。限定補齊前三課試用回饋入口：原生選填表單，下載TXT後自行附回專案對話；切課／重讀／重建保留本頁回饋，下載故障可複製內容，回饋與未存課程合併離頁提醒。沒有新保存鍵或後端；未改課程、答案、桌規／AI及任何舊存檔格式。TXT只附手動輸入與白名單課程快照，讀取失敗／衝突時不列未確認旗標；不是正式試用、首次曝光、理解或公開同意證明。詳[試用與接收流程](BEGINNER-TRIAL.md)。
+
+本機型別／正式建置、400項Node、58項瀏覽器回歸（51.5秒）通過；新增四項覆蓋實際TXT下載／舊鍵隔離／取消離頁／下載失敗／跨頁衝突與兩種未存狀態，沒有把合成回饋計入真人。Chrome155.0.8059.80與Edge155.0.4283.62各320／1440px經鍵盤開啟、輸入、下載與取消返回，無橫溢出、pageerror或網路寫入；強制色彩焦點可見，桌面及窄畫面表單已目視。證據work/learning-feedback-20261019/（build／node-tests／browser-tests.log、local-result.json與截圖）。Luna唯讀review指出未確認旗標風險，已修並回歸。
+
+目前分支codex/learning-feedback-20261019，尚未提交／PR／部署；正式網站仍為下述433e042。下一步提交、指定head的PR與main CI／Pages、正式資源與實際下載驗證。新learn-CenaBSFi.js／learn-YDGOvCA6.css，其餘六資源不變。預覽4234由本輪啟動（session85437），收尾只關閉此實例。帳戶開始五小時用量20%、中途58%，resetsAt1792400501；不能推算精確剩餘token，未重設／自動續跑。
+
+真人仍0，S2.2內容修訂待驗，S2.3後五課整合與S6不因此放行。新的可重現維護缺口可獨立推進；不為填進度捏造試用或擴題。
+
+## 前包：S1.7 名稱與返回導引已發布
 
 使用者要求全力推進並想移除「青竹」，其後指定「從零到一百的___」由代理補完；採「從零到一百的麻將路」，取代尚未發布的暫定名稱。名稱不代表一百課或能力等級。首頁與三頁標題／頁首、現行README／方向／企畫／發布草稿及展示腳本同步，首頁字樣改「雀」。歷史驗收、影片、字幕不改，展示README註明舊版名稱。repository、Pages網址、本機資料鍵／格式及題庫內容版本均不變。
 
@@ -14,7 +24,7 @@
 
 正式三頁HTML及全部引用JS／CSS的HTTP200／SHA-256均與指定建置相符（live-assets.log）。正式Chrome／Edge再次執行同樣四寬三頁檢查與兩條返回操作，0pageerror、原牌局／其他鍵保留（live-result.json及截圖）；正式桌面首頁已目視。這些是隔離合成驗收，不是手機實機或真人理解證據。
 
-目前資源：index-Cz1_bxsf.js／index-CdSD-TSu.css、training-DZ2kWL9p.js／training-Ddyr2V09.css、learn-BrdN8sVu.js／learn-Bv3fDrzy.css、view-CQhgouNC.js、tile-face-CG76dTyt.js。展示影片與三圖仍記錄51f3577的舊名稱，已有說明，沒有為改名冒充新錄影。改名前PR22–28的來源、CI、放大與對比／焦點證據已移入[歷史交接](HANDOFF-HISTORY-20261017.md)，不需每輪重讀。
+前包資源：index-Cz1_bxsf.js／index-CdSD-TSu.css、training-DZ2kWL9p.js／training-Ddyr2V09.css、learn-BrdN8sVu.js／learn-Bv3fDrzy.css、view-CQhgouNC.js、tile-face-CG76dTyt.js。展示影片與三圖仍記錄51f3577的舊名稱，已有說明，沒有為改名冒充新錄影。改名前PR22–28的來源、CI、放大與對比／焦點證據已移入[歷史交接](HANDOFF-HISTORY-20261017.md)，不需每輪重讀。
 
 本輪Luna唯讀檢查未發現其他可證實流程故障；S1.7無剩餘程式／發布待辦，新的維護問題可獨立推進。下一個正式課程包S2.3仍依前三課試用與修訂，正式評量仍依真人題族／難度，S6未啟動；名稱調整不改這些關卡。帳戶啟動五小時用量2%，收尾78%，resetsAt1792310882；無精確對話剩餘token、未使用重設或自動續跑。本輪只由6.1 Sol與限定Luna處理。
 
@@ -23,7 +33,7 @@
 | 範圍 | 真正狀態 |
 |---|---|
 | M0–M5.4、S0／S1 | 台灣16張、1真人＋3公平本地AI、逐項結算、續局、牌效練習、六步導覽、局後檢討與工程基礎已發布；本輪三入口改版也已發布 |
-| S2.1／S2.2 | 前三課與獨立進度已發布；[T0–T5試用](BEGINNER-TRIAL.md)準備完成，真人0、內容修訂待驗 |
+| S2.1／S2.2 | 前三課與獨立進度已發布；[T0–T5試用](BEGINNER-TRIAL.md)與選填TXT回饋工具已備，發布依上方狀態；真人0、內容修訂待驗 |
 | S2.3／S2.4 | [第4–6課26牌例](S23-LESSON-PREPARATION.md)、[第7–8課腳本及8分支](S24-LESSON-PREPARATION.md)、[相容候選規格](S23-PROGRESS-COMPATIBILITY.md)已備；後五課UI／新格式／中途保存／正常對戰連接未實裝。正式整合仍依S2.2試用修訂 |
 | S3.1–S3.3 | 九題四類導引、同類練習、吃碰事後解釋、手動保存／同版續答與曝光自陳已發布；不自動上傳 |
 | S3.4 | [人工錨點／缺口／流程](S34-ASSESSMENT-PREPARATION.md)已備；13題／12題族、四候選不進試讀、assessmentFamilies空；真人題族／難度／內容及正式放行待驗 |
