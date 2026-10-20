@@ -1,6 +1,16 @@
 # S5.1：目前版本的展示素材與核對
 
-## 2026-10-18：三入口改版後重錄
+## 2026-10-20：現行名稱展示刷新
+
+依正式runtime bdb63dffbdeefa0c7aca11b6ac75151aba586aff重錄[70秒示範](../taiwan-mahjong-showcase/DEMO-20261020.mp4)、[13段VTT](../taiwan-mahjong-showcase/DEMO-20261020.vtt)與三圖。首頁與字幕使用「從零到一百的麻將路」，舊影片保留歷史名稱；沒有只改舊片標題冒充新版本。1920×1080、H.264、1725763bytes、無音訊；全新隔離Chrome155.0.8059.80與合成牌例，原牌局仍暫停且原文保留，0pageerror。
+
+產生器未改；先以本機建置核對正式三頁HTML及八項唯一JS／CSS，指紋寫入work/showcase-WY36Mi/capture.json。完整解碼無錯，原生Chrome播放超過一秒、error=null，原生VTT解析13段，七個具名時間定位成功；已目視新名稱、完整答案、重載保留理由、控制列及三圖。字幕位於獨立黑底，不遮遊戲或播放器控制列。MP4 SHA-256：3aefa755fc4c50cbc3389f0757ac07d1d9e126d4368dd3f286e0732464f4fc06。
+
+腳本／原始影片與章節圖在work/showcase-WY36Mi；三圖擷取及檢查log在work/showcase-refresh-20261019（跨日完成）。[PR#31](https://github.com/zhai2Liu/taiwan-mahjong/pull/31)素材來源79915bc的11個公開檔案HTTP200、SHA-256與git blob相同，但尚未合併main。GitHub Actions／Pages官方服務異常、雲端工作queued；本機補跑400項Node、58項瀏覽器（55.7秒）全過，不能代稱雲端成功。最新head與恢復後接續方式依HANDOFF。沒有runtime、資料格式、課程、桌規或依賴變更；素材不在main Pages輸入範圍，不需重部署正常網站。
+
+2026-10-20使用者選擇維持原排程，先等前三課真人回饋，再整合後五課。真人數仍0，影片不是理解／首次曝光證據；回饋下載功能本片未演示，另依BEGINNER-TRIAL與HANDOFF。人性化AI、授權與Release決定未因此啟動。
+
+## 2026-10-18：三入口改版後重錄（歷史）
 
 依正式網站51f35773a25162ffddecf333352f97a52d5e5881重錄[目前示範影片](../taiwan-mahjong-showcase/DEMO-20261018.mp4)、[13段VTT](../taiwan-mahjong-showcase/DEMO-20261018.vtt)與三圖，涵蓋新首頁、試讀與前三課。影片70.52秒、1920×1080、H.264、1706895bytes，無聲音／音樂或真人資料。S5.1原先交付仍成立，本次刷新已完成本機、指定PR及公開核對；未建立Release或更改授權。
 
