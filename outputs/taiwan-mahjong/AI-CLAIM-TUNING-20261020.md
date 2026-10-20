@@ -140,4 +140,4 @@ cd ../tw16-base/outputs/taiwan-mahjong && npm ci && npm run check && node script
 
 - 正式 AI 仍沒有防守與台數取向，放槍胡比例偏高，歸 S6。這組統計可作為 S6 的對照基準。
 - 截圖與舊版示範影片集中放在原始碼資料夾，屬素材整理，不在本包程式範圍。
-- 本包未部署。本工作環境沒有該 repository 的推送權限，交付形式是本機分支提交與 patch 檔。
+- 本包未部署、未開 PR。已推送分支 `claude/ai-claim-tuning`，合併前請先完成上列驗收。
