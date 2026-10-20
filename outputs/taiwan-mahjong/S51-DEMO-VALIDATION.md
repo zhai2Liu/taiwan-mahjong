@@ -6,7 +6,9 @@
 
 產生器未改；先以本機建置核對正式三頁HTML及八項唯一JS／CSS，指紋寫入work/showcase-WY36Mi/capture.json。完整解碼無錯，原生Chrome播放超過一秒、error=null，原生VTT解析13段，七個具名時間定位成功；已目視新名稱、完整答案、重載保留理由、控制列及三圖。字幕位於獨立黑底，不遮遊戲或播放器控制列。MP4 SHA-256：3aefa755fc4c50cbc3389f0757ac07d1d9e126d4368dd3f286e0732464f4fc06。
 
-腳本／原始影片與章節圖在work/showcase-WY36Mi；三圖擷取及檢查log在work/showcase-refresh-20261019（跨日完成）。[PR#31](https://github.com/zhai2Liu/taiwan-mahjong/pull/31)素材來源79915bc的11個公開檔案HTTP200、SHA-256與git blob相同，但尚未合併main。GitHub Actions／Pages官方服務異常、雲端工作queued；本機補跑400項Node、58項瀏覽器（55.7秒）全過，不能代稱雲端成功。最新head與恢復後接續方式依HANDOFF。沒有runtime、資料格式、課程、桌規或依賴變更；素材不在main Pages輸入範圍，不需重部署正常網站。
+腳本／原始影片與章節圖在work/showcase-WY36Mi；三圖擷取及檢查log在work/showcase-refresh-20261019（跨日完成）。前輪遇GitHub服務異常時，僅先完成本機400項Node／58項瀏覽器（55.7秒）與來源79915bc分支11檔公開核對，沒有繞過檢查合併。
+
+[PR#31](https://github.com/zhai2Liu/taiwan-mahjong/pull/31)最終head7997fea0427776077a10df808679c1d99360d846的[Actions39283444438](https://github.com/zhai2Liu/taiwan-mahjong/actions/runs/39283444438)／build118162693958成功：型別／build、400項Node、58項瀏覽器（55.4秒）、87份文件641個本機連結全過。核對後合併b69b896b32eaaa17c0c494ca689475099fc58e66並回main，11個公開展示檔案HTTP200、SHA-256逐一等於合併提交git blob；正式三頁HTML與八項唯一資源再次相符，證據work/showcase-refresh-20261020-closeout/。本包已完成公開核對，沒有runtime、資料格式、課程、桌規或依賴變更；素材與Markdown不在main Pages輸入範圍，遊戲仍為bdb63df，未另部署。
 
 2026-10-20使用者選擇維持原排程，先等前三課真人回饋，再整合後五課。真人數仍0，影片不是理解／首次曝光證據；回饋下載功能本片未演示，另依BEGINNER-TRIAL與HANDOFF。人性化AI、授權與Release決定未因此啟動。
 
