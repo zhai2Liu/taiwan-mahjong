@@ -15,7 +15,8 @@
     "test:history": "npm run build && node scripts/browser-history.mjs",
     "benchmark:browser": "npm run build && node scripts/browser-baseline.mjs",
     "simulate": "npm run check && node scripts/simulate.mjs",
-    "predev": "node scripts/prepare-training.mjs"
+    "predev": "node scripts/prepare-training.mjs",
+    "stats:ai": "npm run check && node scripts/ai-stats.mjs"
   },
   "devDependencies": {
     "@playwright/test": "1.64.0",

@@ -86,6 +86,26 @@ test('AI 吃碰先比較合法捨牌後效率，改善才叫牌', () => {
   }
 });
 
+test('AI 門清且叫牌後仍離聽牌兩步以上時不吃碰；有台字牌碰與已副露手不受此限', () => {
+  const far = '7m 9m 1p 4p 7p 2s 5s 8s 1z 2z 3z 6z 9p';
+  for (const [offered, hand, melds, expected] of [
+    ['2m', `34m ${far}`, [], 'PASS'],
+    ['5z', `55z 3m ${far}`, [], 'PON'],
+    ['2m', '34m 7m 9m 1p 4p 7p 2s 5s 1z 2z 3z 6z', [{ tiles: '999s', fromSeat: 2 }], 'CHI'],
+  ]) {
+    const state = discard(fixture({ hands: { 0: offered, 1: hand }, melds: { 1: melds } }), 0, offered);
+    const o = getObservation(state, 1);
+    assert.ok(o.legalActions.some(a => a.type === (expected === 'PASS' ? 'CHI' : expected)), `${offered} 應有可叫選項`);
+    assert.equal(decide(state, 1).intent.type, expected, `${offered} ${hand}`);
+  }
+});
+
+test('AI 只拿到吃碰選項（沒有過）時仍回傳合法動作', () => {
+  const state = discard(fixture({ hands: { 0: '2m', 1: '34m 7m 9m 1p 4p 7p 2s 5s 8s 1z 2z 3z 6z 9p' } }), 0, '2m');
+  const o = getObservation(state, 1), only = o.legalActions.filter(a => a.type === 'CHI');
+  assert.equal(chooseAction(o, only, 1).intent.type, 'CHI');
+});
+
 test('AI 選保留效率的暗槓／加槓，拒絕拆掉第五面子的暗槓', () => {
   assert.equal(decide(fixture({ hands: { 0: '5555m 123p 456p 789p 123s 1z' } })).intent.type, 'KAN_CLOSED');
   assert.equal(decide(fixture({ hands: { 0: '5m 123p 456p 789p 123s 1z' }, melds: { 0: [{ tiles: '555m' }] } })).intent.type, 'KAN_ADDED');
