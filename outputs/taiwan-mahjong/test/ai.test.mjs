@@ -2,10 +2,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { performance } from 'node:perf_hooks';
 import { chooseAction } from '../dist/ai.js';
-import { createGame, getObservation, legalActions } from '../dist/engine.js';
+import { createGame, getObservation, legalActions, assertState } from '../dist/engine.js';
 import { winningTiles } from '../dist/hand.js';
-import { kindOf } from '../dist/tiles.js';
-import { analyzeObservation } from '../dist/analysis.js';
+import { kindOf, isFlower } from '../dist/tiles.js';
+import { analyzeObservation, compareAnalysis, publicPool } from '../dist/analysis.js';
+import { ordinaryRonSafety } from '../dist/safety.js';
 import { fixture, discard, step, W02, WIN } from './fixtures.mjs';
 
 const decide = (state, seat = 0, seed = 1) => {
@@ -149,6 +150,80 @@ test('AI 四張同牌不能拆成需第五張的假聽牌', () => {
   const o = getObservation(state, 0), only = o.legalActions.filter(a => a.type === 'DISCARD' && kindOf(a.tileId) === '6z');
   const result = chooseAction(o, only, 1);
   assert.match(result.reason, /^1 向聽/);
+});
+
+const xorshift = n => { n ^= n << 13; n ^= n >>> 17; n ^= n << 5; return n >>> 0; };
+const SEEDS = Array.from({ length: 40 }, (_, i) => i * 104729 + 7);
+// 北風三張公開於他家捨牌，自家持最後一張；與孤張 9s 牌效完全並列。
+const tieFixture = (restrictions = { 1: { lastDiscard: '4z' }, 2: { lastDiscard: '4z' }, 3: { lastDiscard: '4z' } }) =>
+  fixture({ hands: { 0: '123m 456m 123p 23s 67p 55z 4z 9s' }, restrictions });
+const bestDiscards = o => {
+  const { discards } = analyzeObservation(o, false);
+  const best = [...discards].sort((a, b) => compareAnalysis(b.analysis, a.analysis))[0].analysis;
+  return { discards, best, tied: discards.filter(d => compareAnalysis(d.analysis, best) === 0).map(d => d.kind) };
+};
+
+test('AI 牌效完全並列的捨牌中，所有種子都選公開證明不會被普通放槍的牌', () => {
+  const o = freeze(getObservation(tieFixture(), 0));
+  const { tied } = bestDiscards(o), pool = publicPool(o);
+  assert.ok(tied.includes('4z') && tied.includes('9s'), `須先隔離並列：${tied}`);
+  assert.deepEqual(tied.filter(k => ordinaryRonSafety(pool, k).provenSafe), ['4z']);
+  const order = o.legalActions.filter(a => a.type === 'DISCARD' && tied.includes(kindOf(a.tileId)));
+  assert.ok(SEEDS.some(s => kindOf(order[Math.floor(xorshift(s) / 4294967296 * order.length)].tileId) !== '4z'), '原隨機並列須有種子選到非安全牌');
+  const originalRandom = Math.random;
+  Math.random = () => { throw new Error('AI must not use global randomness'); };
+  try {
+    const reasons = new Set();
+    for (const seed of SEEDS) {
+      const result = chooseAction(o, o.legalActions, seed);
+      assert.ok(o.legalActions.includes(result.intent));
+      assert.equal(kindOf(result.intent.tileId), '4z', `seed ${seed}`);
+      assert.equal(result.randomState, xorshift(seed));
+      reasons.add(result.reason);
+    }
+    assert.equal(reasons.size, 1);
+  } finally { Math.random = originalRandom; }
+});
+
+test('AI 安全證明不讓牌效較差的捨牌取代原本最佳捨牌', () => {
+  const o = getObservation(fixture({ hands: { 0: '123m 456m 123p 23s 677p 44z 9s' }, restrictions: { 1: { lastDiscard: '4z' }, 2: { lastDiscard: '4z' } } }), 0);
+  const { discards, best, tied } = bestDiscards(o);
+  assert.ok(ordinaryRonSafety(publicPool(o), '4z').provenSafe);
+  assert.ok(compareAnalysis(discards.find(d => d.kind === '4z').analysis, best) < 0, '4z 須確實牌效較差');
+  for (const seed of SEEDS) {
+    const kind = kindOf(chooseAction(o, o.legalActions, seed).intent.tileId);
+    assert.ok(tied.includes(kind) && kind !== '4z', `seed ${seed} 選 ${kind}`);
+  }
+});
+
+test('AI 並列捨牌皆無安全證明時，維持原並列順序、亂數選擇、理由與下一亂數', () => {
+  const o = getObservation(tieFixture({}), 0), pool = publicPool(o);
+  const { tied } = bestDiscards(o);
+  assert.ok(tied.length >= 2 && tied.every(k => !ordinaryRonSafety(pool, k).provenSafe), `須為全未知並列：${tied}`);
+  const order = o.legalActions.filter(a => a.type === 'DISCARD' && tied.includes(kindOf(a.tileId)));
+  const seen = new Set(), reasons = new Set();
+  for (const seed of SEEDS) {
+    const next = xorshift(seed), result = chooseAction(o, o.legalActions, seed);
+    assert.equal(result.intent, order[Math.floor(next / 4294967296 * order.length)], `seed ${seed}`);
+    assert.equal(result.randomState, next);
+    seen.add(kindOf(result.intent.tileId)); reasons.add(result.reason);
+  }
+  assert.deepEqual([...seen].sort(), [...tied].sort(), '未知不可被轉成安全排序');
+  assert.equal(reasons.size, 1);
+});
+
+test('AI 平手安全偏好只讀自家觀察：交換他家暗手與牌牆後決策相同', () => {
+  const state = tieFixture(), swapped = structuredClone(state);
+  const hidden = swapped.players[1].concealed, wall = swapped.wall.order;
+  const at = wall.findIndex((t, i) => i >= swapped.wall.head && !isFlower(t) && kindOf(t) !== kindOf(hidden[0]));
+  const dealt = wall.indexOf(hidden[0]); // 牌牆順序含已發出的牌，兩處一起交換才是合法局面。
+  [hidden[0], wall[at], wall[dealt]] = [wall[at], hidden[0], wall[at]];
+  [swapped.players[2].concealed[0], swapped.players[3].concealed[0]] = [swapped.players[3].concealed[0], swapped.players[2].concealed[0]];
+  assertState(swapped);
+  assert.notDeepEqual(swapped.players[1].concealed, state.players[1].concealed);
+  const a = getObservation(state, 0), b = getObservation(swapped, 0);
+  assert.deepEqual(a, b);
+  for (const seed of SEEDS.slice(0, 8)) assert.deepEqual(chooseAction(a, a.legalActions, seed), chooseAction(b, b.legalActions, seed));
 });
 
 test('AI 100 次實際開局決策耗時合理，且每次交回引擎合法動作', t => {
