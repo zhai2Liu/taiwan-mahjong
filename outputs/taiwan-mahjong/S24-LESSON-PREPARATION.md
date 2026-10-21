@@ -1,8 +1,32 @@
 # 第7–8課：整局腳本與實桌附錄準備
 
-2026-10-21順序更新：使用者取消先等前三課真人回饋的開發限制；目前先做[S2.3第4–6課整合](S23-INTEGRATION-VALIDATION.md)，再接本包。以下為原準備內容，實際發布狀態查[HANDOFF](HANDOFF.md)；第7–8課互動與真人理解仍待驗。
+2026-10-22更新：第1–6課已發布；第7–8課先完成下節S2.4a純核心與檢查點契約，再接互動頁。使用者已取消先等真人回饋的開發限制；實際驗證／合併狀態查[HANDOFF](HANDOFF.md)。第7–8課頁面、中途保存與真人理解仍待驗。
 
-2026-10-17，S2.4準備包，接[第4–6課教材](S23-LESSON-PREPARATION.md)。本文件交付可整合的教學腳本、換例與實桌附錄；[8個具名整局／分支牌例](test/learning-round.test.mjs)從真實144張牌堆發牌，沿凍結引擎行動，不把中途局面改成指定答案。**網站仍是前三課試用版，第7–8課互動頁、進度擴充及真人理解尚未完成。**
+## S2.4a：整局核心與檢查點契約
+
+[learning-round.ts](src/learning-round.ts)重用既有教學配置，重建完整144張牌後真正發牌；每步都交共用引擎。`replayRound`每次從固定初始局面重播到指定步驟，返回獨立局面。兩吃法、自摸、L8由下家胡，以及選過後停止都沿本文件原劇本；不支援任意合法打牌的後續。`passed`代表合法選過後輪到自己摸，不代表課程完成。所有完成旗標仍由未來頁面負責，不以結果勝負決定。
+
+`roundCheckpoint`建立資料，`encodeCheckpoint`驗證並輸出原文，`decodeCheckpoint`回傳成功／失敗；它們不讀寫任何保存鍵。八個欄位固定為schemaVersion=1、scriptVersion=beginner-round-v1、rulesVersion=TW16-CLASSIC-v1、lesson=7或8、point、chi、outcome、assisted。最後一欄是本次受助，還原時保留，不能用重載洗掉。它是本機自述，不是可信能力評量。沒有GameState、暗手、牌牆、指令或分數欄位；scriptVersion同時約束牌堆及引擎語義，相關語義改動須升版並明確處理舊資料。
+
+| point | 到達位置與欄位限制 |
+|---|---|
+| start／dealt／opening | 未發／已發待起手補花／莊家先打；chi與outcome均null |
+| flower | 僅第7例自己摸冬待補；chi與outcome均null |
+| discard | 自己待打九條，第8例與opening相同；chi與outcome均null |
+| claim | 上家打二萬／二筒待回應，兩吃法都合法；chi與outcome均null |
+| passed | 選過並仲裁，手牌不拆、自己待摸；chi與outcome均null |
+| afterClaim／afterDiscard／win | 吃後待打／已打剩餘一或四／摸七條可自摸；chi須13或34，outcome為null |
+| result／nextHand | 已結算／已執行NEXT_HAND；chi須13或34，outcome須selfDraw；第8例也接受ron |
+
+解碼只接受`encodeCheckpoint`輸出的正規原文（固定鍵序、無額外空白），上限512字元。未知／缺少／重複欄位、未知版本、錯型及不可能組合都拒絕，不自動重設。未來若包入保存封套，應保留這段原文，不重排JSON。此限制為單一固定腳本的最小方案，不是一般JSON匯入器。
+
+本包沒有localStorage、DOM、計時器、正常AI或Session接線。UI須用`getObservation(state, 0)`呈現，不能揭露他家暗手或把固定牆送進正常對戰。後續保存須另定獨立鍵、Web Locks及鎖內原文衝突核對，失敗保留本頁與舊原文；不得把檢查點塞進只存完成旗標的tw16:learn:v2。真正的暫停、重載續學與正常對戰連接仍屬下一包。
+
+[新核心測試](test/learning-round-core.test.mjs)逐點對照獨立fixture及原始引擎路徑；[原準備測試](test/learning-round.test.mjs)保留作八條路徑的獨立參考。實際執行結果只記HANDOFF，不以教材或測試存在代替通過。
+
+## 原教學準備稿（2026-10-17）
+
+2026-10-17，S2.4準備包，接[第4–6課教材](S23-LESSON-PREPARATION.md)。本文件交付可整合的教學腳本、換例與實桌附錄；[8個具名整局／分支牌例](test/learning-round.test.mjs)從真實144張牌堆發牌，沿凍結引擎行動，不把中途局面改成指定答案。當時網站為前三課試用版；目前狀態以上方更新及HANDOFF為準。
 
 規則只依[TW16-CLASSIC-v1](../taiwan-mahjong-m0/RULES.md)；後五課正式整合沿[路線圖](ROADMAP.md)的前三課試用／修訂順序。固定整局明示為「教學示例」，三位其他玩家按示例劇本行動，不是正常對戰的公平AI策略。
 

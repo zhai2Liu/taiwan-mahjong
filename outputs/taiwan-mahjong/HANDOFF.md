@@ -2,7 +2,17 @@
 
 更新：2026-10-22（Asia/Taipei）。方向依[PRODUCT-DIRECTION](PRODUCT-DIRECTION.md)，排程依[ROADMAP](ROADMAP.md)，修改位置依[MAINTENANCE](MAINTENANCE.md)。本輪以前及展開的CI證據保留[歷史交接](HANDOFF-HISTORY-20261017.md)；不要沿歷史「下一步」自動開工。
 
-## 本輪：S2.3第4–6課已發布並完成正式驗收
+## 本輪：S2.4a第7–8課整局核心
+
+2026-10-22，承接使用者「推進專案進度」，先完成第7–8課的純整局腳本及最少檢查點。Codex PM／SA定義範圍並驗收，實際Claude Code CLI以既有claude.ai Pro實作及同會話自測；分支codex/lesson-round-core-20261022，基準0c1db73。原教學8路徑測試完整保留，新增src/learning-round.ts及test/learning-round-core.test.mjs；只更新既有教材／維護／路線文件，不新增平台、依賴或保存鍵。brief、會話c9da2894-103b-47a1-b2f0-3b3c3bbb8161、結果與檢查紀錄在work/lesson-round-core-20261022/。
+
+核心從完整144張真正DEAL，沿凍結引擎重播至指定點；含兩吃法、L8由下家胡，以及合法過後停止。檢查點只記版本／例號／步驟／吃法／結果／受助，共八欄，不包含可篡改局面；只接受encoder產生的512字元內正規原文。scriptVersion同時約束牌堆及引擎語義，變動須升版。詳細API／點位／限制見[S24契約](S24-LESSON-PREPARATION.md)。沒有UI、localStorage、計時器或Session／正常AI接線，不能稱第7–8課已開放、已暫停續學或已通過真人驗證；公開網站仍為六課。
+
+Claude最終428項Node與build通過、無權限拒絕。初稿自測曾因自行加管線被拒，同會話已改用授權的純命令完成，未放寬權限或切換計費。Codex獨立重跑428項（0失敗／跳過）及build通過；另直接重用未修改的原準備測試路徑，八條結果與NEXT_HAND逐一對照通過。74個合法檢查點（37點各含受助true／false）與獨立fixture／引擎路徑、codec及serialize／restore等值；含錯誤輸入拒絕、互不污染與不重付。三頁及8資源共11檔SHA-256與上一版完全一致，因此本機不重跑無關UI流程；PR仍沿既有全瀏覽器CI。最終提交／CI狀態於收尾補記。
+
+**下一包S2.4b：** 接第7–8課互動頁與實桌附錄、提示／合法偏離後的明確重試、真正暫停／返回、獨立檢查點保存與重載、正常對戰入口。UI只呈現getObservation(state, 0)，不得送固定牆給正常AI。先定保存封套與獨立鍵、Web Locks鎖內原文衝突核對、失敗與他頁保護；tw16:learn:v2仍只保存六課完成旗標，不塞GameState。完成功能後才開7–8課並驗兩寬操作、失敗／跨頁、原對戰存檔隔離；不等真人，不啟動S6或正式評量。
+
+## 前包：S2.3第4–6課已發布並完成正式驗收
 
 [PR#34](https://github.com/zhai2Liu/taiwan-mahjong/pull/34)最終head af7dd4045303433c2f83fac7fde0cb21baebabbd，Actions39630840862／build119328301041成功415／80（1.3分），91份文件807連結通過，PR無Pages。2026-10-22已合併，**正式Pages來源c5e76c96889851ae3af12735284aacb96a145d21**，main Actions39631381702／build119330178701成功415／80（1.2分）、91份807連結，deploy119331469050成功。已回main、tree與驗收head相同；純文件收尾不代表另一個runtime。臨時4237核對PID38596及完整專案命令後已關閉、無監聽；context與4231也均關閉，日常4173未動。
 
