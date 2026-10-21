@@ -38,7 +38,7 @@ S2.3教材：[S23教材](S23-LESSON-PREPARATION.md)供4–6課文字、示範、
 
 S2.3保存：[相容規格](S23-PROGRESS-COMPATIBILITY.md)定tw16:learn:v2八筆／六課開放、4KiB、舊v1逐字保留與明確帶入。有效v2不依賴v1；未知原文保留，缺v2才預覽舊版。帶入以v1→v2固定鎖順序、鎖內原文／不存在核對，只寫一次v2；缺鎖不降級，等鎖停用進度操作，失敗保留本頁。前三課旗標逐位帶入，7–8不可標完成；不建立同步／備份鍵或通用遷移器。C01–C12實際結果依[S23驗收](S23-INTEGRATION-VALIDATION.md)，不是單靠規格通過。
 
-S2.4準備：[第7–8課腳本／實桌附錄](S24-LESSON-PREPARATION.md)對應test/learning-round.test.mjs。從完整144張牌堆經真實DEAL，逐步跑示範及換例的13／34吃法、他家胡與過；是固定教學劇本，不是正常AI。引擎序列化檢查不代表課程中途進度已保存，正式整合仍先處理前三課修訂及擴課相容。
+S2.4：[第7–8課腳本／實桌附錄及檢查點契約](S24-LESSON-PREPARATION.md)對應src/learning-round.ts與test/learning-round-core.test.mjs，原test/learning-round.test.mjs保留獨立參考。從完整144張經真實DEAL重播兩吃法、他家胡與過；每次回傳新局面，UI須用getObservation(0)呈現。檢查點只收encoder產生的512字元內正規原文，scriptVersion同時綁牌堆及引擎語義；沒有保存接線，tw16:learn:v2仍只存六課完成旗標。下一包再接第7–8課互動、真正暫停／中途保存及正常對戰連接，不能把純核心還原當成已續學。
 
 S4.2牌面語意／選取：[限定驗收](S42-ACCESSIBILITY.md)。共用view.tile以role=img呈現名稱，裝飾牌及他家暗手維持隱藏；不能為可及性把暗槓未知牌種填回DOM。learning.css在forced-colors用雙線框，保持內距／邊框總尺寸及獨立焦點；對應test/e2e/accessibility.spec.js，含light／dark、暗槓遮罩與未推進牌局。
 
