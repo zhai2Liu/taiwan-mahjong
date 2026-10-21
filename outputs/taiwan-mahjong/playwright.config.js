@@ -7,7 +7,9 @@ export default defineConfig({
   retries: 0,
   forbidOnly: !!process.env.CI,
   reporter: 'list',
-  use: { baseURL: 'http://127.0.0.1:4226', browserName: 'chromium', channel: process.env.TW16_BROWSER_CHANNEL, trace: 'retain-on-failure', screenshot: 'only-on-failure' },
+  use: { baseURL: 'http://127.0.0.1:4226', browserName: 'chromium', channel: process.env.TW16_BROWSER_CHANNEL,
+    launchOptions: { executablePath: process.env.TW16_BROWSER_PATH || undefined },
+    trace: 'retain-on-failure', screenshot: 'only-on-failure' },
   projects: [
     { name: 'desktop', use: { viewport: { width: 1440, height: 900 } } },
     { name: 'narrow', use: { viewport: { width: 390, height: 844 } } },

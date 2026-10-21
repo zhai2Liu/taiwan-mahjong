@@ -5,6 +5,7 @@ import { chooseAction } from '../dist/ai.js';
 import { createGame, getObservation, legalActions } from '../dist/engine.js';
 import { winningTiles } from '../dist/hand.js';
 import { kindOf } from '../dist/tiles.js';
+import { analyzeObservation } from '../dist/analysis.js';
 import { fixture, discard, step, W02, WIN } from './fixtures.mjs';
 
 const decide = (state, seat = 0, seed = 1) => {
@@ -98,6 +99,35 @@ test('AI 門清且叫牌後仍離聽牌兩步以上時不吃碰；有台字牌�
     assert.ok(o.legalActions.some(a => a.type === (expected === 'PASS' ? 'CHI' : expected)), `${offered} 應有可叫選項`);
     assert.equal(decide(state, 1).intent.type, expected, `${offered} ${hand}`);
   }
+});
+
+test('AI 遠手碰自風或圈風可破門清，非台字仍保留門清', () => {
+  const far = '7m 9m 1p 4p 7p 2s 5s 8s 1z 2z 3z 6z 9p';
+  for (const [kind, expected] of [['1z', 'PON'], ['2z', 'PON'], ['3z', 'PASS']]) {
+    const hand = `${kind[0]}${kind[0]}z 3m ${far.replace(kind, '8p')}`;
+    const o = getObservation(discard(fixture({ hands: { 0: kind, 1: hand } }), 0, kind), 1);
+    const summary = analyzeObservation(o, false), claim = summary.claims.find(c => c.intent.type === 'PON');
+    assert.ok(claim);
+    assert.equal(claim.best[0].analysis.shanten, summary.current.shanten - 1);
+    assert.ok(claim.best[0].analysis.shanten > 1, '必須隔離遠手的有台字牌豁免');
+    assert.equal(chooseAction(o, o.legalActions, 1).intent.type, expected);
+  }
+});
+
+test('AI 門清叫牌後恰好一步聽時可吃，只有暗槓的遠手仍保留門清', () => {
+  const near = discard(fixture({ hands: { 0: '2m', 1: '34m 67m 124p 456p 789s 11z 7z' } }), 0, '2m');
+  const o = getObservation(near, 1), summary = analyzeObservation(o, false);
+  assert.equal(summary.current.shanten, 2);
+  assert.equal(summary.claims.find(c => c.intent.type === 'CHI').best[0].analysis.shanten, 1);
+  assert.equal(decide(near, 1).intent.type, 'CHI');
+  const closed = discard(fixture({
+    hands: { 0: '2m', 1: '34m 7m 9m 1p 4p 7p 2s 5s 1z 2z 3z 6z' },
+    melds: { 1: [{ kind: 'concealedKong', tiles: '9999s' }] },
+  }), 0, '2m');
+  const closedSummary = analyzeObservation(getObservation(closed, 1), false);
+  assert.equal(closedSummary.claims[0].best[0].analysis.shanten, closedSummary.current.shanten - 1);
+  assert.ok(closedSummary.claims[0].best[0].analysis.shanten > 1);
+  assert.equal(decide(closed, 1).intent.type, 'PASS');
 });
 
 test('AI 只拿到吃碰選項（沒有過）時仍回傳合法動作', () => {
