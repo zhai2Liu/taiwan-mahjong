@@ -2,6 +2,8 @@
 
 更新：2026-10-22（Asia/Taipei）。方向依[PRODUCT-DIRECTION](PRODUCT-DIRECTION.md)，排程依[ROADMAP](ROADMAP.md)，修改位置依[MAINTENANCE](MAINTENANCE.md)。本輪以前及展開的CI證據保留[歷史交接](HANDOFF-HISTORY-20261017.md)；不要沿歷史「下一步」自動開工。
 
+以下「前包」段落保留當時的發布與待辦快照；其中六課、尚未整合或下一包等描述不代表現況。當前開放八課，交付狀態以本輪及「進度與不能代理的門檻」表為準。
+
 ## 本輪：S2.4b八課入門與獨立續學已發布並完成正式驗收
 
 2026-10-22，使用者要求持續推進直到本次五小時額度用完。專案仍在既有new-chat路徑，基準main4eb13e4、分支codex/learning-round-ui-20261022。Codex定範圍／契約及驗收，實際Claude Code既有claude.ai Pro會話5c796624-5967-4003-a3fe-e73f14f53130完成實作、自測及同會話修正；brief、各輪JSON、原始檢查及截圖留work/learning-round-ui-20261022/。**下列本機、PR／main與正式發布驗收均完成；這不是真人理解或實機手機驗證。**
@@ -80,7 +82,7 @@ Codex檢視四個實作檔、確認原斷言未弱化，獨立重跑408項Node�
 |---|---|
 | M0–M5.4、S0／S1 | 台灣16張、1真人＋3公平本地AI、逐項結算、續局、牌效練習、六步導覽、局後檢討與工程基礎已發布；學習／練習／對戰三入口改版已發布 |
 | S2.1／S2.2 | 前三課、獨立進度與選填TXT回饋已發布；[T0–T5試用](BEGINNER-TRIAL.md)準備完成，真人0、內容修訂待驗 |
-| S2.3／S2.4 | [4–6課互動及v2相容](S23-INTEGRATION-VALIDATION.md)已發布c5e76c9並完成正式驗收；[7–8課腳本及8分支](S24-LESSON-PREPARATION.md)已備，頁面／中途保存／正常對戰連接未整合，接續推進不再等真人 |
+| S2.3／S2.4 | [4–6課互動及v2相容](S23-INTEGRATION-VALIDATION.md)及[7–8課整局互動／獨立續學](S24-LESSON-PREPARATION.md)均已完成；八課正式來源56c1063，437項Node／120項瀏覽器與正式站驗收通過。實桌附錄及正常對戰入口已接線，真人理解仍待驗 |
 | S3.1–S3.3 | 九題四類導引、同類練習、吃碰事後解釋、手動保存／同版續答與曝光自陳已發布；不自動上傳 |
 | S3.4 | [人工錨點／缺口／流程](S34-ASSESSMENT-PREPARATION.md)已備；13題／12題族、四候選不進試讀、assessmentFamilies空；真人題族／難度／內容及正式放行待驗 |
 | S4 | 限定技術檢查已完成；[人工回饋清單](HUMAN-FEEDBACK-CHECKLIST.md)中的手機／Safari／輔具／理解仍待，程式或模型不能代填 |
