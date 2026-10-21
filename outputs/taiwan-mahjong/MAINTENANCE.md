@@ -121,6 +121,8 @@ exactPool只接剩餘一般牌的唯一實體ID；publicPool扣自家牌、公�
 | npm run simulate -- --hands 1000 --matches 3 --seed 20261004 | M1測試策略長模擬，輸出SIMULATION.json；不是正式AI策略驗收 |
 | node scripts/verify-m3.mjs M5.1-SIMULATION.json | 正式策略3完整將驗證，需先check；指定輸出檔名以保留歷史；省略時更新M3-SIMULATION.json，非每次修改必跑 |
 
+Playwright預設使用lockfile對應Chromium；TW16_BROWSER_CHANNEL可選已安裝channel，TW16_BROWSER_PATH可明確指定執行檔（設定時以此路徑為準）。覆寫結果需記瀏覽器來源，不保證版本相容；CI維持不設覆寫。以退出碼及實際通過數驗收，啟動失敗不得算通過。npm run stats:ai為正式AI四家合成對局統計，calls是仲裁成立、proposals是提案；全桌胡法組成不是單一策略捨牌放槍率，詳[吃碰門檻驗收](AI-CLAIM-TUNING-20261020.md)。
+
 test/browser.html與test/runner.html為開發來源工具；browser-fixtures、chi-fixtures、layout-fixtures提供續局、吃法、長牌河與結算場景。使用前先看對應test及scripts，不把測試頁上線；fixture會寫測試來源存檔，測試完成後關閉該來源頁面／伺服器。
 
 純文件修改跑`npm run check:docs`，再人工核對命令與現況一致性。檢查器只用Node標準函式庫，從script位置找Git根目錄，涵蓋根README／AGENTS及遊戲、M0、showcase內追蹤的md；略過圍欄程式碼、外部網址及頁內錨點。檢查本機行內／圖片連結的檔案或追蹤目錄，不驗外部網站、標題錨點、參照式或巢狀連結。新增檔先加入Git索引；只存在本機／被忽略的目標也會失敗，避免發布後才斷鏈。與型別／build分開，讓不含.git的原始碼仍可建置；不為此新增Markdown依賴。

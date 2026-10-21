@@ -6,8 +6,12 @@ import { assertState, restore as readSnapshot, serialize } from './validation.js
 export { assertState, serialize } from './validation.js';
 
 const seats: Seat[] = [0, 1, 2, 3];
-const emptyPlayer = (): Player => ({ concealed: [], melds: [], flowers: [], discardHistory: [], restrictions: { passedWin: false, passedPon: [], lastDiscard: null, forbiddenDiscards: [] } });
-const context = (source: GameState['drawContext']['source']): GameState['drawContext'] => ({ source, lastTile: null, replacement: false, selfDrawForbidden: false });
+const emptyPlayer = (): Player => ({
+  concealed: [], melds: [], flowers: [], discardHistory: [],
+  restrictions: { passedWin: false, passedPon: [], lastDiscard: null, forbiddenDiscards: [] },
+});
+const context = (source: GameState['drawContext']['source']): GameState['drawContext'] =>
+  ({ source, lastTile: null, replacement: false, selfDrawForbidden: false });
 export const availableTiles = (s: GameState): number => Math.max(0, s.wall.tail - s.wall.head + 1 - 16);
 const effective = (p: Player): number => p.concealed.length + 3 * p.melds.length;
 const kinds = (ts: TileId[]): TileKind[] => ts.map(kindOf);
@@ -33,7 +37,10 @@ export function createGame(options: { dealer?: Seat; deck?: TileId[]; matchId?: 
 const windowOf = (s: GameState): ClaimWindow | null => s.pending?.kind === 'discard' || s.pending?.kind === 'robKong' ? s.pending : null;
 function canonical(value: unknown): string {
   if (Array.isArray(value)) return `[${value.map(canonical).join(',')}]`;
-  if (value && typeof value === 'object') return `{${Object.entries(value).sort(([a], [b]) => a.localeCompare(b)).map(([k, v]) => `${JSON.stringify(k)}:${canonical(v)}`).join(',')}}`;
+  if (value && typeof value === 'object') {
+    const entries = Object.entries(value).sort(([a], [b]) => a.localeCompare(b));
+    return `{${entries.map(([k, v]) => `${JSON.stringify(k)}:${canonical(v)}`).join(',')}}`;
+  }
   return JSON.stringify(value);
 }
 const sameIntent = (a: Intent, b: Intent): boolean => canonical(a) === canonical(b);
@@ -47,7 +54,8 @@ function remove(p: Player, ids: TileId[]): void {
 function inputFor(s: GameState, seat: Seat, source: ScoreInput['source'], tile: TileId | null): ScoreInput {
   const p = s.players[seat], ownTurn = source === 'selfDraw';
   return {
-    concealed: kinds(p.concealed).concat(!ownTurn && tile ? [kindOf(tile)] : []), melds: p.melds, flowers: kinds(p.flowers), winningTile: tile ? kindOf(tile) : null,
+    concealed: kinds(p.concealed).concat(!ownTurn && tile ? [kindOf(tile)] : []),
+    melds: p.melds, flowers: kinds(p.flowers), winningTile: tile ? kindOf(tile) : null,
     source, seatWind: seatWind(seat, s.dealer), roundWind: s.roundWind,
     heavenly: ownTurn && seat === s.dealer && s.drawContext.source === 'deal' && !s.openingContext.interrupted && s.openingContext.discards[s.dealer] === 0,
     earthly: ownTurn && seat !== s.dealer && s.openingContext.draws[seat] === 1 && !s.openingContext.interrupted && s.openingContext.discards[seat] === 0,
@@ -63,7 +71,10 @@ function normalScore(s: GameState, seat: Seat, source: ScoreInput['source'], til
   if (!isWinningHand(input.concealed, p.melds)) return null;
   return evaluateHand(input);
 }
-function finish(s: GameState, winner: Seat | null, source: NonNullable<GameState['settlement']>['source'], score: ScoreResult | null, payers: Seat[] = [], externalTile: TileId | null = null): void {
+function finish(
+  s: GameState, winner: Seat | null, source: NonNullable<GameState['settlement']>['source'],
+  score: ScoreResult | null, payers: Seat[] = [], externalTile: TileId | null = null,
+): void {
   if (s.settlement) throw new Error('ALREADY_SETTLED');
   const delta = winner === null ? [0, 0, 0, 0] : settlePayments(winner, payers, score!.tai, s.dealer, s.streak);
   s.scores = s.scores.map((n, i) => n + delta[i]);
@@ -71,15 +82,23 @@ function finish(s: GameState, winner: Seat | null, source: NonNullable<GameState
   s.phase = 'handResult'; s.pending = null;
 }
 function flowerWin(s: GameState, winner: Seat, mode: 'sevenFlowers' | 'eightFlowers', allowNormal: boolean): void {
-  const normal = allowNormal && effective(s.players[winner]) === 17 ? normalScore(s, winner, 'selfDraw', s.drawContext.source === 'deal' ? null : s.drawContext.lastTile) : null;
+  const normal = allowNormal && effective(s.players[winner]) === 17
+    ? normalScore(s, winner, 'selfDraw', s.drawContext.source === 'deal' ? null : s.drawContext.lastTile)
+    : null;
   const items = normal?.items.filter(x => x.id !== 'S06' && x.id !== 'S11') ?? [];
-  items.push({ id: mode === 'sevenFlowers' ? 'S24' : 'S25', tai: 8, reason: mode === 'sevenFlowers' ? '七花／一花分布' : '取得八花並完成補牌' });
-  const score: ScoreResult = { tai: items.reduce((n, x) => n + x.tai, 0), items, excluded: [...(normal?.excluded ?? []), 'S06', 'S11'], decomposition: normal?.decomposition ?? null };
+  items.push(mode === 'sevenFlowers'
+    ? { id: 'S24', tai: 8, reason: '七花／一花分布' }
+    : { id: 'S25', tai: 8, reason: '取得八花並完成補牌' });
+  const score: ScoreResult = {
+    tai: items.reduce((n, x) => n + x.tai, 0), items,
+    excluded: [...(normal?.excluded ?? []), 'S06', 'S11'], decomposition: normal?.decomposition ?? null,
+  };
   const payers = mode === 'eightFlowers' ? seats.filter(x => x !== winner) : seats.filter(x => x !== winner && s.players[x].flowers.length === 1);
   finish(s, winner, mode, score, payers);
 }
 function checkFlowers(s: GameState, opening = false): boolean {
-  const winner = seats.find(x => s.players[x].flowers.length === 8 || (s.players[x].flowers.length === 7 && seats.some(y => y !== x && s.players[y].flowers.length === 1)));
+  const count = (x: Seat): number => s.players[x].flowers.length;
+  const winner = seats.find(x => count(x) === 8 || (count(x) === 7 && seats.some(y => y !== x && count(y) === 1)));
   if (winner === undefined || (!opening && (winner !== s.turn || effective(s.players[winner]) !== 17))) return false;
   flowerWin(s, winner, s.players[winner].flowers.length === 8 ? 'eightFlowers' : 'sevenFlowers', winner === s.turn); return true;
 }
@@ -110,7 +129,9 @@ function possibleClaims(s: GameState, seat: Seat, w: ClaimWindow): Intent[] {
   if (w.kind === 'robKong' || availableTiles(s) <= 3) return result;
   if (own.length >= 3 && nextSeat(w.sourceSeat) !== seat) result.push({ type: 'KAN_OPEN', ownTiles: own.slice(0, 3), windowId: w.windowId });
   if (p.restrictions.lastDiscard === k) return result;
-  if (own.length >= 2 && !p.restrictions.passedPon.includes(k) && p.concealed.some(t => kindOf(t) !== k)) result.push({ type: 'PON', ownTiles: own.slice(0, 2), windowId: w.windowId });
+  if (own.length >= 2 && !p.restrictions.passedPon.includes(k) && p.concealed.some(t => kindOf(t) !== k)) {
+    result.push({ type: 'PON', ownTiles: own.slice(0, 2), windowId: w.windowId });
+  }
   if (seat === nextSeat(w.sourceSeat) && k[1] !== 'z') {
     const rank = Number(k[0]);
     for (let start = rank - 2; start <= rank; start++) {
@@ -132,7 +153,9 @@ function openWindow(s: GameState, kind: ClaimWindow['kind'], sourceSeat: Seat, t
 const priority = (i: Intent): number => i.type === 'WIN' ? 3 : i.type === 'PON' || i.type === 'KAN_OPEN' ? 2 : i.type === 'CHI' ? 1 : 0;
 function windowReady(w: ClaimWindow): boolean {
   const ordered = seats.filter(x => w.options[x]).sort((a, b) => (a - w.sourceSeat + 4) % 4 - (b - w.sourceSeat + 4) % 4);
-  const winning = ordered.filter(x => w.responses[x]?.type !== 'PASS' && w.responses[x] && priority(w.responses[x]!) > 0).sort((a, b) => priority(w.responses[b]!) - priority(w.responses[a]!));
+  const winning = ordered
+    .filter(x => w.responses[x]?.type !== 'PASS' && w.responses[x] && priority(w.responses[x]!) > 0)
+    .sort((a, b) => priority(w.responses[b]!) - priority(w.responses[a]!));
   const best = winning[0];
   return ordered.every(x => {
     if (w.responses[x]) return true;
@@ -176,7 +199,9 @@ function markDeclines(s: GameState, seat: Seat, chosen: Intent, options: Intent[
 }
 function resolveClaims(s: GameState): void {
   const w = windowOf(s)!;
-  const order = seats.filter(x => w.responses[x] && priority(w.responses[x]!) > 0).sort((a, b) => priority(w.responses[b]!) - priority(w.responses[a]!) || (a - w.sourceSeat + 4) % 4 - (b - w.sourceSeat + 4) % 4);
+  const order = seats
+    .filter(x => w.responses[x] && priority(w.responses[x]!) > 0)
+    .sort((a, b) => priority(w.responses[b]!) - priority(w.responses[a]!) || (a - w.sourceSeat + 4) % 4 - (b - w.sourceSeat + 4) % 4);
   const winner = order[0];
   // Record only choices that could have changed the final ruling, regardless of response arrival order.
   for (const seat of seats) {
@@ -200,7 +225,10 @@ function resolveClaims(s: GameState): void {
     if (action.type !== 'CHI' && action.type !== 'PON' && action.type !== 'KAN_OPEN') throw new Error('INVALID_CLAIM');
     const discard = s.players[w.sourceSeat].discardHistory.at(-1)!;
     remove(p, action.ownTiles); discard.claimedBy = winner;
-    p.melds.push({ meldId: `${s.handId}:${s.eventSeq}`, kind: action.type === 'CHI' ? 'chi' : action.type === 'PON' ? 'pon' : 'exposedKong', tiles: [...action.ownTiles, w.tileId], fromSeat: w.sourceSeat, sourceEvent: discard.eventSeq });
+    p.melds.push({
+      meldId: `${s.handId}:${s.eventSeq}`, kind: action.type === 'CHI' ? 'chi' : action.type === 'PON' ? 'pon' : 'exposedKong',
+      tiles: [...action.ownTiles, w.tileId], fromSeat: w.sourceSeat, sourceEvent: discard.eventSeq,
+    });
     p.restrictions.forbiddenDiscards = action.type === 'CHI' ? discardBan(action.ownTiles, w.tileId) : action.type === 'PON' ? [kindOf(w.tileId)] : [];
     s.turn = winner; s.pending = null; s.openingContext.interrupted = true;
     s.drawContext = context(action.type === 'KAN_OPEN' ? 'exposedKong' : 'claim');
@@ -228,9 +256,11 @@ function nextHand(s: GameState): void {
   s.openingContext = { draws: [0, 0, 0, 0], discards: [0, 0, 0, 0], interrupted: false };
   s.phase = 'setup'; s.pending = null; s.settlement = null; s.acceptedOpIds = [];
 }
-export function applyAction(state: GameState, action: Action): { ok: true; state: GameState; events: string[] } | { ok: false; state: GameState; error: string } {
+export function applyAction(state: GameState, action: Action):
+  { ok: true; state: GameState; events: string[] } | { ok: false; state: GameState; error: string } {
   const reject = (error: string) => ({ ok: false as const, state, error });
-  if (!action || typeof action !== 'object' || typeof action.opId !== 'string' || !action.opId || action.opId.length > 128 || !action.intent) return reject('INVALID_ACTION');
+  if (!action || typeof action !== 'object' || typeof action.opId !== 'string' || !action.opId
+    || action.opId.length > 128 || !action.intent) return reject('INVALID_ACTION');
   if (action.matchId !== state.matchId || action.handId !== state.handId) return reject('WRONG_HAND');
   if (state.acceptedOpIds.includes(action.opId)) return reject('DUPLICATE_OPERATION');
   if (action.version !== state.version) return reject('STALE_VERSION');
@@ -294,12 +324,17 @@ export function applyAction(state: GameState, action: Action): { ok: true; state
     case 'KAN_CLOSED': {
       markDeclines(s, s.turn, a, options); remove(p, a.ownTiles);
       p.melds.push({ meldId: `${s.handId}:${s.eventSeq}`, kind: 'concealedKong', tiles: [...a.ownTiles], fromSeat: null, sourceEvent: s.eventSeq });
-      s.openingContext.interrupted = true; s.drawContext.source = 'concealedKong'; s.drawContext.lastTile = null; s.drawContext.replacement = true; s.phase = 'awaitReplacement'; break;
+      s.openingContext.interrupted = true;
+      s.drawContext.source = 'concealedKong'; s.drawContext.lastTile = null; s.drawContext.replacement = true;
+      s.phase = 'awaitReplacement'; break;
     }
     case 'KAN_ADDED':
       markDeclines(s, s.turn, a, options); s.openingContext.interrupted = true; openWindow(s, 'robKong', s.turn, a.tileId, a.meldId); break;
     case 'WIN':
-      if (a.source === 'selfDraw') finish(s, s.turn, 'selfDraw', normalScore(s, s.turn, 'selfDraw', s.drawContext.source === 'deal' ? null : s.drawContext.lastTile)!, seats.filter(x => x !== s.turn));
+      if (a.source === 'selfDraw') {
+        const tile = s.drawContext.source === 'deal' ? null : s.drawContext.lastTile;
+        finish(s, s.turn, 'selfDraw', normalScore(s, s.turn, 'selfDraw', tile)!, seats.filter(x => x !== s.turn));
+      }
       else windowOf(s)!.responses[action.actor as Seat] = a;
       break;
     case 'CHI': case 'PON': case 'KAN_OPEN': case 'PASS': {
