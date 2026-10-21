@@ -3,6 +3,7 @@ import type { Intent, Meld } from './model.js';
 import { kindOf, seatWind } from './tiles.js';
 import { createAnalyzer, publicPool, analyzeObservation, compareAnalysis } from './analysis.js';
 import type { Analysis } from './analysis.js';
+import { ordinaryRonSafety } from './safety.js';
 
 const intentKey = (a: Intent): string => JSON.stringify(a, ['type', 'source', 'windowId', 'tileId', 'ownTiles', 'meldId']);
 
@@ -32,7 +33,7 @@ export function chooseAction(
   if (win) return { intent: win, randomState: nextRandom, reason: '優先選擇合法胡牌' };
 
   const summary = analyzeObservation(observation, false);
-  const analyzer = createAnalyzer(publicPool(observation));
+  const pool = publicPool(observation), analyzer = createAnalyzer(pool);
   // ponytail: one-draw tile efficiency; add deeper search only after measured strength needs.
   const candidates = legal.map(intent => {
     let q = summary.current, bonus = 0, blocked = false;
@@ -69,7 +70,12 @@ export function chooseAction(
   const usable = candidates.some(c => !c.blocked) ? candidates.filter(c => !c.blocked) : candidates;
   const sorted = usable.sort((a, b) => compareAnalysis(b.q, a.q) || b.bonus - a.bonus);
   const first = sorted[0], tied = sorted.filter(c => compareAnalysis(c.q, first.q) === 0 && c.bonus === first.bonus);
-  const selected = tied[Math.floor(nextRandom / 4294967296 * tied.length)];
+  // ponytail: exact tie-only ordinary-ron proof——牌效完全並列且全為捨牌時，才優先公開牌證明不可能被普通放槍的牌；
+  // 不涵蓋自摸、花牌或連莊，未知不當安全。相對危險度與攻守屬於日後另行驗證的策略。
+  const safe = tied.every(c => c.intent.type === 'DISCARD')
+    ? tied.filter(c => c.intent.type === 'DISCARD' && ordinaryRonSafety(pool, kindOf(c.intent.tileId)).provenSafe) : [];
+  const pick = safe.length ? safe : tied;
+  const selected = pick[Math.floor(nextRandom / 4294967296 * pick.length)];
   const shape = selected.q.shanten === 0 ? '聽牌' : `${selected.q.shanten} 向聽`;
   return { intent: selected.intent, randomState: nextRandom, reason: `${shape}；依公開資訊估計有效進張 ${selected.q.improving} 張` };
 }

@@ -2,7 +2,15 @@
 
 更新：2026-10-21（Asia/Taipei）。方向依[PRODUCT-DIRECTION](PRODUCT-DIRECTION.md)，排程依[ROADMAP](ROADMAP.md)，修改位置依[MAINTENANCE](MAINTENANCE.md)。本輪以前及展開的CI證據保留[歷史交接](HANDOFF-HISTORY-20261017.md)；不要沿歷史「下一步」自動開工。
 
-## 本輪：電腦吃碰門檻驗收、合併與發布完成
+## 本輪：B1平手安全捨牌本機完成，待指定CI與發布
+
+依使用者「繼續推進，開發可交Claude Code」及新的常設分工，Codex定義B1限定範圍／驗收，實際Claude Code CLI2.1.304透過claude-rd完成RD、自測；使用既有claude.ai訂閱，無API/provider切換。基準main2a33106，工作分支codex/ai-safe-tie-20261021；會話與brief／原始JSON在work/ai-safe-tie-20261021/。只有原本牌效及加分完全並列且全為捨牌時，優先選既有公開容量證明可排除本次普通放槍的牌；未證明仍未知。不改主要牌效、吃碰槓／WIN優先、理由、亂數步數、格式或UI，不啟動人格／攻守、阻莊及後五課。詳[驗收文件§9](AI-CLAIM-TUNING-20261020.md)。
+
+Codex檢視四個實作檔、確認原斷言未弱化，獨立重跑408項Node、build、58項Chromium（46.8秒）通過。直接用基準AI對照：128種子全選安全北（原版56次九條）；全未知與原版相同、較差安全牌不越過原最佳、不可見牌交換不改決策。一將26局3,398步／1,338決策中11次選擇不同，皆同一步牌效且新版具普通放槍證明；終止、還原與收付平衡通過，非強度或收益比較。
+
+本機Chrome155.0.8059.85於1440／320px實際續開合成v1舊檔，B1打北、僅一步、操作前原文及原分數／牌組保持；暫停／重載及其他鍵保留，0pageerror、無橫溢出。未觸日常profile／4173。臨時4236（session54151／PID38304）核對命令／port後已關閉，無監聽；驗收context均關閉。CLI管線build曾被拒，改原允許的純命令完成且Codex再驗，未放寬權限。[PR#33](https://github.com/zhai2Liu/taiwan-mahjong/pull/33)已送出；補齊維護入口舊「尚未接AI」說法後，須以最新head CI成功為準，再合併並核對main部署、正式資源與相同續玩流程；本機驗收不可代稱發布。
+
+## 前包：電腦吃碰門檻驗收、合併與發布完成
 
 2026-10-21使用者要求完成上次工作；接續Claude來源b16ac096e858d440ff72389025c656717775a8a7、基準main09ee410，在codex/ai-claim-validation-20261021補驗。原始背景、修正後統計及A–E逐項處置見[驗收文件§8](AI-CLAIM-TUNING-20261020.md)。未實裝安全平手偏好、人格／攻守或後五課。
 

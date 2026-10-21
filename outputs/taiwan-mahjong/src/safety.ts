@@ -1,7 +1,8 @@
 import type { TilePool } from './analysis.js';
 import { KINDS } from './tiles.js';
 
-/** Research-only sufficient proof for ordinary ron, not a probability or policy.
+/** Sufficient proof for ordinary ron, not a probability or risk ranking.
+ * chooseAction uses it only to break exact discard ties; unproven means unknown.
  * Input must come from publicPool(ownObservation); the candidate is held by self.
  * Unknown tiles include opponents and the reserve. No furiten assumptions.
  */
