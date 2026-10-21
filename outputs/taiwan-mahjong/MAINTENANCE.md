@@ -30,13 +30,13 @@ S3.2：hand-review.ts從原決策快照算證據，claimResolution另對同局�
 
 S3.1九題試讀：兩份TRAINING JSON負責題幹／答案／牌面／範圍；scripts/training-content.mjs負責四能力導引、固定九題允許名單與完整內容雜湊，生成器及review-trial同讀。不要直接改生成的training-data.ts。畫面分類只改瀏覽順序，drafts仍按原題位置保留，匯出必含所有題；舊schema2版本不符轉人工，schema1保留缺完整版本警告。新增分類回歸在test/e2e/training-guidance.spec.js，詳見[S3.1](S31-VALIDATION.md)。修改題量先處理允許名單／題族與舊匯出相容，不另外散落九題常數；人類資料和合成檔分開，接收見[審閱流程](TRIAL-REVIEW.md)。
 
-S2.1新手課：learn.html／src/learning.ts與learning.css是獨立頁；learning-model.ts沿用引擎與手牌驗證，learning-progress.ts處理新鍵／版本／容量／Web Locks。內容與保存規格見[BEGINNER-LEARNING](BEGINNER-LEARNING.md)，改課程先同步courseVersion及遷移；現在只三筆，不能直接增長判舊檔壞掉。回歸見[S21](S21-VALIDATION.md)，進度重建須確認且等待時停用課程動作，不動舊Session／練習／檢討。三頁HTML引用的全部preload／JS／CSS都要驗，不再假定固定三個資源。
+S2新手課：learn.html／src/learning.ts與learning.css為獨立頁；learning-model.ts管六課文字及前三課引擎操作，learning-fixtures.ts為4–6課固定教材，learning-progress.ts管v2、唯讀舊v1、容量與Web Locks。內容／保存契約見[BEGINNER-LEARNING](BEGINNER-LEARNING.md)，本輪驗收見[S23](S23-INTEGRATION-VALIDATION.md)。改完成條件先同步版本與帶入對照；不能因擴課直接把三筆舊v1判壞。重建只寫v2、確認並核對原文，等待時停用課程動作，不動Session／練習／檢討／試讀。三頁HTML的全部preload／JS／CSS都要驗，不假定固定資源數。
 
 S2.2回饋：learn.html的原生details／form獨立於lesson及progress重繪，learning.ts僅匯出純文字白名單快照，沒有新保存鍵。beforeunload須同時考慮課程dirty與回饋欄；課程保存成功不能清除回饋提醒，清空回饋也不能清除課程未存提醒。URL下載失敗仍留下可複製預覽，blocked時不把預設旗標當有效進度。不能將開始下載稱作已確認落盤；不把回饋視為正式試用、公開同意或自動上傳。回歸test/e2e/learning-feedback.spec.js，接收界線見[試用紀錄](BEGINNER-TRIAL.md)。
 
-S2.3準備：第4–6課課文／示範／換例／回饋與整合先決事項集中於[S23教材](S23-LESSON-PREPARATION.md)；test/learning-next.test.mjs以L4／L5／L6具名牌例核對固定引擎與逐條結算。尚未接課程頁或擴三筆進度；改教材先對照該牌例及RULES，不新增教學專用仲裁／過水／計台算法。
+S2.3教材：[S23教材](S23-LESSON-PREPARATION.md)供4–6課文字、示範、換例與回饋；learning-fixtures.ts只配置固定教學局面，所有動作仍交凍結引擎並assertState。test/learning-next.test.mjs保留26具名牌例，另比對runtime示例及實際操作。結算只讀settlement.score／delta與scoreLines，不重付；下一局莊位應以本局門風標示原座位，避免用下一局門風把接莊者一律寫成東門。禁打給原因，打牌手勢須與摸打課及正常對戰一致。
 
-S2.3保存準備：[相容候選規格](S23-PROGRESS-COMPATIBILITY.md)管新八課另鍵、舊原文保留、條件式帶入、固定鎖順序及單次寫入；C01–C12為尚未實裝的待驗清單。現行learning-progress.ts仍只接受三課v1，不能把候選格式當作已支援；S2.2內容修訂後先凍結可帶入課次，再實作與驗版本回復。
+S2.3保存：[相容規格](S23-PROGRESS-COMPATIBILITY.md)定tw16:learn:v2八筆／六課開放、4KiB、舊v1逐字保留與明確帶入。有效v2不依賴v1；未知原文保留，缺v2才預覽舊版。帶入以v1→v2固定鎖順序、鎖內原文／不存在核對，只寫一次v2；缺鎖不降級，等鎖停用進度操作，失敗保留本頁。前三課旗標逐位帶入，7–8不可標完成；不建立同步／備份鍵或通用遷移器。C01–C12實際結果依[S23驗收](S23-INTEGRATION-VALIDATION.md)，不是單靠規格通過。
 
 S2.4準備：[第7–8課腳本／實桌附錄](S24-LESSON-PREPARATION.md)對應test/learning-round.test.mjs。從完整144張牌堆經真實DEAL，逐步跑示範及換例的13／34吃法、他家胡與過；是固定教學劇本，不是正常AI。引擎序列化檢查不代表課程中途進度已保存，正式整合仍先處理前三課修訂及擴課相容。
 

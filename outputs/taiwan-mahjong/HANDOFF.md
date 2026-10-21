@@ -2,7 +2,17 @@
 
 更新：2026-10-21（Asia/Taipei）。方向依[PRODUCT-DIRECTION](PRODUCT-DIRECTION.md)，排程依[ROADMAP](ROADMAP.md)，修改位置依[MAINTENANCE](MAINTENANCE.md)。本輪以前及展開的CI證據保留[歷史交接](HANDOFF-HISTORY-20261017.md)；不要沿歷史「下一步」自動開工。
 
-## 本輪：專案 Markdown 整理
+## 本輪：S2.3第4–6課本機驗收完成，發布中
+
+2026-10-21使用者明確改為「不管真人回饋了，先推進課程進度」，解除先等前三課真人回饋的開發順序。這次先做第4–6課互動及進度相容，第7–8課另包；真人仍0、理解與成效待驗，不阻擋課程開發，不放行正式評量或S6。以下舊順序均屬當時紀錄。
+
+既有專案仍在C:/Users/USER/Documents/Codex/2026-10-03/new-chat；新工作資料夾C:/Users/USER/Documents/ChatGPT/麻將之路尚空，未搬移或覆蓋。分支codex/lessons-4-6-20261021，先保留原32份文件整理為c79b07f（90份文件788連結通過，修掉索引末尾空白行）。Codex定範圍、實際Claude Code CLI2.1.304 RD實作及同會話修正／自測，claude.ai Pro原訂閱；brief／CLI結果及本輪檢查留work/lessons-4-6-20261021/。詳[整合與驗收](S23-INTEGRATION-VALIDATION.md)。新課本機驗收已完成，尚待指定CI／正式發布核對；目前正式版仍下節B1及前三課。
+
+相容對照已凍結並實裝：前三課語義、提示歸類與完成條件不變，read／guided／independent逐位帶入；tw16:learn:v2（schema2、beginner-1-8-v1）與舊v1分鍵，原v1不改不刪，玩家明確選擇才帶入。八筆封套只開六課，7–8旗標false；不保存未完成操作。C01／03–12通過，C02無實質修訂不適用。資料界線表的舊v1為只讀相容，不是當前寫入鍵。
+
+Claude415／80與build通過；Codex獨立重跑415項Node、build、80項瀏覽器（1.8分）、文件91份810連結及空白檢查通過，凍結引擎／規則／計台／AI／Session未變。另核對46個新舊牌例局面、125個舊旗標組合、8種失敗0寫入、結算只讀及下一局不重付。實際Chrome155.0.8059.85於1440／320px完成帶入及4–6換例、重載／舊鍵他頁事件／只重建v2與五類其他資料保持，0pageerror、無溢出，桌面／窄版已目視；Chrome／Edge各四模式真實BFCache返回與衝突共8流程通過。臨時4237（session8851／PID38596）仍供最後核對，4231已關、日常4173未動。帳戶開始7%、後續檢查39%已用，非對話精確token。
+
+## 前包：專案 Markdown 整理
 
 2026-10-21，依使用者要求整理全部專案Markdown。新增[完整分類索引](DOCUMENTATION.md)，統一README／AGENTS／M0入口，標明現行規格、階段驗收、候選研究及歷史交接。已完成前包的展開紀錄原文移入既有[歷史交接](HANDOFF-HISTORY-20261017.md)，舊檔名、驗收數字與凍結規格保留。歷史AI及試讀文件補後續狀態入口，避免把早期「未接線／未發布」當現況。
 
@@ -10,7 +20,7 @@
 
 獨立核對90份正式Markdown（含新索引）全部列入8類、無漏列或重複；文件檢查788個本機連結、0問題，差異空白檢查通過。已搬移前包與既有歷史主文均比對原始快照確認完整，凍結RULES／CONTRACTS原文未變；驗證使用暫存Git索引，原索引未改。文件已存檔，尚未提交或推送。
 
-## 最近功能交付：B1平手安全捨牌已合併並完成正式驗收
+## 前包功能：B1平手安全捨牌已合併並完成正式驗收
 
 依使用者「繼續推進，開發可交Claude Code」及新的常設分工，Codex定義B1限定範圍／驗收，實際Claude Code CLI2.1.304透過claude-rd完成RD、自測；使用既有claude.ai訂閱，無API/provider切換。基準main2a33106，工作分支codex/ai-safe-tie-20261021；會話與brief／原始JSON在work/ai-safe-tie-20261021/。只有原本牌效及加分完全並列且全為捨牌時，優先選既有公開容量證明可排除本次普通放槍的牌；未證明仍未知。不改主要牌效、吃碰槓／WIN優先、理由、亂數步數、格式或UI，不啟動人格／攻守、阻莊及後五課。詳[驗收文件§9](AI-CLAIM-TUNING-20261020.md)。
 
@@ -30,7 +40,7 @@ Codex檢視四個實作檔、確認原斷言未弱化，獨立重跑408項Node�
 |---|---|
 | M0–M5.4、S0／S1 | 台灣16張、1真人＋3公平本地AI、逐項結算、續局、牌效練習、六步導覽、局後檢討與工程基礎已發布；學習／練習／對戰三入口改版已發布 |
 | S2.1／S2.2 | 前三課、獨立進度與選填TXT回饋已發布；[T0–T5試用](BEGINNER-TRIAL.md)準備完成，真人0、內容修訂待驗 |
-| S2.3／S2.4 | [第4–6課26牌例](S23-LESSON-PREPARATION.md)、[第7–8課腳本及8分支](S24-LESSON-PREPARATION.md)、[相容候選規格](S23-PROGRESS-COMPATIBILITY.md)已備；後五課UI／新格式／中途保存／正常對戰連接未實裝。正式整合仍依S2.2試用修訂 |
+| S2.3／S2.4 | [4–6課互動及v2相容](S23-INTEGRATION-VALIDATION.md)本機技術驗收完成、發布中；[7–8課腳本及8分支](S24-LESSON-PREPARATION.md)已備，頁面／中途保存／正常對戰連接未整合，接續推進不再等真人 |
 | S3.1–S3.3 | 九題四類導引、同類練習、吃碰事後解釋、手動保存／同版續答與曝光自陳已發布；不自動上傳 |
 | S3.4 | [人工錨點／缺口／流程](S34-ASSESSMENT-PREPARATION.md)已備；13題／12題族、四候選不進試讀、assessmentFamilies空；真人題族／難度／內容及正式放行待驗 |
 | S4 | 限定技術檢查已完成；[人工回饋清單](HUMAN-FEEDBACK-CHECKLIST.md)中的手機／Safari／輔具／理解仍待，程式或模型不能代填 |
@@ -46,7 +56,7 @@ Codex檢視四個實作檔、確認原斷言未弱化，獨立重跑408項Node�
 | tw16:TW16-CLASSIC-v1:save | Session／GameState v1；decodeSession→engine.restore，結算已付款，不重付 |
 | tw16:practice:v1 | 練習v1；種子與日誌重播核對 |
 | tw16:review:v2 | 白名單快照、容量／版本、Web Locks |
-| tw16:learn:v1 | schema1、beginner-1-3-v1、只三課；v2是候選規格，現行不支援 |
+| tw16:learn:v1／v2 | v1 schema1三課原文只讀保留；v2 schema2、beginner-1-8-v1八筆／六課開放，明確帶入；本機已驗，正式發布依本輪狀態 |
 | tw16:trial:v1 | 保存封套schema1含schema3報告、128KiB、Web Locks ifAvailable＋expectedRaw，只自動讀同版 |
 
 教練偏好tw16:coach:v1為on／off／after。壞檔、未知版、讀寫失敗及跨頁衝突保留原文與本頁內容，不清空localStorage修復。試讀保存位置只在按鈕保存時更新，切題不自動寫入；曝光自陳不是首次證明，揭示後鎖定。CLI讀schema1／2／3、審閱reportVersion2；未授權任意匯入、靜默遷移或後端。

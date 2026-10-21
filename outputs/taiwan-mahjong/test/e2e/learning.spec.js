@@ -50,9 +50,10 @@ test('三課示範與換例、含槓組牌、提示標記、重載與舊檔隔�
   await page.setViewportSize({ width: 320, height: 844 });
   await page.getByRole('button', { name: '3. 五組牌加一對眼睛', exact: true }).click();
   await composition(page, false); await composition(page, true);
-  await expect.poll(async () => (await course(page))?.lessons).toEqual(Array.from({ length: 3 }, () => ({ read: true, guided: true, independent: true })));
+  await expect.poll(async () => (await course(page))?.lessons).toEqual([...Array.from({ length: 3 }, () => ({ read: true, guided: true, independent: true })),
+    ...Array.from({ length: 5 }, () => ({ read: false, guided: false, independent: false }))]);
   await page.reload();
-  expect((await course(page)).lessons.every(p => p.independent)).toBe(true);
+  expect((await course(page)).lessons.slice(0, 3).every(p => p.independent)).toBe(true);
   await expect(page.locator('#learning-progress')).toContainText('第3課：已閱讀 ✓');
   expect(await page.evaluate(keys => Object.fromEntries(keys.map(k => [k, localStorage.getItem(k)])), Object.keys(otherSaves))).toEqual(otherSaves);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -139,7 +140,7 @@ test('保存失敗保留本頁、重試；壞檔清除要確認，跨頁更新�
 
 for (const failure of ['read-error', 'broken', 'future']) test(`重讀${failure}保留本頁未存進度及離頁提醒，修復後才採用保存紀錄`, async ({ page }) => {
   const original = encodeLearningProgress(markLesson(emptyProgress(), 0, 'read'));
-  const bad = failure === 'broken' ? '{broken' : JSON.stringify({ ...emptyProgress(), schemaVersion: 2 });
+  const bad = failure === 'broken' ? '{broken' : JSON.stringify({ ...emptyProgress(), schemaVersion: 3 });
   await page.addInitScript(({ key, original }) => {
     if (localStorage.getItem(key) === null) localStorage.setItem(key, original);
     window.__failLearningRead = false; window.__failLearningWrite = true;

@@ -19,7 +19,7 @@
 - **候選／研究**：教材準備、模型複核、離線策略與企畫完成，都不等於正式功能、真人驗證或開發授權。
 - **歷史交接／底稿**：供查背景與原始證據；其中待辦、用量、程序及服務狀態不能沿用為現況。
 
-現行重點：前三課與九題試讀可用；後五課仍依前三課真人回饋推進。共通 AI 的吃碰門檻與 B1 平手安全捨牌已完成，完整人格／攻守仍屬 S6，需另外啟動。具體發布來源與驗證界線見下表的 HANDOFF。
+現行重點：前三課與九題試讀已發布；使用者2026-10-21取消先等真人的課程開發順序，第4–6課整合啟動，第7–8課接續。真人理解與成效仍待驗。共通 AI 的吃碰門檻與 B1 平手安全捨牌已完成，完整人格／攻守仍屬 S6，需另外啟動。具體發布來源與驗證界線見下表的 HANDOFF。
 
 ## 完整分類目錄
 
@@ -54,11 +54,12 @@
 
 | 文件 | 用途與界線 |
 |---|---|
-| [BEGINNER-LEARNING.md](BEGINNER-LEARNING.md) — 前三課規格 | 現行內容與獨立進度保存契約 |
+| [BEGINNER-LEARNING.md](BEGINNER-LEARNING.md) — 新手課程規格 | 第1–6課、現行v2及舊三課v1相容契約 |
 | [BEGINNER-TRIAL.md](BEGINNER-TRIAL.md) — 新手試用 | T0–T5 任務、觀察模板與回饋接收 |
 | [TRIAL-REVIEW.md](TRIAL-REVIEW.md) — 試讀紀錄審閱 | 匯出 JSON 的接收、格式檢查與人工審閱 |
-| [S23-LESSON-PREPARATION.md](S23-LESSON-PREPARATION.md) — 第 4–6 課準備 | 教材與 26 個引擎牌例；互動頁尚未整合 |
-| [S23-PROGRESS-COMPATIBILITY.md](S23-PROGRESS-COMPATIBILITY.md) — 課程進度相容候選 | 實裝前規格；不能視為現行 learn:v2 已支援 |
+| [S23-LESSON-PREPARATION.md](S23-LESSON-PREPARATION.md) — 第 4–6 課準備 | 原教材與26個引擎牌例；互動整合見本輪驗收 |
+| [S23-PROGRESS-COMPATIBILITY.md](S23-PROGRESS-COMPATIBILITY.md) — 課程進度相容 | 2026-10-21採納v2另鍵、明確帶入；實際C01–C12見整合驗收 |
+| [S23-INTEGRATION-VALIDATION.md](S23-INTEGRATION-VALIDATION.md) — 第4–6課互動與保存整合 | 本輪定稿、相容驗收與發布追蹤；真人理解另記 |
 | [S24-LESSON-PREPARATION.md](S24-LESSON-PREPARATION.md) — 第 7–8 課準備 | 整局腳本、實桌附錄及 8 個分支；頁面尚未整合 |
 | [S34-ASSESSMENT-PREPARATION.md](S34-ASSESSMENT-PREPARATION.md) — 評量候選準備 | 四候選、人工理由規準與模板；正式評量待驗 |
 | [S51-DEMO-VALIDATION.md](S51-DEMO-VALIDATION.md) — 展示素材驗收 | 影片、字幕、三圖與來源核對紀錄 |
