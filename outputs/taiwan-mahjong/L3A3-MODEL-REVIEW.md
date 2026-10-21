@@ -1,5 +1,7 @@
 # L3-A3：分開模型複核與四能力候選
 
+> 歷史模型複核：九題後續已接內容試讀並完成[S3.1修訂](S31-VALIDATION.md)；四題仍為保留候選，正式評量與真人驗證仍待。下文未接遊戲與下一步保留當時背景，現況依[HANDOFF](HANDOFF.md)。
+
 2026-10-12。延續[L3-A2](L3A2-CONTENT-REVIEW.md)。本包新增HC01、HD01，現在共13題／12題族：9訓練、4保留候選。資料仍只在兩份開發JSON，未接遊戲。所有題目的reviewStatus改為`model-reviewed-not-calibrated`，不是正式測驗核准；assessmentFamilies仍空。
 
 ## 審閱紀錄

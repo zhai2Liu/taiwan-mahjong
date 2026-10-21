@@ -6,6 +6,8 @@
 
 ## 入口
 
+- [完整文件分類索引](DOCUMENTATION.md)：全部正式Markdown依用途分類，含現行規格、候選研究及歷史證據。
+
 - [目前交接與發布狀態](HANDOFF.md)：最新完成、驗證範圍與下一包。
 - [電腦吃碰門檻與引擎可讀性調整](AI-CLAIM-TUNING-20261020.md)：修正後統計、引擎等價驗證、舊檔續玩語意及建議處置；最新CI／發布依HANDOFF。
 - [首頁三路入口](HOME-REDESIGN-20261018.md)、[試讀工作區](TRIAL-WORKSPACE-20261018.md)與[前三課畫面](LEARNING-LAYOUT-20261018.md)：最新分組、續玩位置與排版回歸契約；正式狀態依HANDOFF。
@@ -21,42 +23,7 @@
 - [決策題試讀](https://zhai2liu.github.io/taiwan-mahjong/training.html)：9題草案，牌效／吃碰取捨／安全牌／莊家連莊四類導引；手動保存後下次同版續答，匯出全部九題，先作答再看推導，不計牌技總分；[續答與曝光](S33-VALIDATION.md)、[內容版本](S31-VALIDATION.md)、[最初驗收](L3B0-TRIAL-VALIDATION.md)。
 - [新手試用任務與紀錄](BEGINNER-TRIAL.md)：前三課T0–T5與觀察模板已備妥，真人驗收仍待。
 
-<details>
-<summary>工程證據與歷史驗收索引（各份保留當時版本）</summary>
-
-- [L3-A3題目模型複核](L3A3-MODEL-REVIEW.md)：13題草案、4能力候選與難度限制，目前已提供九題內容試讀。
-
-- [L2-B局後檢討畫面](L2B2-REVIEW-UI-VALIDATION.md)：結算內回看最多三筆決策；本輪發布狀態見HANDOFF。
-- [L2-A真人記錄與保存驗收](L2A3-RECORDING-VALIDATION.md)：已接本機對局，獨立快照／互斥／重試／清除；發布狀態見HANDOFF。
-
-- [L1-B決策證據契約與驗收](L1B-EVIDENCE-CONTRACT.md)：已接L2局後檢討；契約與資訊邊界見本文。
-
-- [L1-A核心證據驗收](L1A-EVIDENCE-VALIDATION.md)：獨立手算、未知安全反例與續莊界線；L1-B與L2已完成。
-
-- [完整專案現況與目標重整底稿](PROJECT-REVIEW.md)：功能、架構、研究進度、限制與待決策。
-
-- [目前交接與下一步](HANDOFF.md)
-- [對手別公開風險證據](RISK-EVIDENCE-VALIDATION.md)：單家與全桌安全、進聽與退守的實際代價；對手別策略仍為離線研究，B1僅取全域普通放槍容量證明作平手偏好。
-- [牌風、牌效與留安全張研究](HUMAN-AI-TACTICS-RESEARCH.md)：台麻反例、可重現牌例與人性化決策方向；不代表完整攻守或人格已整合，現行共通策略維護依HANDOFF。
-- [全專案檢視與優化](AUDIT-2026-10-07.md)：展開提示保留牌桌、儲存失敗直接重試與文件整理。
-- [桌規展開與牌桌排版修正](TABLE-LAYOUT-VALIDATION.md)：展開說明不再擠壓中央牌桌。
-- [正向遊玩回饋與驗證](POSITIVE-FEEDBACK-VALIDATION.md)：牌效進步、聽牌、吃碰成立、胡牌得分與練習鼓勵；不改遊戲AI。
-- 胡牌結算預設逐條列牌型與台數，紅中／發財／白板分列、正花按實際得台張數呈現，上方可直接看牌型組合。
-- [階段順序與完成條件](ROADMAP.md)
-- [發布設定、更新與回復](DEPLOYMENT.md)
-- [維護指南：修改位置、資料流、存檔與驗證](MAINTENANCE.md)
-- [固定桌規與完整台表](../taiwan-mahjong-m0/RULES.md)
-- [概念契約](../taiwan-mahjong-m0/CONTRACTS.md)：實際欄位以src/model.ts為準。
-- [人性化AI玩家設計](HUMAN-AI-DESIGN.md)：個性、攻守、最佳實踐與未來工作包已整理完成；[決策／保存規格](HUMAN-AI-DECISION-SPEC.md)、[證據／驗證方案](HUMAN-AI-VALIDATION.md)。正式人格整合尚未啟動；吃碰門檻及B1平手捨牌屬共通策略維護，發布狀態依HANDOFF。
-- [進攻／防守牌風研究](AI-STYLE-DESIGN.md)：公開資訊安全原理、768副起手基準與三個引擎反例；已併入人性化AI設計，尚未更換遊戲AI。
-- [純練習與新手提示設計](TRAINING-DESIGN.md)：M5設計及Sol／Luna分工。
-- [新手操作教學驗證](TUTORIAL-VALIDATION.md)：六步原生視窗、示範選牌／出牌與兩種吃法，正式發布狀態見HANDOFF。
-- [本輪維護驗證](MAINTENANCE-2026-10-06.md)：鍵盤入口、結算付款核對及文件校正。
-- [最近提示狀態修正](PANEL-STATE-VALIDATION.md)：暫停／回合切換／練習往返後保留展開或收合。
-- [選牌流程修正](COACH-FLOW-VALIDATION.md)：滑鼠／鍵盤選牌與教練摘要同步、禁捨提醒、出牌及窄畫面。
-- [對戰教練驗收](M5.3-VALIDATION.md)：226項測試、建置、提示開關、吃碰比較與窄畫面；純練習見M5.2，共用數學見M5.1。
-
-</details>
+全部工程證據、研究與歷史交接統一收錄在[完整文件分類索引](DOCUMENTATION.md)。階段驗收保留當時版本；最新進度以HANDOFF／ROADMAP為準。
 
 ## 新手入門試用版
 
@@ -77,6 +44,8 @@ npm run preview -- --port 4173
 開啟[本機牌桌](http://127.0.0.1:4173/)。單擊選牌、快速連點同張兩次出牌；鍵盤Tab選牌、Enter或空白鍵出牌。合法吃碰槓胡直接選操作。結算彈窗可看明細、返回牌桌或進下一局；重載可選「繼續上次牌局」。本機伺服器是否仍在執行須當次確認。
 
 存檔屬於目前網站來源及瀏覽器；換網址、連接埠、瀏覽器或清除網站資料，可能讀不到同一存檔。網站部署不會自動搬移本機牌局。
+
+胡牌結算預設逐條列牌型與台數，紅中／發財／白板分列、正花按實際得台張數呈現，上方可直接看牌型組合。
 
 儲存失敗時請保持頁面，儲存恢復後可按「重試儲存」，不用再出牌或摸牌；跨分頁衝突則依提醒重載最新進度。
 
@@ -121,7 +90,7 @@ npm run build
 
 瀏覽器核心回歸：首次 `npx playwright install chromium`，再執行 `npm run test:browser`。目前test/e2e案例在桌面／390px各驗一次，結算、練習、分類與檢討另驗320px，使用正式建置、隔離本機4226來源與合成資料；不取代手機／Safari實機或真人試用。CI亦執行，失敗證據機制見[S1.2b](S12B-VALIDATION.md)；範圍見[S2.1](S21-VALIDATION.md)、[S3.1](S31-VALIDATION.md)、[S3.2](S32-VALIDATION.md)、[S3.3](S33-VALIDATION.md)及[S4.2可及性／重讀保留](S42-ACCESSIBILITY.md)，最新項目數及指定提交結果只記[HANDOFF](HANDOFF.md)，不在此重複維護計數；歷史效能基準見[S1.3](S13-VALIDATION.md)。
 
-本輪[練習易用性驗收](M5.2-UX-VALIDATION.md)：集中手牌與預覽、清楚指標、候選點選及窄畫面流程。
+歷史[練習易用性驗收](M5.2-UX-VALIDATION.md)：集中手牌與預覽、清楚指標、候選點選及窄畫面流程。
 
 ## 歷史證據
 

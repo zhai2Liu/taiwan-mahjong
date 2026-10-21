@@ -1,14 +1,14 @@
-**現行入口：[HANDOFF](../taiwan-mahjong/HANDOFF.md)。M0–M5.4已完成，後續按試玩回饋維護；以下為歷史交接記錄。**
+> 歷史交接：本檔保留M0及早期階段紀錄。接續工作只讀[現行HANDOFF](../taiwan-mahjong/HANDOFF.md)與[ROADMAP](../taiwan-mahjong/ROADMAP.md)；完整分類見[文件索引](../taiwan-mahjong/DOCUMENTATION.md)。以下各階段的進度、用量及下一步均為當時快照。
 
-# 下一次模型啟動：先讀此檔
+# M0與早期階段交接歷史
 
-**目前入口：M3.1已完成，下一階段M3.2維護文件整理。先讀[M3.1-HANDOFF.md](../taiwan-mahjong/M3.1-HANDOFF.md)。185項測試及建置通過，操作改為雙擊、牌河集中、結算彈窗；以下為歷史紀錄。**
+**M3.1歷史入口：M3.1已完成，下一階段M3.2維護文件整理。先讀[M3.1-HANDOFF.md](../taiwan-mahjong/M3.1-HANDOFF.md)。185項測試及建置通過，操作改為雙擊、牌河集中、結算彈窗；以下為歷史紀錄。**
 
-**最新狀態：M3已完成（2026-10-05），173項測試與正式建置通過。先讀 [M3-HANDOFF.md](../taiwan-mahjong/M3-HANDOFF.md)。使用者試玩回饋後新增發布前修正與文件整理；後續順序以[ROADMAP.md](../taiwan-mahjong/ROADMAP.md)為準，尚未開始新階段。以下為歷史完成紀錄。**
+**M3歷史狀態：M3已完成（2026-10-05），173項測試與正式建置通過。先讀 [M3-HANDOFF.md](../taiwan-mahjong/M3-HANDOFF.md)。使用者試玩回饋後新增發布前修正與文件整理；後續順序以[ROADMAP.md](../taiwan-mahjong/ROADMAP.md)為準，尚未開始新階段。以下為歷史完成紀錄。**
 
 **M2歷史基線：** [M2-HANDOFF.md](../taiwan-mahjong/M2-HANDOFF.md)，當時149項測試通過，網頁可在本機遊玩。
 
-## 最新進度：M1 已完成
+## M1歷史進度：已完成
 
 2026-10-04：使用者已啟動下一階段，M1 純規則引擎完成。**現在請接讀 [M1-HANDOFF.md](../taiwan-mahjong/M1-HANDOFF.md)**，再依下一次使用者指示進入 M2。以下 M0 紀錄保留作歷史，不代表目前仍未建立程式專案。
 
@@ -91,7 +91,7 @@
 - 過水判斷見R11；不要用已被禁止胡的結果解除過水，不是日麻振聽。
 - 同一胡牌多拆法各算後取最大，不能混搭；全求人可加獨聽、五暗可加碰碰、字一色排除碰碰。
 
-## 下一次啟動的最短入口
+## M0完成時的續作入口（歷史）
 
 若使用者要求繼續下一階段：讀本檔 → RULES.md → CONTRACTS.md → cases.json，開始M1純規則引擎。先重跑資料檢查即可，不重做M0或規則網搜。M1先做牌ID、牌牆及階段，再胡牌／計台與規則事件，最後四家自動驅動完整一局／一將。
 

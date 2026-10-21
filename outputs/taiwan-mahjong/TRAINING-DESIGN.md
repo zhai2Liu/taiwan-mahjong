@@ -1,6 +1,6 @@
 # 進階玩家決策訓練設計
 
-2026-10-09現行方向，依[PRODUCT-DIRECTION](PRODUCT-DIRECTION.md)。下方M5文件保留已實作行為；L2局後檢討已發布，L3題庫仍在草案審核；不把現行練習重命名就當成新訓練已完成。
+本文保留2026-10-09進階訓練方向與M5設計沿革，現行定位依[PRODUCT-DIRECTION](PRODUCT-DIRECTION.md)。L2局後檢討及九題試讀後續已發布，正式評量仍待真人驗證；最新狀態依[HANDOFF](HANDOFF.md)與[ROADMAP](ROADMAP.md)，不把歷史設計當新功能完成證據。
 
 ## 目標與學習閉環
 

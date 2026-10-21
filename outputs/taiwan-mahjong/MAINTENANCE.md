@@ -6,11 +6,11 @@
 
 # 維護指南
 
-2026-10-06，M5.3及後續維護更新。此文件說明現有實作與修改路徑；目前進度見[HANDOFF](HANDOFF.md)，新增玩法規格見[TRAINING-DESIGN](TRAINING-DESIGN.md)。
+2026-10-06建立，隨後續維護更新。此文件說明實作與修改路徑；目前進度見[HANDOFF](HANDOFF.md)，現行範圍見[產品方向](PRODUCT-DIRECTION.md)，完整規格與歷史證據從[文件索引](DOCUMENTATION.md)查找。文中具日期的維護記錄保留當時契約，後續變更以最新對應規格為準。
 
 ## 文件各自負責什麼
 
-README是使用與開發總入口；HANDOFF只記目前進度、風險與下一步；ROADMAP只記階段。RULES是凍結桌規唯一來源，cases.json是人工牌例；CONTRACTS為概念契約，實際型別以src/model.ts為準。各階段VALIDATION保留歷史證據，不能把舊測試數量當現況。
+README是使用與開發總入口；[DOCUMENTATION](DOCUMENTATION.md)維護全部正式Markdown的分類與用途；HANDOFF只記目前進度、風險與下一步，已完成前包的展開紀錄收進既有歷史交接；ROADMAP管理階段。RULES是凍結桌規唯一來源，cases.json是人工牌例；CONTRACTS為概念契約，實際型別以src/model.ts為準。各階段VALIDATION保留歷史證據，不能把舊測試數量當現況。新增文件時同步索引，保留歷史日期與驗證限制。
 
 ## 修改位置
 

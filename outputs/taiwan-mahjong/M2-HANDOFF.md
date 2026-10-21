@@ -1,4 +1,4 @@
-**歷史交接：目前M3.2已完成，下一階段M4；請先讀[現行HANDOFF](HANDOFF.md)。以下記錄保留當時狀態，不作目前啟動指示。**
+> 歷史交接：以下保留該階段完成時的進度、驗收及下一步；不作目前啟動指示。現況只依[HANDOFF](HANDOFF.md)與[ROADMAP](ROADMAP.md)，其他文件見[分類索引](DOCUMENTATION.md)。
 
 # M2 已完成：下次啟動入口
 

@@ -1,5 +1,7 @@
 # L2-B1：局後少量比較資料層
 
+> 歷史子包：資料層後續已接[L2-B2畫面](L2B2-REVIEW-UI-VALIDATION.md)並發布；下文未接畫面指本子包完成時。現況依[HANDOFF](HANDOFF.md)。
+
 2026-10-10。完成src/hand-review.ts及3項測試，未接畫面；不是L2-B全部完成。最新全套312測試／check／build通過（另含L2-A牌局保存失敗不記錄的回歸）。
 
 ## 已完成

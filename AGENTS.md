@@ -1,6 +1,6 @@
 # 台灣麻將專案的啟動入口
 
-開始本專案相關工作前，先讀 `outputs/taiwan-mahjong-m0/HANDOFF.md`，再讀 `outputs/taiwan-mahjong/HANDOFF.md`（歷史M1–M3.1按需）。2026-10-13使用者啟動S0.1–S1.1，已採納「台灣十六張麻將學習與決策練習」兩路線；讀 PRODUCT-DIRECTION.md、MASTER-IMPROVEMENT-PLAN.md及ROADMAP.md。完整八課屬S2，正式評量仍待題族／難度／曝光與真人驗證，不能以模型審核或程式測試代替。M0–M5.4、L1證據與L2局後檢討已發布，九題試讀可用；最新驗證／發布與下一包只依HANDOFF、ROADMAP，不沿歷史「下一步」自動開工。人性化AI研究保留離線，使用者指定目前不實裝，S6需另外啟動。按需讀RULES、CONTRACTS、cases，避免重新研究或覆寫凍結桌規。使用者只啟動哪一階段，就先完成該階段。
+開始本專案相關工作前，先讀[現行交接](outputs/taiwan-mahjong/HANDOFF.md)及[工作包路線](outputs/taiwan-mahjong/ROADMAP.md)，需要其他文件時查[完整分類索引](outputs/taiwan-mahjong/DOCUMENTATION.md)；M0及M1–M3.1交接僅按需查歷史。2026-10-13使用者啟動S0.1–S1.1，已採納「台灣十六張麻將學習與決策練習」兩路線；方向依 PRODUCT-DIRECTION.md，整體方案依 MASTER-IMPROVEMENT-PLAN.md。完整八課屬S2，正式評量仍待題族／難度／曝光與真人驗證，不能以模型審核或程式測試代替。M0–M5.4、L1證據與L2局後檢討已發布，九題試讀可用；最新驗證／發布與下一包只依HANDOFF、ROADMAP，不沿歷史「下一步」自動開工。人性化AI研究保留離線，使用者指定目前不實裝，S6需另外啟動。按需讀RULES、CONTRACTS、cases，避免重新研究或覆寫凍結桌規。使用者只啟動哪一階段，就先完成該階段。
 
 使用者要求節省 token 並可靠交接：每個工作包完成後落盤，立即更新 HANDOFF；額度工具只能讀帳戶用量，不能宣稱可知精確對話剩餘 token。長工作開始及檢查點查額度，剩餘偏低時優先收斂與交接，不自行使用重設額度或新增自動續跑。
 
@@ -8,4 +8,4 @@ Ponytail：先判斷是否必要，優先標準函式庫、平台功能和已安
 
 使用繁體中文。scratch 放 work/，本輪文件交付在 outputs/。遊戲目標為 GitHub Pages 的台灣16張，1真人＋3本地公平AI；開發模型與遊戲AI為不同概念。
 
-開發由6.1 Sol主導，必要時使用Luna子代理完成限定工作；常規不啟用Astra。
+依2026-10-21使用者常設分工，Codex負責需求、設計、任務範圍與最終驗收，軟體實作及自測交由實際Claude Code CLI，使用claude-rd技能；Codex必須檢視變更並獨立驗證。規劃與文件整理由Codex處理；當次明確指定優先。保留使用者選定的訂閱與權限，遇驗證或額度問題明確回報，不擅自切換供應者。歷史模型分工只代表當時紀錄。

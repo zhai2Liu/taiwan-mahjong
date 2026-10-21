@@ -1,5 +1,7 @@
 # L1-B：決策證據格式與驗收
 
+> 契約與歷史驗收：下文「尚未接線」指L1-B完成當時；證據後續已用於[L2局後檢討](L2B2-REVIEW-UI-VALIDATION.md)，最新狀態依[HANDOFF](HANDOFF.md)。
+
 2026-10-09。完成`src/decision-evidence.ts`及7項新測試；全套288項、check與build通過。此模組尚未接正式UI／AI／存檔。L1的底層證據與格式已完成，真人理解及學習成效尚待後續驗收。
 
 ## 使用邊界
