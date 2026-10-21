@@ -83,7 +83,7 @@ getObservation遮蔽其他玩家暗手、暗槓牌種、牌牆順序、洗牌種
 
 `src/risk-evidence.ts`在自家Observation合法DISCARD上提供對手別安全證據與零台放槍付款底線，沿用safety/publicPool/settlePayments；不直接選牌或回報機率。驗證用risk-evidence.test.mjs與scripts/research-risk.mjs，結果與限制見[RISK-EVIDENCE-VALIDATION](RISK-EVIDENCE-VALIDATION.md)。
 
-研究擴充：`src/safety.ts`只回傳普通放槍的充分安全證明與尚未排除的局部成形路徑，輸入為自家publicPool與持有牌種，不接正式AI。不能將possibleUses數量當放槍率。驗證用`test/safety.test.mjs`；保留安全張的牌效案例用`node scripts/research-reserve.mjs`，先check。正式接線前仍須相對風險及策略／保存驗收。
+公開容量證明：`src/safety.ts`只回傳本次普通放槍的充分安全證明與尚未排除的局部成形路徑，輸入為自家publicPool與持有牌種。B1僅在ai.ts原牌效／加分完全並列且全為捨牌時，以此證明選安全子集；無證明保留原順序與亂數。不能將possibleUses數量當放槍率，也不排除自摸／花胡或保證阻莊。驗證用`test/safety.test.mjs`及`test/ai.test.mjs`，本機／正式狀態依[驗收文件§9](AI-CLAIM-TUNING-20261020.md)與HANDOFF。保留安全張的牌效案例仍用`node scripts/research-reserve.mjs`，先check；相對風險、攻守、人格及新保存策略需另行驗收，未接正式AI。
 
 src/analysis.ts是AI、練習與教練的共用來源；不要解析AI的reason字串。createAnalyzer接牌池，analyze接自家暗手牌種與完整副露；只分析等效E16／E17。E17捨牌比較先走discards，傳入實際合法牌種；analyzeObservation只接引擎產生的單一玩家觀察，吃碰採該觀察合法候選及engine共用discardBan。
 
