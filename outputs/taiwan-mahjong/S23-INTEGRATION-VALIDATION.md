@@ -28,7 +28,7 @@
 | C04–C06 | 有效／壞／未知新版、壞／讀不到舊版、下載失敗可複製；原文保持 | 通過；回饋草稿與離頁提醒亦保留 |
 | C07–C09 | 封套容量／缺鎖／忙鎖／quota、過期舊原文或新鍵已存在、雙擊／重載 | 通過；Codex另驗8種失敗0寫入，雙鍵固定鎖序及一次新鍵寫入 |
 | C10–C12 | 舊新版來回不合併、重建只動新鍵、等鎖停用／取消／未存提醒、其他模式隔離 | 通過；原版解碼器仍可讀舊檔；本機Chrome兩寬另驗真實他頁舊鍵事件與新鍵重建，五類其他資料逐字保持 |
-| 回歸及發布 | 完整Node、build、瀏覽器、文件連結；指定PR與main CI、公開資源與實際操作核對 | 本機415／80及build通過；PR／正式驗證待完成，依HANDOFF |
+| 回歸及發布 | 完整Node、build、瀏覽器、文件連結；指定PR與main CI、公開資源與實際操作核對 | 本機、指定PR與main各415／80通過；Pages及正式兩寬操作／三頁8資源核對完成 |
 
 開發由實際Claude Code CLI依claude-rd完成，Codex獨立審查及驗收；各自測試分開記錄。原始brief、CLI回報、審查／測試／合成資料與截圖留work/lessons-4-6-20261021/，不提交私人牌局或瀏覽器資料。
 
@@ -39,3 +39,11 @@ Codex另以Chrome155.0.8059.85實際跑1440／320px：帶入舊旗標、4–6課
 工具邊界：Claude初次合併式Git／列檔探索被拒，改用既有Read／Glob／Grep，未放寬權限；Codex文件當時尚未追蹤，曾令Claude文件檢查報7缺連結，加入Git索引後91份／810連結通過。這兩項不作為未解缺陷，也未略過驗證。首次build與瀏覽器曾同時啟動，修正輪及Codex最終重跑均依test→build完成→browser順序，驗收以最終版本為準。
 
 已知界線：134範例吃後手中沒有禁打牌，先以文字列禁打種類，實際拒絕操作用碰後剩第四張五萬驗；示範含吃、碰及槓分段，長度仍待真人體驗驗證。固定教材可重練，不是陌生題或能力認證；真人仍0，實機觸控、Safari與輔具理解尚未驗，不以合成資料補填。
+
+## 正式發布完成（2026-10-22）
+
+[PR#34](https://github.com/zhai2Liu/taiwan-mahjong/pull/34)最終head af7dd4045303433c2f83fac7fde0cb21baebabbd：Actions39630840862／build119328301041成功415／80（1.3分），文件91份807連結通過，PR無Pages。合併及**正式Pages來源c5e76c96889851ae3af12735284aacb96a145d21**：main Actions39631381702／build119330178701成功415／80（1.2分）、91份807連結，deploy119331469050成功；main tree與驗收head相同，後續純Markdown不改runtime。
+
+正式[學習頁](https://zhai2liu.github.io/taiwan-mahjong/learn.html)及首頁／試讀頁HTTP200，三頁HTML和8項唯一引用JS／CSS SHA-256皆與驗收建置相同。新learn-DUtJZ8XM.js／learn-q8MxNIzo.css、index-CG8hfk7O.js／view-BYik_jIh.js，另外4資源不變。正式Chrome1440／320px再跑舊v1明確帶入、4–6換例自行完成、重載、真實他頁舊鍵事件及重建v2；舊v1與五類其他資料逐字保留，0pageerror、無橫溢出；正式桌面結算及窄版吃牌已目視。證據為同一work目錄的live-assets.log、live-ui.log、live-ui-result.json及四張live截圖。
+
+正式驗收context均關閉。臨時4237（session8851／PID38596）核對完整專案命令與監聽後只停止該程序，4237／4231無監聽；原4173及日常瀏覽器profile未動。下一包第7–8課不再依賴真人回饋開工，尚未完成整局中途保存、暫停與正常對戰連接；內容及檢查點規格沿[S24](S24-LESSON-PREPARATION.md)，不把六課發布稱為完整八課。
