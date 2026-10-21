@@ -78,7 +78,7 @@ try {
   await chapter(lesson, '12-counterexample', '五組加眼睛後，再辨認哪副不符合一般牌形\n示例B的東、南、西不能組成順子', 4000);
   await lesson.getByRole('button', { name: /^示例B/ }).click();
   await lesson.locator('#lesson').filter({ hasText: '本段完成' }).waitFor();
-  await chapter(lesson, '13-finish', '本次示範完成，紀錄與「換例自行完成」分開\n目前提供前三課；真人學習成效與指定實機仍待驗證', 5000);
+  await chapter(lesson, '13-finish', '本次示範完成，紀錄與「換例自行完成」分開\n目前提供八課入門；真人成效與指定實機仍待驗證', 5000);
   assert.equal(await main.evaluate(key => localStorage.getItem(key), gameKey), pausedGame);
   assert.ok(await explanation.isVisible()); assert.deepEqual(errors, []);
 } finally { await context.close(); await browser.close(); await writeFile(join(scratch, 'attempt.json'), JSON.stringify({ chapters, errors, cut }, null, 2)); }

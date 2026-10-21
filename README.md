@@ -2,7 +2,7 @@
 
 一款可直接在瀏覽器玩的台灣十六張麻將產品：一位真人與三位本地電腦，搭配牌效練習、打牌與吃碰回應後的解釋、局後檢討。採明確桌規，讓合法行牌、資訊公平與資料保存都能驗證。
 
-**[立即遊玩](https://zhai2liu.github.io/taiwan-mahjong/) · [從零入門](https://zhai2liu.github.io/taiwan-mahjong/learn.html) · [決策題試讀](https://zhai2liu.github.io/taiwan-mahjong/training.html) · [操作示範與三圖](outputs/taiwan-mahjong-showcase/README.md) · [開發與維護入口](outputs/taiwan-mahjong/README.md)**
+**[立即遊玩](https://zhai2liu.github.io/taiwan-mahjong/) · [從零入門](https://zhai2liu.github.io/taiwan-mahjong/learn.html) · [決策題試讀](https://zhai2liu.github.io/taiwan-mahjong/training.html) · [操作示範與畫面](outputs/taiwan-mahjong-showcase/README.md) · [開發與維護入口](outputs/taiwan-mahjong/README.md)**
 
 此專案使用 AI 協作開發。開發工具與遊戲內電腦是不同概念：遊戲內使用本地策略，無需模型 API、登入或後端。
 
