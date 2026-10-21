@@ -16,8 +16,8 @@
 |---|---|
 | **已上線** | 完整對戰、台型與台數明細、本機續局、純牌效練習、六步操作導覽、即時輔助／打牌與吃碰後解釋、局後最多三筆檢討與同類練習入口 |
 | **可試讀原型** | 九道情境題，四類能力導引、手動本機保存續答；先作答再看推導、回饋與作答匯出、曝光自陳與未存離頁提醒；不計整體牌技分數 |
-| **入門試用版** | 前三課認牌／摸打補花／組牌，固定示例與換例、獨立本機進度；已發布，限定驗收見HANDOFF |
-| **後續工作** | 新手第4–8課、前三課真人試用、題族／難度校準、正式無提示評量與成效驗證 |
+| **入門試用版** | 第1–6課認牌／摸打補花／組牌／吃碰槓／聽胡過水／結算，固定示例與換例、獨立本機進度；限定驗收與發布見HANDOFF |
+| **後續工作** | 第7–8課整局教學／實桌準備，題族／難度校準及正式評量；真人理解與成效仍待驗，不阻擋課程開發 |
 | **離線研究** | 人性化 AI、牌風與阻莊；現行正式電腦策略尚未整合人格 |
 
 固定桌規為 [TW16-CLASSIC-v1](outputs/taiwan-mahjong-m0/RULES.md)，是本專案選定的台灣十六張變體。桌面優先；窄畫面與鍵盤已有驗收，指定手機／Safari 的支援承諾待實機驗證。
@@ -91,6 +91,8 @@ flowchart TD
 
 上述需求、方向、實際操作回饋與AI協作分工，已於2026-10-17由專案擁有者確認符合實際；[確認紀錄](outputs/taiwan-mahjong/S51-DEMO-VALIDATION.md)不推定個人技能或手寫比例。
 
+2026-10-21起依使用者常設分工，Codex負責需求、設計與最終驗收，Claude Code負責軟體實作及自測；規劃與文件整理由Codex處理。歷史階段的模型分工保留當時紀錄，現行工作規範見根目錄AGENTS.md。
+
 ## 開發與驗證
 
 TypeScript、Vite、原生 HTML／CSS／SVG；無執行時套件。Node 24.12.0 為 CI 基準，依 lockfile 安裝。
@@ -112,6 +114,8 @@ npm run preview -- --port 4173
 [版本回復演練與來源盤點](outputs/taiwan-mahjong/S52-RELEASE-PREPARATION.md)記錄舊版→新版的五種本機資料保留、結算不重付與發布草稿；既有分工已由本人確認，另擬履歷摘要、公開授權及實際Release仍待決定。
 
 ## 文件與後續範圍
+
+[完整文件分類索引](outputs/taiwan-mahjong/DOCUMENTATION.md)收錄現行規格、研究提案、階段驗收與歷史交接；接手工作先讀[現行交接](outputs/taiwan-mahjong/HANDOFF.md)，再依工作包路線確認範圍。
 
 [現行方向](outputs/taiwan-mahjong/PRODUCT-DIRECTION.md) · [全面強化企畫](outputs/taiwan-mahjong/MASTER-IMPROVEMENT-PLAN.md) · [工作包路線](outputs/taiwan-mahjong/ROADMAP.md) · [維護指南](outputs/taiwan-mahjong/MAINTENANCE.md) · [部署與回復](outputs/taiwan-mahjong/DEPLOYMENT.md)
 

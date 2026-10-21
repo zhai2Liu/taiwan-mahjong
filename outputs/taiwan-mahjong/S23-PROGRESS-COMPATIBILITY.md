@@ -1,5 +1,7 @@
 # S2.3進度相容：實裝前候選規格
 
+2026-10-21定稿並啟動：使用者要求先推課程，本規格的另鍵／明確帶入／舊原文保留方案採納。前三課內容語義、提示與完成條件保持，三種旗標逐位複製；schema2、beginner-1-8-v1八筆封套只開六課，7–8保持false。C01–C12須實際驗收；下列「尚未實裝」是原提案時間狀態，最新實作／發布依[S2.3驗收](S23-INTEGRATION-VALIDATION.md)及[HANDOFF](HANDOFF.md)。
+
 2026-10-18。這是後五課整合前的保存設計，**目前未實裝、未新增任何本機鍵，也未放行第4–8課互動整合**。正式整合仍先依[前三課試用](BEGINNER-TRIAL.md)與修訂結果，凍結課文、完成條件及下述對照。現行三課契約仍以[BEGINNER-LEARNING](BEGINNER-LEARNING.md)及[src/learning-progress.ts](src/learning-progress.ts)為準。
 
 ## 建議：新八課紀錄另存，保留舊三課原文

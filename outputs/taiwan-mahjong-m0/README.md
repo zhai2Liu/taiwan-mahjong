@@ -1,6 +1,6 @@
 # 第一階段 M0：台灣麻將規格與案例
 
-後續進度（2026-10-04）：[M1 規則核心](../taiwan-mahjong/README.md) 已完成。以下保留 M0 當時的交付與驗證界線；最新續作入口見 [M1 交接](../taiwan-mahjong/M1-HANDOFF.md)。
+本目錄保留 M0 凍結規格與當時驗證；RULES仍是桌規權威，CONTRACTS為概念契約。接續工作請讀[現行交接](../taiwan-mahjong/HANDOFF.md)與[文件總索引](../taiwan-mahjong/DOCUMENTATION.md)。下文「尚未開始」及下一階段均指2026-10-04的歷史狀態。
 
 完成日期：2026-10-04｜規則：TW16-CLASSIC-v1｜凍結文件版：M0.1
 

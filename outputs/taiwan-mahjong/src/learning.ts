@@ -1,12 +1,14 @@
-import { node, button, tileName } from './view.js';
+import { node, button, tileName, scoreLines } from './view.js';
 import { tileFace } from './tile-face.js';
-import { kindOf } from './tiles.js';
+import { kindOf, seatWind } from './tiles.js';
 import { legalActions } from './engine.js';
-import { isWinningHand } from './hand.js';
-import type { GameState, Meld, Seat } from './model.js';
+import { isWinningHand, winningTiles } from './hand.js';
+import type { GameState, Intent, Meld, Seat } from './model.js';
 import { lessons, recognitionQuestions, createTeachingRound, runTeachingOthers, teachingStep, resolveTeachingDiscard, compositionTiles, collectGroup, collectPair, completedComposition, invalidHandChoices } from './learning-model.js';
-import { LEARN_KEY, COURSE_VERSION, emptyProgress, decodeLearningProgress, encodeLearningProgress, markLesson, saveLearningProgress } from './learning-progress.js';
-import type { LearningProgress, LessonProgress } from './learning-progress.js';
+import { kinds, has, act, discardKind, settleClaims, chiExample, ponExample, priorityExample, PRIORITY_CHOICES, closedKongExample, openKongExample, addedKongExample, lesson4Limits,
+  WAIT_HAND, WAIT_TRANSFER_HAND, ronExample, selfDrawExample, changeWaitExample, ownDiscardExample, settlementGuided, settlementTransfer, nextHand, settlementSupplements } from './learning-fixtures.js';
+import { LEARN_KEY, LEGACY_LEARN_KEY, COURSE_VERSION, OPEN_LESSONS, emptyProgress, decodeLearningProgress, decodeLegacyLearningProgress, encodeLearningProgress, markLesson, saveLearningProgress, importLearningProgress } from './learning-progress.js';
+import type { LegacyLearningProgress, LessonProgress } from './learning-progress.js';
 
 const root = document.querySelector<HTMLElement>('#lesson')!, progressPanel = document.querySelector<HTMLElement>('#learning-progress')!;
 const feedback = document.querySelector<HTMLElement>('#lesson-feedback')!;
@@ -17,10 +19,14 @@ const reportNote = document.querySelector<HTMLTextAreaElement>('#learning-feedba
 const reportStatus = document.querySelector<HTMLElement>('#learning-feedback-status')!;
 let reportExportSnapshot: string | undefined;
 let progress = emptyProgress(), raw: string | null | undefined, blocked = false, dirty = false, busy = false, saveNotice = '';
-let index = 0, stage: 'read' | 'guided' | 'transfer' | 'done' = 'read', assisted = false, step = 0;
+/** Old three-lesson record awaiting an explicit choice; only set while the new record is missing. */
+type Legacy = { kind: 'valid'; raw: string; progress: LegacyLearningProgress } | { kind: 'bad'; raw: string } | { kind: 'unreadable' };
+let legacy: Legacy | null = null, legacyDownloadNotice = '';
+let index = 0, stage: 'read' | 'guided' | 'transfer' | 'done' = 'read', assisted = false, step = 0, detail = '';
 let round: GameState | null = null, remaining: string[] = [], groups: Meld[] = [], pair: string[] = [], selected = new Set<string>(), assemblyDone = false;
 const warnLeave = (event: BeforeUnloadEvent) => { event.preventDefault(); event.returnValue = 'true'; };
 function syncLeaveGuard(): void { window.removeEventListener('beforeunload', warnLeave); if (dirty || reportNote.value.trim() || reportDevice.value.trim()) window.addEventListener('beforeunload', warnLeave); }
+const openLessons = () => progress.lessons.slice(0, OPEN_LESSONS);
 
 const reportSnapshot = () => JSON.stringify([reportScope.value, reportDevice.value, reportNote.value]);
 function updateReportStatus(): void {
@@ -41,14 +47,14 @@ function setupReport(): void {
     const stageName = { read: '圖解', guided: '親手做示範', transfer: '換例自己試', done: '本段完成' }[stage];
     const entry = document.querySelector<HTMLScriptElement>('script[type="module"][src]')?.getAttribute('src') ?? '未記錄';
     preview.value = [
-      '台灣十六張前三課試用回饋（供人工核對）',
+      '台灣十六張第1–6課入門試用回饋（供人工核對）',
       `匯出時間：${new Date().toISOString()}`, `課程版本：${COURSE_VERSION}；桌規：TW16-CLASSIC-v1`,
       `匯出頁面：${location.origin}${location.pathname}`, `匯出時頁面程式：${entry}`,
       `回饋範圍：${reportScope.value}`, `裝置與瀏覽器（自述）：${reportDevice.value.trim() || '未提供'}`,
       `匯出時所在畫面：第${index + 1}課 ${lessons[index].title}／${stageName}`,
       '', '玩家回饋原文：', reportNote.value, '',
       '本頁進度快照（累積紀錄，可能來自先前練習，不代表本次理解或首次完成）：',
-      ...(blocked ? ['進度來源未確認：讀取或衝突未解，本次不列完成旗標。'] : progress.lessons.map((p, i) => `第${i + 1}課：已閱讀${p.read ? '是' : '否'}／提示下完成${p.guided ? '是' : '否'}／換例自行完成${p.independent ? '是' : '否'}`)),
+      ...(blocked ? ['進度來源未確認：讀取或衝突未解，本次不列完成旗標。'] : openLessons().map((p, i) => `第${i + 1}課：已閱讀${p.read ? '是' : '否'}／提示下完成${p.guided ? '是' : '否'}／換例自行完成${p.independent ? '是' : '否'}`)),
       `保存狀態：${blocked ? '讀取或衝突未解，無法確認與保存檔一致' : dirty ? '本頁有尚未保存的進度' : '本頁旗標與最後讀取或保存的紀錄一致'}`,
       '', '此檔不是作答紀錄或正式驗收，不自動判定真人來源、曝光或學習成效；未包含未完成操作的續存資料。',
       '請自行附回專案對話。提供回饋不等於同意公開原文、截圖或個人資訊。',
@@ -64,18 +70,36 @@ function setupReport(): void {
     finally { if (url) { const old = url; setTimeout(() => URL.revokeObjectURL(old), 1000); } syncLeaveGuard(); }
   });
 }
+function readLegacy(): Legacy | null {
+  let text: string | null;
+  try { text = localStorage.getItem(LEGACY_LEARN_KEY); } catch { return { kind: 'unreadable' }; }
+  if (text === null) return null;
+  try { return { kind: 'valid', raw: text, progress: decodeLegacyLearningProgress(text) }; } catch { return { kind: 'bad', raw: text }; }
+}
+const legacyNotice = (old: Legacy) => old.kind === 'valid' ? '找到舊版前三課紀錄。可以先在本頁練習；保存前請在下方選擇帶入或從新版開始。'
+  : '舊版前三課紀錄無法使用，不會帶入，原紀錄不動。保存前請在下方確認從新版開始。';
 function loadProgress(): void {
   let candidate: string | null | undefined;
   try {
     candidate = localStorage.getItem(LEARN_KEY); const loaded = decodeLearningProgress(candidate);
+    // A valid new record never depends on the old one; the old record is only consulted when the new one is missing.
+    const old = candidate === null ? readLegacy() : null;
     // Commit a reread only after validation; failed reads keep in-page progress and its leave guard.
-    raw = candidate; progress = loaded; blocked = false; dirty = false; saveNotice = '已讀取此瀏覽器的學習進度。';
+    raw = candidate; progress = loaded; blocked = false; dirty = false; legacy = old; legacyDownloadNotice = '';
+    saveNotice = old ? legacyNotice(old) : '已讀取此瀏覽器的學習進度。';
   }
   catch { raw = candidate; blocked = true; saveNotice = raw === undefined ? '無法讀取學習進度；本頁紀錄仍保留，可在本頁練習，但不會覆寫未知原檔。' : '學習進度損壞或版本不符，原檔已保留；本頁紀錄仍保留，可在本頁練習，重新建立須確認。'; }
   syncLeaveGuard(); renderProgress();
 }
+/** Disables progress-changing lesson/navigation controls while a write waits; returns the restore step. */
+function freezeControls(): () => void {
+  const controls = Array.from(document.querySelectorAll<HTMLButtonElement>('#lesson button, #lesson-nav button')).map(b => ({ b, disabled: b.disabled }));
+  controls.forEach(({ b }) => b.disabled = true);
+  return () => controls.forEach(({ b, disabled }) => { if (b.isConnected) b.disabled = disabled; });
+}
 async function save(): Promise<void> {
   if (busy || blocked || raw === undefined || !dirty) return;
+  if (legacy) { saveNotice = '尚未決定如何處理舊版紀錄，本頁完成暫不保存；請在進度區選擇。'; renderProgress(); return; }
   busy = true; renderProgress(); const captured = progress; let saved = false;
   try { raw = await saveLearningProgress(localStorage, raw, captured); dirty = encodeLearningProgress(progress) !== raw; saved = true; saveNotice = dirty ? '還有新變更待保存。' : '已保存新手進度；未完成操作不續存。'; }
   catch (error) {
@@ -85,32 +109,98 @@ async function save(): Promise<void> {
   finally { busy = false; syncLeaveGuard(); renderProgress(); }
   if (saved && dirty) void save();
 }
+async function importLegacy(captured: string): Promise<void> {
+  if (busy || dirty || blocked || raw !== null) return;
+  busy = true; const restore = freezeControls(); renderProgress(); let reread = '';
+  try {
+    const saved = await importLearningProgress(localStorage, captured);
+    raw = saved; progress = decodeLearningProgress(saved); legacy = null; dirty = false;
+    saveNotice = '已帶入並另存新版進度；舊版前三課紀錄原樣保留。之後在舊版新增的完成不會自動同步。';
+  } catch (error) {
+    const code = error instanceof Error ? error.message : '';
+    if (code === 'LEARNING_LEGACY_CHANGED') reread = '舊版紀錄已在其他頁變更，沒有帶入；請看新的預覽後再決定。';
+    else if (code === 'LEARNING_CONFLICT') reread = '另一頁已建立新版紀錄，沒有帶入，也沒有覆蓋；已改讀新版紀錄。';
+    else saveNotice = '帶入沒有完成（其他頁正在保存、瀏覽器不支援或空間不足）。舊版紀錄與本頁內容都保留，可稍後重試。';
+  } finally { busy = false; restore(); syncLeaveGuard(); }
+  // Nothing unsaved exists here (import is offered only before new work), so a fresh read is safe.
+  if (reread) { loadProgress(); if (!blocked) saveNotice = reread; }
+  renderProgress();
+}
+async function startFresh(): Promise<void> {
+  if (busy || blocked || raw !== null || !legacy) return;
+  if (!confirm(`另建新版第1–6課進度，不帶入舊版紀錄；舊版紀錄保留不動。${dirty ? '本頁尚未保存的完成會一起保存。' : ''}確定？`)) return;
+  busy = true; const restore = freezeControls(); renderProgress(); const captured = progress;
+  try { raw = await saveLearningProgress(localStorage, null, captured); legacy = null; dirty = encodeLearningProgress(progress) !== raw; saveNotice = '已建立新版進度；舊版前三課紀錄原樣保留，之後不會自動同步。'; }
+  catch (error) {
+    if (error instanceof Error && error.message === 'LEARNING_CONFLICT') { blocked = true; saveNotice = '另一頁已建立新版紀錄，停止覆寫。本頁未存紀錄仍保留；重新讀取前會確認放棄。'; }
+    else saveNotice = '新版進度未能建立，舊版紀錄與本頁內容都保留，可稍後重試。';
+  }
+  finally { busy = false; restore(); syncLeaveGuard(); renderProgress(); }
+}
 function mark(kind: keyof LessonProgress): void { progress = markLesson(progress, index, kind); dirty = true; syncLeaveGuard(); renderProgress(); void save(); }
+function renderLegacy(old: Legacy): HTMLElement {
+  const box = node('section', 'legacy-panel'); box.setAttribute('aria-label', '舊版學習紀錄');
+  box.append(node('h3', '', '舊版前三課學習紀錄'));
+  if (old.kind === 'valid') {
+    box.append(node('p', '', '帶入時照舊紀錄原值，沒完成的不會補成完成：'));
+    const list = node('ul', 'progress-list');
+    old.progress.lessons.forEach((p, i) => list.append(node('li', '', `第${i + 1}課：已閱讀${p.read ? ' ✓' : ' —'} · 提示下完成${p.guided ? ' ✓' : ' —'} · 換例自行完成${p.independent ? ' ✓' : ' —'}`)));
+    list.append(node('li', '', '第4–6課：新課，從未開始。'));
+    box.append(list, node('p', '', '帶入後另存新版進度；舊版紀錄保留不動，之後在舊版新增的完成不會自動同步。未完成的操作仍不續存。'));
+    if (dirty) box.append(node('p', '', '本頁已有尚未保存的新完成，不能直接帶入以免蓋掉。可選「從新版重新開始」保存本頁紀錄；或先重新讀取（放棄本頁未存內容）再帶入。'));
+  } else box.append(node('p', '', old.kind === 'bad' ? '舊版紀錄損壞或版本不符，不會帶入；原紀錄保留不動。' : '舊版紀錄讀不到，不會帶入，也不會改動它。'));
+  const actions = node('div', 'lesson-actions');
+  if (old.kind === 'valid') actions.append(button('帶入現有進度', 'learn-import', () => { void importLegacy(old.raw); }, '', busy || dirty || blocked));
+  actions.append(button('從新版重新開始', 'learn-fresh', () => { void startFresh(); }, '', busy || blocked));
+  box.append(actions);
+  if (old.kind !== 'unreadable') {
+    const label = node('label', '', '舊版紀錄原文（唯讀，可複製）'), text = node('textarea'); label.htmlFor = 'legacy-raw';
+    text.id = 'legacy-raw'; text.readOnly = true; text.rows = 3; text.value = old.raw;
+    box.append(label, text, button('下載舊版紀錄原文', 'learn-legacy-download', () => {
+      let url: string | undefined;
+      try {
+        url = URL.createObjectURL(new Blob([old.raw], { type: 'application/json;charset=utf-8' }));
+        const link = node('a'); link.href = url; link.download = 'taiwan-mahjong-learning-v1.json'; link.click();
+        legacyDownloadNotice = '已交由瀏覽器下載，請自行確認檔案；舊版紀錄仍留在此瀏覽器。';
+      } catch { legacyDownloadNotice = '下載未成功；可複製上方原文。舊版紀錄仍留在此瀏覽器，沒有任何變更。'; }
+      finally { if (url) { const done = url; setTimeout(() => URL.revokeObjectURL(done), 1000); } renderProgress(); }
+    }, ''));
+    if (legacyDownloadNotice) box.append(node('p', 'muted', legacyDownloadNotice));
+  }
+  return box;
+}
 function renderProgress(): void {
   const focused = progressPanel.contains(document.activeElement) ? (document.activeElement as HTMLElement).dataset.focus : undefined;
   progressPanel.replaceChildren(node('h2', '', '本機學習進度'));
   const notice = node('p', '', saveNotice || '紀錄只存在此瀏覽器，不是證書或牌技分數。'); notice.id = 'save-notice'; notice.dataset.focus = 'learn-save-notice'; notice.tabIndex = -1; notice.setAttribute('role', 'status'); progressPanel.append(notice);
   const list = node('ul', 'progress-list');
-  progress.lessons.forEach((p, i) => list.append(node('li', '', `第${i + 1}課：已閱讀${p.read ? ' ✓' : ' —'} · 提示下完成${p.guided ? ' ✓' : ' —'} · 換例自行完成${p.independent ? ' ✓' : ' —'}`))); progressPanel.append(list);
+  openLessons().forEach((p, i) => list.append(node('li', '', `第${i + 1}課：已閱讀${p.read ? ' ✓' : ' —'} · 提示下完成${p.guided ? ' ✓' : ' —'} · 換例自行完成${p.independent ? ' ✓' : ' —'}`)));
+  list.append(node('li', '', '第7–8課：尚未開放。')); progressPanel.append(list);
+  if (legacy && raw === null && !blocked) progressPanel.append(renderLegacy(legacy));
   const actions = node('div', 'lesson-actions');
-  if (dirty) actions.append(button('重試保存進度', 'learn-retry', () => { void save(); }, '', busy || blocked));
+  if (dirty && !legacy) actions.append(button('重試保存進度', 'learn-retry', () => { void save(); }, '', busy || blocked));
   actions.append(button('重新讀取保存紀錄', 'learn-load', () => {
     if (dirty && !confirm('重新讀取成功後會放棄本頁尚未保存的新手紀錄，未完成操作仍不續存。確定？')) return;
     loadProgress();
   }, '', busy));
   actions.append(button('重新建立新手進度', 'learn-reset', async () => {
-    if (raw === undefined || !confirm('只重建前三課的學習進度，清除已閱讀與完成標記，目前教學操作回到圖解；對戰、練習及檢討不變。確定？')) return;
-    busy = true; renderProgress();
-    const controls = Array.from(document.querySelectorAll<HTMLButtonElement>('#lesson button, #lesson-nav button')).map(b => ({ b, disabled: b.disabled }));
-    controls.forEach(({ b }) => b.disabled = true);
-    try { const next = emptyProgress(); raw = await saveLearningProgress(localStorage, raw, next); progress = next; dirty = false; blocked = false; stage = 'read'; saveNotice = '新手進度已重新建立；其他存檔不變。'; render(); }
+    if (raw === undefined || !confirm('只重建新版第1–6課的學習進度，清除已閱讀與完成標記，目前教學操作回到圖解；舊版前三課紀錄、對戰、練習及檢討不變。確定？')) return;
+    busy = true; renderProgress(); const restore = freezeControls();
+    try { const next = emptyProgress(); raw = await saveLearningProgress(localStorage, raw, next); progress = next; dirty = false; blocked = false; legacy = null; stage = 'read'; saveNotice = '新手進度已重新建立；其他存檔不變。'; render(); }
     catch { saveNotice = '重新建立失敗或原檔已被其他頁更新；原資料及本頁紀錄保留，請重新讀取後再決定。'; }
-    finally { controls.forEach(({ b, disabled }) => { if (b.isConnected) b.disabled = disabled; }); busy = false; syncLeaveGuard(); renderProgress(); }
+    finally { restore(); busy = false; syncLeaveGuard(); renderProgress(); }
   }, '', busy || raw === undefined));
   progressPanel.append(actions);
   if (focused) (Array.from(progressPanel.querySelectorAll<HTMLElement>('[data-focus]')).find(e => e.dataset.focus === focused && !e.matches(':disabled')) ?? notice).focus({ preventScroll: true });
 }
 window.addEventListener('storage', event => {
+  if (event.key === LEGACY_LEARN_KEY) {
+    // The old record matters only while a choice about it is pending; a valid new record is never blocked by it.
+    if (!legacy || busy || raw !== null || blocked) return;
+    legacy = readLegacy(); legacyDownloadNotice = '';
+    saveNotice = legacy ? '舊版紀錄剛在其他頁變更，已重新預覽；請重新確認。' : '舊版紀錄已在其他頁移除；可直接在新版保存。';
+    renderProgress(); return;
+  }
   if (event.key !== null && event.key !== LEARN_KEY) return;
   blocked = true; saveNotice = '另一頁已更動學習進度，停止覆寫。本頁內容保留；請重新讀取保存紀錄。'; renderProgress();
 });
@@ -122,14 +212,16 @@ function cards(ids: string[]): HTMLElement { const row = node('div', 'learn-tile
 function say(message: string, focus = true): void { feedback.textContent = message; if (focus) feedback.focus(); }
 function mistake(message: string): void { assisted = true; say(message); }
 function start(transfer: boolean): void {
-  mark('read'); stage = transfer ? 'transfer' : 'guided'; assisted = !transfer; step = 0;
-  round = index === 1 ? createTeachingRound(transfer) : null;
+  mark('read'); stage = transfer ? 'transfer' : 'guided'; assisted = !transfer; detail = '';
+  step = transfer && (index === 3 || index === 5) ? 1 : 0;
+  round = index === 1 ? createTeachingRound(transfer) : index === 3 ? chiExample(transfer ? 'p' : 'm')
+    : index === 5 ? (transfer ? settlementTransfer() : settlementGuided()) : null;
   remaining = index === 2 ? compositionTiles(transfer) : []; groups = []; pair = []; selected.clear(); assemblyDone = false;
   render(); say(transfer ? '換一副示例再試。本次看提示、回看圖解或錯答看推導後完成，會列為提示下完成。' : '示範開始。可以犯錯再試；示範完成會列為提示下完成。', false);
 }
-function complete(): void {
+function complete(prefix = ''): void {
   mark(stage === 'transfer' && !assisted ? 'independent' : 'guided'); stage = 'done'; render();
-  say('這段任務完成了！你親手核對了牌與操作。這是本次練習紀錄，還不是陌生題能力或實戰成效。', false);
+  say(`${prefix}這段任務完成了！你親手核對了牌與操作。這是本次練習紀錄，還不是陌生題能力或實戰成效。`, false);
 }
 function safe(action: () => void): void {
   try { action(); }
@@ -234,9 +326,324 @@ function renderComposition(activity: HTMLElement): void {
   groups.forEach((g, i) => { const item = node('div'); item.append(node('p', '', `第${i + 1}組${g.kind === 'concealedKong' ? '（槓）' : ''}`), cards(g.tiles)); collected.append(item); });
   if (pair.length) { const item = node('div'); item.append(node('p', '', '眼睛'), cards(pair)); collected.append(item); } activity.append(collected);
 }
+
+// Lessons 4–6: every claim, discard and settlement below is an engine action on a fixed teaching example.
+const seatNames = ['你', '下家', '對家', '上家'] as const;
+const fromSeat = (seat: number) => [2, 1, 0][seat - 1]; // table(): 0 upper, 1 across, 2 lower
+const names = (ks: string[]) => ks.map(tileName).join('、');
+/** "一二三萬" for a same-suit run. */
+const run = (ks: string[]) => { const sorted = [...ks].sort(); return `${sorted.map(k => tileName(k).slice(0, -1)).join('')}${tileName(sorted[0]).slice(-1)}`; };
+function next(nextStep: number, message: string): void { step = nextStep; render(); say(message, false); }
+function ask(activity: HTMLElement, prompt: string, choices: string[], correct: number, wrong: string, right: () => void): void {
+  activity.append(node('p', '', prompt));
+  const row = node('div', 'lesson-actions');
+  choices.forEach((choice, i) => row.append(button(choice, `ask-${i}`, () => safe(() => { if (i !== correct) { mistake(wrong); return; } right(); }), '')));
+  activity.append(row);
+}
+/** Multi-select without pre-highlighted answers; the answer is checked only after "確認". */
+function pick(activity: HTMLElement, label: string, items: { key: string; label: string; tiles: string[] }[], check: (keys: string[]) => string | null, right: () => void): void {
+  const row = node('div', 'learn-tiles'); row.setAttribute('role', 'group'); row.setAttribute('aria-label', label);
+  for (const item of items) {
+    const b = button('', `pick-${item.key}`, () => { if (selected.has(item.key)) selected.delete(item.key); else selected.add(item.key); b.setAttribute('aria-pressed', String(selected.has(item.key))); }, '');
+    b.dataset.pick = item.key; b.setAttribute('aria-label', item.label); b.setAttribute('aria-pressed', String(selected.has(item.key)));
+    if (!item.tiles.length) b.textContent = item.label;
+    item.tiles.forEach(t => b.append(face(t))); row.append(b);
+  }
+  activity.append(row, button('確認', 'pick-confirm', () => safe(() => { const problem = check([...selected]); if (problem) { mistake(problem); return; } selected.clear(); right(); }), ''));
+}
+function setCheck(answer: string[], extra: (key: string) => string, missing: string): (keys: string[]) => string | null {
+  return keys => { const wrong = keys.find(k => !answer.includes(k)); return wrong ? extra(wrong) : keys.length < answer.length ? missing : null; };
+}
+const intentLabel = (a: Intent) => a.type === 'CHI' ? `吃（用${names(a.ownTiles)}）` : a.type === 'WIN' ? (a.source === 'selfDraw' ? '自摸' : '胡') : a.type === 'KAN_CLOSED' ? `暗槓${tileName(a.ownTiles[0])}`
+  : a.type === 'KAN_ADDED' ? `加槓${tileName(a.tileId)}` : ({ PON: '碰', KAN_OPEN: '明槓', PASS: '過' } as Record<string, string>)[a.type] ?? a.type;
+function claims(activity: HTMLElement, game: GameState, choose: (a: Intent) => void, only: (a: Intent) => boolean = a => a.type !== 'DISCARD'): void {
+  const row = node('div', 'lesson-actions'); row.setAttribute('role', 'group'); row.setAttribute('aria-label', '你可以選的動作');
+  legalActions(game, 0).filter(only).forEach((a, i) => row.append(button(intentLabel(a), `claim-${a.type}-${i}`, () => safe(() => choose(a)), '')));
+  activity.append(row);
+}
+function showHand(activity: HTMLElement, game: GameState): void {
+  const p = game.players[0];
+  activity.append(node('p', '', `你的手牌：手中 ${p.concealed.length} 張${p.melds.length ? `，桌上 ${p.melds.length} 組` : ''}${p.flowers.length ? `，花 ${p.flowers.length} 張` : ''}`), cards(p.concealed));
+  if (p.melds.length) { const shown = node('div', 'grouped-tiles'); p.melds.forEach(m => { const item = node('div'); item.append(node('p', '', '桌上牌組'), cards(m.tiles)); shown.append(item); }); activity.append(shown); }
+}
+/** Same gesture as lesson 2: single click selects, double click/tap or Enter/Space discards; a forbidden tile explains why. */
+function discards(activity: HTMLElement, game: GameState, done: (after: GameState) => void, forbidden: (kind: string) => string): void {
+  const legal = new Set(legalActions(game, 0).flatMap(a => a.type === 'DISCARD' ? [a.tileId] : []));
+  activity.append(node('p', '', '單擊選牌，雙擊同一張或Enter／空白鍵打出。'));
+  const hand = node('div', 'learn-tiles'); hand.setAttribute('role', 'group'); hand.setAttribute('aria-label', '選牌打出');
+  let last: { id: string; time: number } | null = null;
+  const play = (id: string) => safe(() => {
+    last = null;
+    if (!legal.has(id)) { mistake(forbidden(kindOf(id))); return; }
+    done(teachingStep(game, 0, { type: 'DISCARD', tileId: id }));
+  });
+  for (const id of game.players[0].concealed) {
+    const select = () => { for (const b of Array.from(hand.querySelectorAll<HTMLButtonElement>('button'))) b.setAttribute('aria-pressed', String(b.dataset.tile === id)); };
+    const b = button('', `discard-${id}`, event => {
+      if (!event.detail) { play(id); return; }
+      const now = performance.now();
+      // ponytail: same 450ms double-tap window as lesson 2 and battle.
+      if (last?.id === id && now - last.time <= 450) play(id); else { last = { id, time: now }; select(); }
+    }, '');
+    b.dataset.tile = id; b.setAttribute('aria-label', `打出${tileName(id)}`); b.setAttribute('aria-pressed', 'false'); b.append(face(id));
+    b.addEventListener('focus', () => { last = null; select(); });
+    b.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); if (!event.repeat) play(id); } }); hand.append(b);
+  }
+  activity.append(hand);
+}
+
+function renderClaims(activity: HTMLElement): void {
+  const suit = stage === 'transfer' ? 'p' : 'm', two = `2${suit}`, game = round!;
+  if (step <= 3) activity.append(node('p', '', `教學示例：手中有${names(['1' + suit, '3' + suit, '4' + suit])}，另兩門各一四七，加七種字牌。`));
+  if (step === 0) {
+    activity.append(table(1, two)); showHand(activity, game);
+    ask(activity, `圖中是對家打出${tileName(two)}，可以吃嗎？`, ['可以，哪一家打的都能吃', '不行，吃只拿上家的牌'], has(chiExample(suit, 2), 0, 'CHI') ? 0 : 1,
+      '再想想：吃只拿上家的牌；對家打的牌可以考慮合法的碰或胡，不能吃。', () => next(1, '對。吃只拿上家的牌；對家這張可以考慮合法碰或胡，不能吃。現在這張是上家打的。'));
+  } else if (step === 1) {
+    activity.append(table(0, two)); showHand(activity, game);
+    const legal = legalActions(game, 0).flatMap(a => a.type === 'CHI' ? [a.ownTiles.map(kindOf).sort().join(',')] : []);
+    activity.append(node('p', '', `上家打出${tileName(two)}。選出所有能和它湊成連號三張的兩張手牌（可複選），再按確認。`));
+    pick(activity, '候選吃法', [['1', '3'], ['3', '4'], ['1', '4']].map(p => p.map(n => n + suit)).map(p => ({ key: p.join(','), label: p.map(tileName).join('＋'), tiles: p })),
+      setCheck(legal, key => `${names(key.split(','))}加${tileName(two)}不是連號三張，不能吃。`, `還有別的吃法：把${tileName(two)}放在連號中間或前端試試。`),
+      () => next(2, `都找到了：${legal.map(k => run([...k.split(','), two])).join('、')}兩種都合法，選哪一種都可以。`));
+  } else if (step === 2) {
+    activity.append(table(0, two)); showHand(activity, game);
+    activity.append(node('p', '', '選一種吃法。要等這張牌的回應結束才確定由誰取得（胡＞碰／明槓＞吃）。'));
+    claims(activity, game, a => {
+      if (a.type !== 'CHI') return;
+      const own = a.ownTiles.map(kindOf), after = settleClaims(game, { 0: x => x.type === 'CHI' && x.ownTiles.join() === a.ownTiles.join() });
+      if (after.phase !== 'awaitDiscard' || after.turn !== 0) throw new Error('LESSON_CHI_NOT_TAKEN');
+      const left = ['1', '3', '4'].map(n => n + suit).find(k => !own.includes(k))!, ban = after.players[0].restrictions.forbiddenDiscards;
+      round = after;
+      detail = `你用${names(own)}吃成${run([...own, two])}，${tileName(left)}還留在手中。這次不能打：${ban.map(k => `${tileName(k)}（和剛用的${names(own)}又湊成${run([...own, k])}）`).join('、')}。`;
+      next(3, '其他家都選過，這張由你取得。吃後先打一張，不再摸牌。');
+    }, a => a.type === 'CHI');
+  } else if (step === 3) {
+    showHand(activity, game);
+    discards(activity, game, after => {
+      round = resolveTeachingDiscard(after); detail = '';
+      const message = `已吃好並打完：手中${round.players[0].concealed.length}張加桌上一組，接著等下一家的動作。`;
+      if (stage === 'transfer') complete(`${message} `); else { round = ponExample(3); next(4, `${message}接著看碰。`); }
+    }, k => `剛吃完不能立刻打${tileName(k)}：它會和你剛用來吃的兩張湊成順子。換一張打。`);
+  } else if (step === 4) {
+    activity.append(table(0, '5m')); showHand(activity, game);
+    activity.append(node('p', '', `碰的短例：上家打出五萬，你手上有三張五萬。碰可以拿任何一家的牌${has(game, 0, 'KAN_OPEN') ? '' : '；本桌不能明槓上家，所以這裡沒有明槓'}。本例請選碰。`));
+    claims(activity, game, a => {
+      if (a.type !== 'PON') { say('選過也合法，但會記「過碰」：到你下次打牌前不能再碰五萬。本例請選碰。'); return; }
+      round = settleClaims(game, { 0: 'PON' }); detail = '碰可取任一家；手上留下的第四張五萬，這次不能立即打出或加槓。';
+      next(5, '碰到了。先打一張合法的牌，不再摸牌。');
+    });
+  } else if (step === 5) {
+    showHand(activity, game);
+    discards(activity, game, after => { round = resolveTeachingDiscard(after); detail = ''; next(6, '碰後打完了。接著看同一張牌有好幾家要時誰拿到。'); },
+      k => `剛碰完不能立刻打出同種的${tileName(k)}，也不能馬上加槓。換一張，例如白板。`);
+  } else if (step === 6) {
+    const outcomes = PRIORITY_CHOICES.map(c => settleClaims(priorityExample(), c)), taker = (s: GameState) => s.settlement?.winner ?? s.turn;
+    activity.append(node('p', '', '看仲裁：你打出二萬。下家可以吃、對家可以碰、上家剛好能胡。'));
+    ask(activity, '三家都提出要這張時，誰取得？', ['下家（吃）', '對家（碰）', '上家（胡）', '最先按的人'], [1, 2, 3].indexOf(taker(outcomes[0])),
+      '不是比誰快：胡優先於碰／明槓，碰／明槓又優先於吃。', () => {
+        detail = `${seatNames[taker(outcomes[0])]}胡牌取得。若上家選過，由${seatNames[taker(outcomes[1])]}碰；上家、對家都選過，才由${seatNames[taker(outcomes[2])]}吃。沒拿到牌的人手牌不拆開。`;
+        round = closedKongExample(); next(7, '仲裁看順序：胡＞碰／明槓＞吃。接下來分開看三種槓。');
+      });
+  } else if (step === 7) {
+    showHand(activity, game);
+    activity.append(node('p', '', '暗槓短例：你自己有四張五萬，輪到你出牌時可以開槓。'));
+    claims(activity, game, a => { round = teachingStep(game, 0, a); next(8, '已暗槓：四張只算一組。槓後先補一張牌。'); }, a => a.type === 'KAN_CLOSED');
+  } else if (step === 8) {
+    showHand(activity, game);
+    activity.append(button('補牌', 'kong-replace', () => safe(() => {
+      round = act(game, 'engine', 'REPLACE'); const p = round.players[0], total = p.concealed.length + p.melds.reduce((n, m) => n + m.tiles.length, 0);
+      detail = `補到${tileName(round.drawContext.lastTile!)}。暗槓四張只算一組，現在實體共${total}張，仍是五組加眼睛；其他人只看到你有一組暗槓，看不到牌種。`;
+      next(9, '補好了。接著看明槓。');
+    }), ''));
+  } else if (step === 9) {
+    showHand(activity, game);
+    ask(activity, '明槓短例：上家打出五萬，你手上有三張五萬。可以明槓嗎？', ['可以', '不行，本桌不能明槓上家'], has(openKongExample(3), 0, 'KAN_OPEN') ? 0 : 1,
+      '本桌規定不能明槓上家；上家的牌只能考慮吃、碰或胡。', () => { round = openKongExample(2); detail = ''; next(10, '對。改由對家打出五萬，這次可以明槓。'); });
+  } else if (step === 10) {
+    activity.append(table(1, '5m')); showHand(activity, game);
+    activity.append(node('p', '', '對家打出五萬。本例請選明槓。'));
+    claims(activity, game, a => {
+      if (a.type !== 'KAN_OPEN') { say(a.type === 'PON' ? '碰也合法；本例要看明槓，請選明槓。' : '選過也合法；本例要看明槓，請選明槓。'); return; }
+      round = settleClaims(game, { 0: 'KAN_OPEN' }); next(11, '明槓成立，先補牌。');
+    });
+  } else if (step === 11) {
+    showHand(activity, game);
+    activity.append(button('補牌', 'kong-replace', () => safe(() => { round = act(game, 'engine', 'REPLACE'); next(12, `補到${tileName(round.drawContext.lastTile!)}。`); }), ''));
+  } else if (step === 12) {
+    showHand(activity, game);
+    const p = game.players[0], formed = isWinningHand(p.concealed.map(kindOf), p.melds);
+    ask(activity, `補牌後牌型${formed ? '已經完成' : '還沒完成'}。現在可以自摸嗎？`, ['可以，補到就能胡', '不行，這次要先打一張'], has(game, 0, 'WIN') ? 0 : 1,
+      '明槓後到這次打牌前都不能一般自摸；連續補花或再開槓也一樣。這不是過水，是明槓的限制。', () => {
+        round = addedKongExample(); detail = ''; next(13, '對。明槓補成牌型也要先打一張。最後看加槓。');
+      });
+  } else if (step === 13) {
+    showHand(activity, game);
+    activity.append(node('p', '', '加槓短例：你已碰五萬，又摸進第四張五萬。（本例設定你先前放過一次胡，正在過水中；第5課會說明。）'));
+    claims(activity, game, a => { round = teachingStep(game, 0, a); next(14, '加槓要先等其他人能不能搶槓。'); }, a => a.type === 'KAN_ADDED');
+  } else if (step === 14) {
+    showHand(activity, game);
+    activity.append(node('p', '', '下家剛好聽五萬，可以搶槓胡。選一種結果看看：'));
+    const row = node('div', 'lesson-actions');
+    if (has(game, 1, 'WIN')) row.append(button('下家搶槓胡', 'rob-win', () => safe(() => {
+      round = settleClaims(game, { 1: 'WIN' });
+      detail = `下家搶槓胡：你的碰仍是${round.players[0].melds[0].tiles.length}張，第四張五萬歸下家，你不補牌。`; next(15, '加槓被搶，不成槓。');
+    }), ''));
+    row.append(button('下家選過', 'rob-pass', () => safe(() => {
+      round = act(settleClaims(game, { 1: 'PASS' }), 'engine', 'REPLACE'); const p = round.players[0];
+      detail = `無人搶槓，加槓正式成立（${p.melds[0].tiles.length}張一組），過水${p.restrictions.passedWin ? '仍未解除' : '同時解除'}，並已補牌。`; next(15, '加槓成立並補牌。');
+    }), ''));
+    activity.append(row);
+  } else {
+    activity.append(node('p', '', '三種槓分開看：暗槓自己四張、明槓拿別家（不能拿上家）、加槓先等搶槓。'));
+    const row = node('div', 'lesson-actions');
+    row.append(button('看另一種搶槓結果', 'rob-again', () => safe(() => { round = addedKongExample(); detail = ''; next(13, '重新開始加槓短例。'); }), ''),
+      button('完成本課示範', 'claims-finish', () => complete(), ''));
+    activity.append(row);
+  }
+}
+function renderWaits(activity: HTMLElement): void {
+  const transfer = stage === 'transfer', hand = kinds(transfer ? WAIT_TRANSFER_HAND : WAIT_HAND), waits = winningTiles(hand);
+  const waitCheck = (answer: string[], missing: string) => setCheck(answer, k => `${tileName(k)}放進來拆不成五組加眼睛。`, missing);
+  if (step === 0) {
+    activity.append(node('p', '', `教學示例手牌（16張）：再進哪一種牌，就能湊成五組加一對眼睛？可複選，選好按確認。`), cards(hand));
+    const candidates = transfer ? ['1p', '2p', '3p', '4p', '5p', '6p', '7p', '8p', '9p', '5z', '6z', '7z'] : ['1m', '2m', '3m', '4m', '5m', '6m', '7m', '8m', '9m', '1z'];
+    pick(activity, '候選聽口', candidates.map(k => ({ key: k, label: tileName(k), tiles: [k] })),
+      waitCheck(waits, transfer ? '還有聽口沒找到：兩對都可能變成三張，另一對留作眼睛。' : '還有聽口沒找到：重新檢查三四萬的兩端。'),
+      () => next(1, `都找到了：聽${names(waits)}。`));
+  } else if (transfer) {
+    const drawn = act(settleClaims(ronExample(WAIT_TRANSFER_HAND, '2p', '6z')), 'engine', 'DRAW');
+    activity.append(cards(hand));
+    ask(activity, '上家打出二筒時你能胡卻選了過。之後自己摸到發財，牌型完成。現在可以自摸嗎？', ['可以，發財是另一種聽口', '不行，過水還沒解除'], has(drawn, 0, 'WIN') ? 0 : 1,
+      '過水限制全部聽口的胡、自摸和搶槓，不只剛放過的那一種；要打出不在新聽口的牌才解除。', () => complete('對：你分開確認了聽口和當下胡牌資格。'));
+  } else if (step === 1) {
+    activity.append(cards(hand));
+    const ron = legalActions(ronExample(WAIT_HAND, '2m'), 0).find(a => a.type === 'WIN'), self = legalActions(selfDrawExample(WAIT_HAND, '5m'), 0).find(a => a.type === 'WIN');
+    ask(activity, '上家打出二萬，你胡這張，叫什麼？', ['自摸', '胡別人（上家放槍）'], ron?.type === 'WIN' && ron.source === 'ron' ? 1 : 0,
+      '自摸是自己摸進來；別人打出被你胡，打的人叫放槍。', () => next(2, `對。${self ? '自己摸到五萬也能合法胡，那叫自摸。' : ''}本桌不必宣告聽牌，零台也能胡。`));
+  } else if (step === 2) {
+    if (!round) round = ronExample(WAIT_HAND, '2m', '5m');
+    const game = round; activity.append(table(0, '2m'), cards(game.players[0].concealed));
+    activity.append(node('p', '', '上家打出二萬，你可以胡。本示範要看選過的代價：請按「過」。'));
+    claims(activity, game, a => {
+      if (a.type !== 'PASS') { say(`${a.type === 'WIN' ? '這是合法胡牌' : '這也是合法選擇'}；本示範要看選過的代價，請改按「過」。`); return; }
+      round = settleClaims(game); detail = round.players[0].restrictions.passedWin ? '你剛才有合法胡牌機會但選了過，現在尚未解除（過水）。' : '';
+      next(3, '已選過。輪到你時摸一張。');
+    });
+  } else if (step === 3) {
+    showHand(activity, round!);
+    activity.append(button('摸牌', 'wait-draw', () => safe(() => { round = act(round!, 'engine', 'DRAW'); next(4, `摸到${tileName(round.drawContext.lastTile!)}。`); }), ''));
+  } else if (step === 4) {
+    const game = round!; showHand(activity, game);
+    ask(activity, `摸到${tileName(game.drawContext.lastTile!)}，牌型${isWinningHand(game.players[0].concealed.map(kindOf)) ? '完成了' : '未完成'}。現在可以自摸嗎？`, ['可以', '不行，還在過水中'], has(game, 0, 'WIN') ? 0 : 1,
+      '你剛才有合法胡牌機會但選了過，現在尚未解除。過水限制全部聽口，不只剛放過的二萬。', () => next(5, '對。牌型完成不等於現在合法能胡。'));
+  } else if (step === 5) {
+    showHand(activity, round!);
+    activity.append(button('打回五萬', 'wait-discard-5m', () => safe(() => {
+      const after = discardKind(round!, 0, '5m'), p = after.players[0];
+      detail = `打回五萬後仍聽${names(winningTiles(p.concealed.map(kindOf)))}；五萬還在新聽口內，所以過水${p.restrictions.passedWin ? '沒有解除' : '已解除'}。`;
+      round = act(settleClaims(ronExample(WAIT_HAND, '2m', '9m 2m')), 'engine', 'DRAW');
+      next(6, '換一個走法：同一副牌放過二萬後，改摸到九萬。');
+    }), ''));
+  } else if (step === 6) {
+    const game = round!; showHand(activity, game);
+    activity.append(node('p', '', '過水中摸到九萬。打哪一張，可以保持聽二萬、五萬，並解除過水？'));
+    discards(activity, game, after => {
+      const p = after.players[0], kept = winningTiles(p.concealed.map(kindOf)).join() === waits.join(), tile = tileName(p.discardHistory.at(-1)!.tileId);
+      if (p.restrictions.passedWin) { mistake(`${tile}還在打後的新聽口內，過水沒有解除。`); return; }
+      if (!kept) { mistake(`打${tile}雖然解除過水，但不再聽二萬、五萬了。本例請保留原聽口。`); return; }
+      let s = act(resolveTeachingDiscard(after), 'engine', 'DRAW'); s = discardKind(s, 1, '2m'); round = s;
+      detail = `打出的${tile}不在新聽口內，出牌後過水已解除。`; next(7, '下家接著打出二萬。');
+    }, () => '這張現在不能打。');
+  } else if (step === 7) {
+    const game = round!; activity.append(table(fromSeat(1), '2m')); showHand(activity, game);
+    claims(activity, game, a => {
+      if (a.type !== 'WIN') { say('本例要確認已能合法胡，請按「胡」。'); return; }
+      const won = settleClaims(game, { 0: 'WIN' });
+      detail = `合法胡牌（胡別人，下家放槍），本例${won.settlement!.score!.tai}台。過水在你打出九萬時已解除。`;
+      round = changeWaitExample(); next(8, '最後看一個反例：換聽不等於解除。');
+    });
+  } else {
+    const game = round!, after = winningTiles(game.players[0].concealed.map(kindOf));
+    activity.append(node('p', '', '另一種情況：過水中摸到五萬，改打四筒。打後手牌如下。新聽口有哪些？（可複選）'), cards(game.players[0].concealed));
+    pick(activity, '候選聽口', ['1p', '2p', '3p', '4p', '5p', '6p', '7p', '8p', '9p'].map(k => ({ key: k, label: tileName(k), tiles: [k] })),
+      waitCheck(after, '還有聽口沒找到：留下的筒子是二三四五六，前、中、後都試試。'),
+      () => complete(`新聽口是${names(after)}；打出的四筒仍在其中，所以過水${game.players[0].restrictions.passedWin ? '沒有解除' : '已解除'}。換聽不等於解除。`));
+  }
+}
+const windLabel = (s: GameState, seat: number) => `${'東南西北'[Number(seatWind(seat as Seat, s.dealer)[0]) - 1]}門${seat === 0 ? '（你）' : ''}`;
+const signed = (n: number) => n > 0 ? `＋${n}` : n < 0 ? `−${-n}` : '0';
+function renderSettlement(activity: HTMLElement): void {
+  const game = round!, transfer = stage === 'transfer';
+  if (step === 0) {
+    activity.append(node('p', '', `教學示例：你是東門莊家，本局開始時連${game.streak}。剛摸進${tileName(game.drawContext.lastTile!)}。花：`), cards(game.players[0].flowers));
+    showHand(activity, game);
+    claims(activity, game, a => { round = teachingStep(game, 0, a); next(1, '已自摸，結算已完成。下面只讀這次結算，不會重算或再付一次。'); }, a => a.type === 'WIN');
+    return;
+  }
+  const result = game.settlement!, score = result.score!, winner = result.winner!, payers = [0, 1, 2, 3].filter(s => result.delta[s] < 0);
+  activity.append(node('p', '', transfer ? `教學示例：莊家東門本局開始時連${game.streak}。南門已吃一二三萬，西門打出紅中，南門胡。` : `東門莊家（你）連${game.streak}自摸。`));
+  activity.append(node('p', '', `${windLabel(game, winner)}的花：`), cards(game.players[winner].flowers));
+  const lines = node('ul', 'progress-list'); lines.setAttribute('aria-label', '胡牌明細');
+  scoreLines(score).forEach(line => lines.append(node('li', '', `${line.reason}：${line.tai}台`)));
+  activity.append(lines, node('p', '', `牌型合計 ${score.tai} 台（還不含每筆付款的莊家／連莊台）。`));
+  if (detail) activity.append(node('p', 'learn-note', detail));
+  const wind = Number(seatWind(winner, game.dealer)[0]), flowers = game.players[winner].flowers;
+  if (step === 1) {
+    const answer = flowers.filter(f => [wind, wind + 4].includes(Number(kindOf(f)[1])));
+    activity.append(node('p', '', `${windLabel(game, winner)}的花裡，哪幾張是本門正花、有台？（可複選）`));
+    pick(activity, '花牌', flowers.map(f => ({ key: f, label: tileName(f), tiles: [f] })),
+      setCheck(answer, f => `${tileName(f)}不是${windLabel(game, winner)}的正花。正花看門風：東春梅、南夏蘭、西秋菊、北冬竹。`, '還有正花沒選：正花看門風，東春梅、南夏蘭、西秋菊、北冬竹。'),
+      () => next(2, `你分清了${flowers.length}張花和${answer.length}張正花。`));
+  } else if (step === 2) {
+    activity.append(node('p', '', '這次誰要付款？（可複選）'));
+    pick(activity, '付款的人', [0, 1, 2, 3].filter(s => s !== winner).map(s => ({ key: String(s), label: windLabel(game, s), tiles: [] })),
+      setCheck(payers.map(String), () => result.source === 'selfDraw' ? '一般自摸由其他三家各付。' : '胡別人只由放槍的一家付，其他人不付。', result.source === 'selfDraw' ? '一般自摸由其他三家各付，還有人沒選。' : '胡別人由放槍的一家付。'),
+      () => next(3, `付款的是${payers.map(s => windLabel(game, s)).join('、')}。`));
+  } else if (step === 3) {
+    const payer = payers.find(s => s === game.dealer) ?? payers[0], amount = -result.delta[payer], dealerPays = [winner, payer].includes(game.dealer);
+    const choices = [...new Set([30 + 10 * score.tai, 30 + 10 * (score.tai + 1), 30 + 10 * (score.tai + 1 + 2 * game.streak), amount])].sort((a, b) => a - b);
+    ask(activity, `${windLabel(game, payer)}付多少分？（一底30、每台10）`, choices.map(n => `${n}分`), choices.indexOf(amount),
+      `一底30＋每台10。這筆${dealerPays ? `涉及莊家，要加莊家1台及連莊${2 * game.streak}台` : '沒有涉及莊家，不加莊家和連莊台'}。`, () => {
+        detail = `四家分數變動：${[0, 1, 2, 3].map(s => `${windLabel(game, s)} ${signed(result.delta[s])}`).join('、')}。本局只付一次，重看畫面不會再付。`;
+        next(4, `對：${dealerPays ? `30＋10×(${score.tai}＋1＋${2 * game.streak})` : `30＋10×${score.tai}`}＝${amount}分。`);
+      });
+  } else {
+    const after = nextHand(game), stay = after.dealer === game.dealer;
+    ask(activity, '下一局誰當莊？', [`東門續莊，連${game.streak + 1}`, `南門接莊（原莊家的下家），連0`], stay ? 0 : 1,
+      '莊家胡或流局才連莊；閒家胡由原莊家的下家接莊，不是胡的人坐莊。', () => complete(`下一局由本局的${windLabel(game, after.dealer).replace('（你）', '')}當莊，連${after.streak}。`));
+  }
+}
+function supplement(): HTMLElement | null {
+  if (![3, 4, 5].includes(index)) return null;
+  const box = node('details', 'learn-note'); box.append(node('summary', '', '補充短例（完成主線後再看）'));
+  const list = node('ul'); box.append(list); const add = (text: string) => list.append(node('li', '', text));
+  try {
+    if (index === 3) {
+      const limit = lesson4Limits();
+      add(`牌尾可用牌只剩3張以內，不能吃、碰、明槓：本例剩4張時有${limit.chiAt4}種吃法，剩3張時${limit.chiAt3}種。`);
+      add(`放棄合法的碰會記「過碰」：到你下次打牌前，同種牌再出現${limit.ponAfterPass ? '仍可' : '也不能'}碰；摸牌或補花不會清除。`);
+      add(`自己最後打出的同種牌，${limit.claimOwnLast ? '仍可' : '暫時不能'}回吃或回碰。`);
+      add('明槓後到這次打牌前不能一般自摸；連續補花或再開暗槓、加槓也不能繞過。');
+    } else if (index === 4) {
+      add(`曾打過某張牌，不會因此一律不能胡它：本例你剛打過二萬，上家再打二萬時${has(ownDiscardExample(), 0, 'WIN') ? '仍可' : '不能'}合法胡。`);
+      add('被別人攔胡不算自願放過；放棄合法自摸也會過水；摸花、暗槓不會自行解除；加槓要沒被搶、正式成立才解除。');
+      add('本課不把桌上看得到的牌數比例當成下一張一定摸中的機率。');
+    } else {
+      const x = settlementSupplements(), z = x.zeroTai, moved = nextHand(x.dealerMoves), drawn = nextHand(x.exhaustiveDraw);
+      add(`自摸不一定同額：南門閒家自摸${x.nonDealerSelfDraw.settlement!.score!.tai}台，東門莊家付${-x.nonDealerSelfDraw.settlement!.delta[0]}，西、北各付${-x.nonDealerSelfDraw.settlement!.delta[2]}，南門共收${x.nonDealerSelfDraw.settlement!.delta[1]}。`);
+      add(`換莊不等於胡的人坐莊：西門胡北門放槍，下一局由${windLabel(x.dealerMoves, moved.dealer).replace('（你）', '')}當莊。`);
+      add(`零台也能胡：本例${z.settlement!.score!.tai}台，兩家都不是莊家，放槍的${windLabel(z, z.settlement!.delta.findIndex(n => n < 0))}付${-Math.min(...z.settlement!.delta)}分（一底）。`);
+      add(`花槓取代正花：持春夏秋冬梅時，明細是${scoreLines(x.flowerKong.settlement!.score!).map(l => `${l.reason}${l.tai}台`).join('、')}，共${x.flowerKong.settlement!.score!.tai}台。`);
+      add(`流局：四家分數都不變（${x.exhaustiveDraw.settlement!.delta.map(signed).join('／')}），莊家留莊，下一局連${drawn.streak}。`);
+    }
+  } catch { add('補充短例未能套用；正常牌局與進度不受影響。'); }
+  return box;
+}
 function render(): void {
   const nav = document.querySelector<HTMLElement>('#lesson-nav')!; nav.replaceChildren();
-  lessons.forEach((l, i) => { const b = button(`${i + 1}. ${l.title}`, `lesson-${i}`, () => { index = i; stage = 'read'; render(); say('可跳課；本頁未完成的操作不續存，已保存完成紀錄保留。', false); }, ''); if (i === index) b.setAttribute('aria-current', 'step'); nav.append(b); });
+  const go = (i: number) => { index = i; stage = 'read'; round = null; detail = ''; render(); say('可跳課；本頁未完成的操作不續存，已保存完成紀錄保留。', false); };
+  lessons.forEach((l, i) => { const b = button(`${i + 1}. ${l.title}`, `lesson-${i}`, () => go(i), ''); if (i === index) b.setAttribute('aria-current', 'step'); nav.append(b); });
   root.replaceChildren(); const heading = node('h2', '', `第${index + 1}課：${lessons[index].title}`); heading.tabIndex = -1; root.append(heading);
   const explanation = node('div'); explanation.append(node('p', '', lessons[index].text));
   if (index === 0) explanation.append(cards(['1m','1p','1s','1z','5z','7z','f1','f5']));
@@ -244,7 +651,15 @@ function render(): void {
   const actions = node('div', 'lesson-actions');
   actions.append(button('我讀完了，開始示範', 'learn-guided', () => start(false), ''), button('換例自己試', 'learn-transfer', () => start(true), ''));
   if (stage === 'read' || stage === 'done') root.append(explanation, actions);
-  if (stage === 'done') root.append(node('p', 'learn-note', '本段完成。可以換例、重練或選下一課；前三課完成後仍需學吃碰槓胡與結算。'));
+  if (stage === 'done') {
+    const last = index === lessons.length - 1, more = supplement();
+    if (more) root.append(more);
+    root.append(node('p', 'learn-note', last ? '本段完成。第1–6課入門試用到此；第7–8課尚未開放。可以換例、重練，或返回牌室。' : '本段完成。可以換例、重練或選下一課。'));
+    const after = node('div', 'lesson-actions');
+    if (last) { const home = node('a', '', '返回牌室'); home.href = './'; after.append(home); }
+    else after.append(button(`下一課：${lessons[index + 1].title}`, 'learn-next', () => go(index + 1), ''));
+    root.append(after);
+  }
   else if (stage !== 'read') {
     const recap = node('details'), summary = node('summary', '', '回看圖解（本次會列提示下完成）');
     summary.addEventListener('click', () => { if (!recap.open) { assisted = true; say('已回看圖解，本次完成將列提示下完成。', false); } });
@@ -252,8 +667,10 @@ function render(): void {
     const activity = node('section'); activity.setAttribute('aria-label', '本課操作任務');
     const taskTitle = node('h3', '', `第${index + 1}課 · ${stage === 'transfer' ? '換例自己試' : '親手做示範'}`); taskTitle.tabIndex = -1; activity.append(taskTitle);
     activity.append(button('看提示', 'learn-hint', () => { assisted = true; say(lessons[index].hint); }, ''));
-    if (index === 0) renderRecognition(activity); else if (index === 1) renderRound(activity); else renderComposition(activity);
-    activity.append(button('回到本課圖解', 'learn-back', () => { stage = 'read'; render(); say('未完成操作已回到起點，已保存紀錄保留。', false); }, ''));
+    if (detail && index !== 5) activity.append(node('p', 'learn-note', detail));
+    if (index === 0) renderRecognition(activity); else if (index === 1) renderRound(activity); else if (index === 2) renderComposition(activity);
+    else if (index === 3) renderClaims(activity); else if (index === 4) renderWaits(activity); else renderSettlement(activity);
+    activity.append(button('回到本課圖解', 'learn-back', () => { stage = 'read'; round = null; detail = ''; render(); say('未完成操作已回到起點，已保存紀錄保留。', false); }, ''));
     root.append(activity); taskTitle.focus(); taskTitle.scrollIntoView({ block: 'start' }); return;
   }
   heading.focus();
