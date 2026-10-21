@@ -26,6 +26,8 @@ Claude最終437項Node／build／120項瀏覽器全過、0skip；Codex已獨立�
 
 收尾文件檢查91份、823個本機連結、0問題；錄製腳本語法與差異空白檢查通過。新展示PNG與正式擷取原檔SHA-256相同，未改舊圖／影片；本輪開發與發布已完成，後續只依可重現問題或另立的有界維護包推進。
 
+**下一個優先維護包：Vite安全修補，尚未實作。** 收尾的完整npm audit實際回傳exit1、1個high套件（vite8.3.2、6則公告）；原始JSON在同一work目錄的dependency-audit.json。已核對[維護者Windows公告](https://github.com/vitejs/launch-editor/security/advisories/GHSA-587h-7wmj-h5pm)、npm修補候選及[Vite8.3.5正式版本](https://github.com/vitejs/vite/releases/tag/v8.3.5)。正式Pages只提供建置靜態檔，並未執行Vite開發伺服器；本機預設127.0.0.1不能當成漏洞已修。下一次先由Claude RD限定更新package.json／lockfile，再由Codex核對audit、437／120、建置與正式發布；不要直接audit fix或在額度尾端改版後省略驗收。範圍與交接在work/learning-round-ui-20261022/security-next-brief.md，尚未派發、未更動依賴。長行整理C1／C2仍依既有決定按實際修改需要處理，不因本次掃描自動加全庫規範。
+
 ## 前包：S2.4a第7–8課整局核心
 
 2026-10-22，承接使用者「推進專案進度」，先完成第7–8課的純整局腳本及最少檢查點。Codex PM／SA定義範圍並驗收，實際Claude Code CLI以既有claude.ai Pro實作及同會話自測；分支codex/lesson-round-core-20261022，基準0c1db73。原教學8路徑測試完整保留，新增src/learning-round.ts及test/learning-round-core.test.mjs；只更新既有教材／維護／路線文件，不新增平台、依賴或保存鍵。brief、會話c9da2894-103b-47a1-b2f0-3b3c3bbb8161、結果與檢查紀錄在work/lesson-round-core-20261022/。
