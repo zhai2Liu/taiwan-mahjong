@@ -100,8 +100,8 @@ test('第4–6課示範與換例實際完成、重載保留、其他存檔不變
   await expect.poll(async () => (await course(page))?.lessons.slice(3)).toEqual([done, done, done, blank, blank]);
   await page.reload();
   await expect(page.locator('.progress-list')).toContainText('第6課：已閱讀 ✓ · 提示下完成 ✓ · 換例自行完成 ✓');
-  await expect(page.locator('.progress-list')).toContainText('第7–8課：尚未開放');
-  await expect(page.locator('#lesson-nav button')).toHaveCount(6);
+  await expect(page.locator('.progress-list')).toContainText('第8課：已閱讀 — · 提示下完成 — · 換例自行完成 —');
+  await expect(page.locator('#lesson-nav button')).toHaveCount(8);
   expect(await others(page)).toEqual(otherSaves); expect(await read(page, LEGACY_LEARN_KEY)).toBeNull();
   expect(errors).toEqual([]);
 });

@@ -9,8 +9,13 @@ import { kinds, has, act, discardKind, settleClaims, chiExample, ponExample, pri
   WAIT_HAND, WAIT_TRANSFER_HAND, ronExample, selfDrawExample, changeWaitExample, ownDiscardExample, settlementGuided, settlementTransfer, nextHand, settlementSupplements } from './learning-fixtures.js';
 import { LEARN_KEY, LEGACY_LEARN_KEY, COURSE_VERSION, OPEN_LESSONS, emptyProgress, decodeLearningProgress, decodeLegacyLearningProgress, encodeLearningProgress, markLesson, saveLearningProgress, importLearningProgress } from './learning-progress.js';
 import type { LegacyLearningProgress, LessonProgress } from './learning-progress.js';
+import { ROUND_KEY, readRoundSave, decodeRoundSave, encodeRoundSave, saveRoundProgress, removeRoundProgress } from './learning-round-store.js';
+import type { RoundCourse, RoundRead } from './learning-round-store.js';
+import { startRound, resumeRound, sessionSave, assist, renderRound as renderWholeRound, appendix, SEGMENTS, modeName } from './learning-round-view.js';
+import type { RoundSession } from './learning-round-view.js';
 
 const root = document.querySelector<HTMLElement>('#lesson')!, progressPanel = document.querySelector<HTMLElement>('#learning-progress')!;
+const roundPanel = document.querySelector<HTMLElement>('#learning-round-save')!;
 const feedback = document.querySelector<HTMLElement>('#lesson-feedback')!;
 // Keep the optional report outside the lesson/progress renders so switching lessons preserves the draft.
 const reportScope = document.querySelector<HTMLSelectElement>('#learning-feedback-scope')!;
@@ -24,8 +29,24 @@ type Legacy = { kind: 'valid'; raw: string; progress: LegacyLearningProgress } |
 let legacy: Legacy | null = null, legacyDownloadNotice = '';
 let index = 0, stage: 'read' | 'guided' | 'transfer' | 'done' = 'read', assisted = false, step = 0, detail = '';
 let round: GameState | null = null, remaining: string[] = [], groups: Meld[] = [], pair: string[] = [], selected = new Set<string>(), assemblyDone = false;
+// Lessons 7–8: one in-page round plus the separate resume key (tw16:learn:round:v1). Completion flags stay in v2.
+let roundSession: RoundSession | null = null;
+/** Last round-key text that was read and strictly validated, or written by this page; undefined until a read succeeds. */
+let roundRaw: string | null | undefined;
+let roundStored: RoundRead = { kind: 'none' };
+/** The text this page saved or resumed for the current session; replacing any other saved text asks first. */
+let roundOwn: string | null = null;
+let roundIssue: '' | 'bad' | 'unreadable' | 'conflict' = '', roundBusy = false, roundNotice = '', roundDownloadNotice = '';
+const isRound = () => index >= 6;
+const frozen = () => busy || roundBusy;
+function roundDirty(): boolean {
+  if (!roundSession?.touched) return false;
+  // A shown legal deviation is page-only and never saved, even when the segment's checkpoint text is stored.
+  if (roundSession.off) return true;
+  try { return encodeRoundSave(sessionSave(roundSession)) !== roundRaw; } catch { return true; }
+}
 const warnLeave = (event: BeforeUnloadEvent) => { event.preventDefault(); event.returnValue = 'true'; };
-function syncLeaveGuard(): void { window.removeEventListener('beforeunload', warnLeave); if (dirty || reportNote.value.trim() || reportDevice.value.trim()) window.addEventListener('beforeunload', warnLeave); }
+function syncLeaveGuard(): void { window.removeEventListener('beforeunload', warnLeave); if (dirty || roundDirty() || reportNote.value.trim() || reportDevice.value.trim()) window.addEventListener('beforeunload', warnLeave); }
 const openLessons = () => progress.lessons.slice(0, OPEN_LESSONS);
 
 const reportSnapshot = () => JSON.stringify([reportScope.value, reportDevice.value, reportNote.value]);
@@ -47,7 +68,7 @@ function setupReport(): void {
     const stageName = { read: '圖解', guided: '親手做示範', transfer: '換例自己試', done: '本段完成' }[stage];
     const entry = document.querySelector<HTMLScriptElement>('script[type="module"][src]')?.getAttribute('src') ?? '未記錄';
     preview.value = [
-      '台灣十六張第1–6課入門試用回饋（供人工核對）',
+      '台灣十六張第1–8課入門試用回饋（供人工核對）',
       `匯出時間：${new Date().toISOString()}`, `課程版本：${COURSE_VERSION}；桌規：TW16-CLASSIC-v1`,
       `匯出頁面：${location.origin}${location.pathname}`, `匯出時頁面程式：${entry}`,
       `回饋範圍：${reportScope.value}`, `裝置與瀏覽器（自述）：${reportDevice.value.trim() || '未提供'}`,
@@ -93,20 +114,22 @@ function loadProgress(): void {
 }
 /** Disables progress-changing lesson/navigation controls while a write waits; returns the restore step. */
 function freezeControls(): () => void {
-  const controls = Array.from(document.querySelectorAll<HTMLButtonElement>('#lesson button, #lesson-nav button')).map(b => ({ b, disabled: b.disabled }));
+  const controls = Array.from(document.querySelectorAll<HTMLButtonElement>('#lesson button, #lesson-nav button, #learning-progress button, #learning-round-save button')).map(b => ({ b, disabled: b.disabled }));
   controls.forEach(({ b }) => b.disabled = true);
-  return () => controls.forEach(({ b, disabled }) => { if (b.isConnected) b.disabled = disabled; });
+  // Native inert also stops non-button lesson actions (recap/appendix details, tile focus); the status regions stay outside.
+  const wasInert = root.inert; root.inert = true;
+  return () => { controls.forEach(({ b, disabled }) => { if (b.isConnected) b.disabled = disabled; }); root.inert = wasInert; };
 }
 async function save(): Promise<void> {
   if (busy || blocked || raw === undefined || !dirty) return;
   if (legacy) { saveNotice = '尚未決定如何處理舊版紀錄，本頁完成暫不保存；請在進度區選擇。'; renderProgress(); return; }
   busy = true; renderProgress(); const captured = progress; let saved = false;
-  try { raw = await saveLearningProgress(localStorage, raw, captured); dirty = encodeLearningProgress(progress) !== raw; saved = true; saveNotice = dirty ? '還有新變更待保存。' : '已保存新手進度；未完成操作不續存。'; }
+  try { raw = await saveLearningProgress(localStorage, raw, captured); dirty = encodeLearningProgress(progress) !== raw; saved = true; saveNotice = dirty ? '還有新變更待保存。' : '已保存新手進度（只存閱讀與完成紀錄，不存未完成的操作）；第7–8課的牌局段落另用「保存並暫停」保存。'; }
   catch (error) {
     if (error instanceof Error && error.message === 'LEARNING_CONFLICT') { blocked = true; saveNotice = '另一頁已更新進度，停止覆寫。本頁未存紀錄仍保留；重新讀取前會確認放棄。'; }
     else saveNotice = '本次進度未能保存，原檔與本頁紀錄仍保留。請保持頁面開啟並重試。';
   }
-  finally { busy = false; syncLeaveGuard(); renderProgress(); }
+  finally { busy = false; syncLeaveGuard(); syncSavePanels(); }
   if (saved && dirty) void save();
 }
 async function importLegacy(captured: string): Promise<void> {
@@ -124,18 +147,18 @@ async function importLegacy(captured: string): Promise<void> {
   } finally { busy = false; restore(); syncLeaveGuard(); }
   // Nothing unsaved exists here (import is offered only before new work), so a fresh read is safe.
   if (reread) { loadProgress(); if (!blocked) saveNotice = reread; }
-  renderProgress();
+  syncSavePanels();
 }
 async function startFresh(): Promise<void> {
   if (busy || blocked || raw !== null || !legacy) return;
-  if (!confirm(`另建新版第1–6課進度，不帶入舊版紀錄；舊版紀錄保留不動。${dirty ? '本頁尚未保存的完成會一起保存。' : ''}確定？`)) return;
+  if (!confirm(`另建新版第1–8課進度，不帶入舊版紀錄；舊版紀錄保留不動。${dirty ? '本頁尚未保存的完成會一起保存。' : ''}確定？`)) return;
   busy = true; const restore = freezeControls(); renderProgress(); const captured = progress;
   try { raw = await saveLearningProgress(localStorage, null, captured); legacy = null; dirty = encodeLearningProgress(progress) !== raw; saveNotice = '已建立新版進度；舊版前三課紀錄原樣保留，之後不會自動同步。'; }
   catch (error) {
     if (error instanceof Error && error.message === 'LEARNING_CONFLICT') { blocked = true; saveNotice = '另一頁已建立新版紀錄，停止覆寫。本頁未存紀錄仍保留；重新讀取前會確認放棄。'; }
     else saveNotice = '新版進度未能建立，舊版紀錄與本頁內容都保留，可稍後重試。';
   }
-  finally { busy = false; restore(); syncLeaveGuard(); renderProgress(); }
+  finally { busy = false; restore(); syncLeaveGuard(); syncSavePanels(); }
 }
 function mark(kind: keyof LessonProgress): void { progress = markLesson(progress, index, kind); dirty = true; syncLeaveGuard(); renderProgress(); void save(); }
 function renderLegacy(old: Legacy): HTMLElement {
@@ -150,8 +173,8 @@ function renderLegacy(old: Legacy): HTMLElement {
     if (dirty) box.append(node('p', '', '本頁已有尚未保存的新完成，不能直接帶入以免蓋掉。可選「從新版重新開始」保存本頁紀錄；或先重新讀取（放棄本頁未存內容）再帶入。'));
   } else box.append(node('p', '', old.kind === 'bad' ? '舊版紀錄損壞或版本不符，不會帶入；原紀錄保留不動。' : '舊版紀錄讀不到，不會帶入，也不會改動它。'));
   const actions = node('div', 'lesson-actions');
-  if (old.kind === 'valid') actions.append(button('帶入現有進度', 'learn-import', () => { void importLegacy(old.raw); }, '', busy || dirty || blocked));
-  actions.append(button('從新版重新開始', 'learn-fresh', () => { void startFresh(); }, '', busy || blocked));
+  if (old.kind === 'valid') actions.append(button('帶入現有進度', 'learn-import', () => { void importLegacy(old.raw); }, '', frozen() || dirty || blocked));
+  actions.append(button('從新版重新開始', 'learn-fresh', () => { void startFresh(); }, '', frozen() || blocked));
   box.append(actions);
   if (old.kind !== 'unreadable') {
     const label = node('label', '', '舊版紀錄原文（唯讀，可複製）'), text = node('textarea'); label.htmlFor = 'legacy-raw';
@@ -175,25 +198,48 @@ function renderProgress(): void {
   const notice = node('p', '', saveNotice || '紀錄只存在此瀏覽器，不是證書或牌技分數。'); notice.id = 'save-notice'; notice.dataset.focus = 'learn-save-notice'; notice.tabIndex = -1; notice.setAttribute('role', 'status'); progressPanel.append(notice);
   const list = node('ul', 'progress-list');
   openLessons().forEach((p, i) => list.append(node('li', '', `第${i + 1}課：已閱讀${p.read ? ' ✓' : ' —'} · 提示下完成${p.guided ? ' ✓' : ' —'} · 換例自行完成${p.independent ? ' ✓' : ' —'}`)));
-  list.append(node('li', '', '第7–8課：尚未開放。')); progressPanel.append(list);
+  progressPanel.append(list);
   if (legacy && raw === null && !blocked) progressPanel.append(renderLegacy(legacy));
   const actions = node('div', 'lesson-actions');
-  if (dirty && !legacy) actions.append(button('重試保存進度', 'learn-retry', () => { void save(); }, '', busy || blocked));
+  if (dirty && !legacy) actions.append(button('重試保存進度', 'learn-retry', () => { void save(); }, '', frozen() || blocked));
   actions.append(button('重新讀取保存紀錄', 'learn-load', () => {
     if (dirty && !confirm('重新讀取成功後會放棄本頁尚未保存的新手紀錄，未完成操作仍不續存。確定？')) return;
     loadProgress();
-  }, '', busy));
+  }, '', frozen()));
   actions.append(button('重新建立新手進度', 'learn-reset', async () => {
-    if (raw === undefined || !confirm('只重建新版第1–6課的學習進度，清除已閱讀與完成標記，目前教學操作回到圖解；舊版前三課紀錄、對戰、練習及檢討不變。確定？')) return;
+    if (raw === undefined || !confirm('只重建新版第1–8課的完成旗標，清除已閱讀與完成標記，目前教學操作回到圖解；第7–8課續學點另外保存、不受影響（要清掉請用續學點區的按鈕）；舊版前三課紀錄、對戰、練習及檢討不變。確定？')) return;
     busy = true; renderProgress(); const restore = freezeControls();
     try { const next = emptyProgress(); raw = await saveLearningProgress(localStorage, raw, next); progress = next; dirty = false; blocked = false; legacy = null; stage = 'read'; saveNotice = '新手進度已重新建立；其他存檔不變。'; render(); }
     catch { saveNotice = '重新建立失敗或原檔已被其他頁更新；原資料及本頁紀錄保留，請重新讀取後再決定。'; }
-    finally { restore(); busy = false; syncLeaveGuard(); renderProgress(); }
-  }, '', busy || raw === undefined));
+    finally { restore(); busy = false; syncLeaveGuard(); syncSavePanels(); }
+  }, '', frozen() || raw === undefined));
   progressPanel.append(actions);
+  progressPanel.append(node('p', 'muted', '只有六課的舊版頁面讀到第7–8課完成時，會停止覆寫、不會降格；請重新整理成新版頁面再繼續。'));
   if (focused) (Array.from(progressPanel.querySelectorAll<HTMLElement>('[data-focus]')).find(e => e.dataset.focus === focused && !e.matches(':disabled')) ?? notice).focus({ preventScroll: true });
 }
+/** The round-key text this page currently believes is stored (the bad text itself while it is shown read-only). */
+const knownRoundRaw = () => roundIssue === 'bad' && roundStored.kind === 'bad' ? roundStored.raw : roundRaw;
+function roundChangedElsewhere(value: string | null): void {
+  if (roundRaw === undefined && roundIssue !== 'bad') return; // nothing known yet; writes are already blocked
+  if (value === knownRoundRaw()) return;
+  roundIssue = 'conflict';
+  roundNotice = '另一頁已變更或清除第7–8課續學點，本頁停止覆寫；目前段落仍保留。按「重新讀取續學點」看看最新內容後再決定。';
+  syncLeaveGuard(); renderRoundPanel(); refreshRoundControls();
+}
+window.addEventListener('pageshow', event => {
+  // A page restored from the back/forward cache missed storage events: compare the round key once, never reload.
+  if (!event.persisted) return;
+  let value: string | null;
+  try { value = localStorage.getItem(ROUND_KEY); }
+  catch { roundIssue = 'unreadable'; roundNotice = '返回本頁後讀不到續學點；本頁段落保留，暫不寫入。'; renderRoundPanel(); refreshRoundControls(); return; }
+  roundChangedElsewhere(value);
+});
 window.addEventListener('storage', event => {
+  if (event.key === ROUND_KEY || event.key === null) {
+    roundChangedElsewhere(event.key === null ? null : event.newValue);
+    // The round key and the v2 completion record are judged separately.
+    if (event.key === ROUND_KEY) return;
+  }
   if (event.key === LEGACY_LEARN_KEY) {
     // The old record matters only while a choice about it is pending; a valid new record is never blocked by it.
     if (!legacy || busy || raw !== null || blocked) return;
@@ -205,6 +251,130 @@ window.addEventListener('storage', event => {
   blocked = true; saveNotice = '另一頁已更動學習進度，停止覆寫。本頁內容保留；請重新讀取保存紀錄。'; renderProgress();
 });
 
+/**
+ * Rebuilds both save panels and the in-lesson save control from the current busy flags. Called whenever any
+ * save/import/rebuild/clear ends, so buttons created while the other write was still pending never stay disabled.
+ */
+function syncSavePanels(): void { renderProgress(); renderRoundPanel(); refreshRoundControls(); }
+/** Reads the round key; only a successful, strictly valid read (or an absent key) replaces the snapshot. */
+function readRound(): void {
+  const result = readRoundSave(localStorage);
+  roundDownloadNotice = '';
+  if (result.kind === 'unreadable') {
+    roundIssue = 'unreadable';
+    roundNotice = '讀不到第7–8課續學點；本頁仍可練習，但不會寫入或清除未知內容。可稍後按「重新讀取續學點」。';
+  } else if (result.kind === 'bad') {
+    roundStored = result; roundIssue = 'bad';
+    roundNotice = '續學點內容無法使用（損壞或版本不符），原文保留不動、不會被覆寫。可複製或下載原文；要改存新的續學點，請先確認清掉它。';
+  } else {
+    roundStored = result; roundRaw = result.kind === 'valid' ? result.raw : null; roundIssue = '';
+    roundNotice = result.kind === 'valid' ? `此瀏覽器有第${result.save.courseLesson}課（${modeName(result.save.mode)}）的續學點：${SEGMENTS[result.checkpoint.point]}。要繼續請按「接續已存教學」。` : '';
+  }
+  syncLeaveGuard(); renderRoundPanel(); refreshRoundControls();
+}
+function roundSaveBlocked(): string | null {
+  if (roundBusy) return '正在保存，請稍候。';
+  if (!roundSession) return '沒有進行中的段落。';
+  if (roundSession.off) return '先按「重試這一段」回到固定示範的段落。';
+  if (roundIssue === 'bad') return '已存內容無法使用；請先在續學點區確認清掉它。';
+  if (roundIssue === 'unreadable' || roundRaw === undefined) return '讀不到目前的續學點，請先在續學點區重新讀取。';
+  if (roundIssue === 'conflict') return '另一頁已變更續學點；請先重新讀取（本頁段落保留）。';
+  return null;
+}
+function roundSaveStatus(): string {
+  if (!roundSession) return '';
+  if (roundSession.off) return '偏離固定示範的這一步不保存；按「重試這一段」回到本段開頭後才能保存。';
+  if (roundDirty()) return '本段尚未保存；只存牌局段落，作答選項不存。';
+  return roundOwn !== null && roundOwn === roundRaw ? '已保存目前段落。' : '尚未保存續學點。';
+}
+/** Updates the in-lesson save button and line in place, without re-rendering or moving focus. */
+function refreshRoundControls(): void {
+  const blockedReason = roundSaveBlocked(), saveButton = root.querySelector<HTMLButtonElement>('[data-focus="round-save"]');
+  if (saveButton && !roundBusy) saveButton.disabled = !!blockedReason;
+  const line = root.querySelector('.round-save-line'); if (line) line.textContent = blockedReason ? `暫不能保存：${blockedReason}` : roundSaveStatus();
+}
+const describeRound = (r: RoundRead) => r.kind === 'valid' ? `第${r.save.courseLesson}課（${modeName(r.save.mode)}）・${SEGMENTS[r.checkpoint.point]}・${r.checkpoint.assisted ? '本次已有提示或求助' : '本次尚未求助'}` : '';
+async function saveRound(): Promise<void> {
+  if (roundSaveBlocked() || !roundSession) return;
+  const session = roundSession, save = sessionSave(session), expected = roundRaw as string | null;
+  if (expected !== null && expected !== roundOwn && !confirm(`以本頁的第${session.course}課段落取代已存的續學點（${describeRound(roundStored)}）？完成旗標不受影響。`)) return;
+  roundBusy = true; const restore = freezeControls(); renderRoundPanel();
+  try {
+    const saved = await saveRoundProgress(localStorage, expected, save), decoded = decodeRoundSave(saved);
+    roundRaw = saved; roundOwn = saved; if (decoded.ok) roundStored = { kind: 'valid', raw: saved, save: decoded.save, checkpoint: decoded.checkpoint };
+    if (roundSession === session) session.paused = true;
+    roundNotice = '已保存並暫停：只存目前牌局段落與提示紀錄；結算小檢核的作答不保存，接續時會重新問。';
+  } catch (error) {
+    const code = error instanceof Error ? error.message : '';
+    if (code === 'ROUND_CONFLICT') { roundIssue = 'conflict'; roundNotice = '另一頁已變更續學點，這次沒有覆寫。本頁段落保留；請先重新讀取再決定。'; }
+    else if (code === 'ROUND_BUSY') roundNotice = '其他頁正在保存續學點，這次沒有寫入；本頁段落保留，可稍後再按保存。';
+    else if (code === 'ROUND_LOCK_UNAVAILABLE') roundNotice = '此瀏覽器不支援安全保存，這次沒有寫入；本頁段落保留，可以繼續在本頁練習，或換用支援的瀏覽器再試。';
+    else roundNotice = '續學點沒有保存成功（可能空間不足），原內容未變；本頁段落保留，可稍後再試。';
+  } finally {
+    roundBusy = false; restore(); syncLeaveGuard(); syncSavePanels();
+    if (isRound() && roundSession === session && stage !== 'read') render(); else refreshRoundControls();
+    say(roundNotice, false);
+  }
+}
+async function clearRound(): Promise<void> {
+  if (roundBusy || roundIssue === 'unreadable' || roundIssue === 'conflict') return;
+  const expected = knownRoundRaw();
+  if (typeof expected !== 'string') return;
+  if (!confirm('只清掉第7–8課的續學點；第1–8課完成旗標、本頁目前段落、對戰、練習、檢討與試讀都不變。確定？')) return;
+  roundBusy = true; const restore = freezeControls(); renderRoundPanel();
+  try {
+    await removeRoundProgress(localStorage, expected);
+    roundRaw = null; roundStored = { kind: 'none' }; roundOwn = null; roundIssue = '';
+    roundNotice = `已清掉續學點，其他資料不變。${roundSession ? '本頁目前段落仍保留，但尚未保存。' : ''}`;
+  } catch (error) {
+    if (error instanceof Error && error.message === 'ROUND_CONFLICT') { roundIssue = 'conflict'; roundNotice = '續學點已在其他頁變更，這次沒有清除；請先重新讀取。'; }
+    else roundNotice = '續學點沒有清除成功（其他頁正在保存或瀏覽器不支援），原內容未變。';
+  } finally { roundBusy = false; restore(); syncLeaveGuard(); syncSavePanels(); }
+}
+function resumeStored(): void {
+  if (roundBusy) return;
+  const latest = readRoundSave(localStorage);
+  if (latest.kind !== 'valid' || latest.raw !== knownRoundRaw()) {
+    readRound();
+    if (latest.kind === 'valid') { roundNotice = '續學點剛被其他頁更新，已重新讀取；請看內容後再按「接續已存教學」。'; renderRoundPanel(); }
+    return;
+  }
+  if (roundSession && roundDirty() && !confirm(`接續已存教學會放棄本頁第${roundSession.course}課尚未保存的段落。確定？`)) return;
+  roundSession = resumeRound(latest.save, latest.checkpoint); roundOwn = latest.raw; roundRaw = latest.raw; roundStored = latest; roundIssue = '';
+  index = latest.save.courseLesson - 1; stage = latest.save.mode; assisted = latest.checkpoint.assisted; detail = '';
+  const quiz = ['result', 'nextHand'].includes(latest.checkpoint.point) ? '結算小檢核的作答沒有保存，會重新問一次。' : '';
+  roundNotice = `已接續第${latest.save.courseLesson}課（${modeName(latest.save.mode)}）：${SEGMENTS[latest.checkpoint.point]}。${quiz}`;
+  syncLeaveGuard(); render(); renderRoundPanel(); say(roundNotice, false);
+}
+function renderRoundPanel(): void {
+  const focused = roundPanel.contains(document.activeElement) ? (document.activeElement as HTMLElement).dataset.focus : undefined;
+  roundPanel.replaceChildren(node('h2', '', '第7–8課續學點'));
+  const notice = node('p', '', roundNotice || '第7–8課可另存一個續學點，只存牌局段落與提示紀錄；完成旗標仍存在上方學習進度，兩者分開。');
+  notice.id = 'round-notice'; notice.dataset.focus = 'round-notice'; notice.tabIndex = -1; notice.setAttribute('role', 'status'); roundPanel.append(notice);
+  if (roundStored.kind === 'valid') roundPanel.append(node('p', '', `已存：${describeRound(roundStored)}`));
+  if (roundSession) roundPanel.append(node('p', 'muted', `本頁：第${roundSession.course}課・${SEGMENTS[roundSession.cp.point]}。${roundSaveStatus()}`));
+  if (roundIssue === 'bad' && roundStored.kind === 'bad') {
+    const bad = roundStored.raw, label = node('label', '', '續學點原文（唯讀，可複製）'), text = node('textarea');
+    label.htmlFor = 'round-raw'; text.id = 'round-raw'; text.readOnly = true; text.rows = 3; text.value = bad;
+    roundPanel.append(label, text, button('下載續學點原文', 'round-download', () => {
+      let url: string | undefined;
+      try {
+        url = URL.createObjectURL(new Blob([bad], { type: 'application/json;charset=utf-8' }));
+        const link = node('a'); link.href = url; link.download = 'taiwan-mahjong-learning-round.json'; link.click();
+        roundDownloadNotice = '已交由瀏覽器下載，請自行確認檔案；原文仍留在此瀏覽器。';
+      } catch { roundDownloadNotice = '下載未成功；可複製上方原文。原文仍留在此瀏覽器，沒有任何變更。'; }
+      finally { if (url) { const done = url; setTimeout(() => URL.revokeObjectURL(done), 1000); } renderRoundPanel(); }
+    }, ''));
+    if (roundDownloadNotice) roundPanel.append(node('p', 'muted', roundDownloadNotice));
+  }
+  const actions = node('div', 'lesson-actions');
+  if (roundStored.kind === 'valid') actions.append(button('接續已存教學', 'round-continue', () => resumeStored(), '', frozen() || roundIssue === 'unreadable'));
+  actions.append(button('重新讀取續學點', 'round-reload', () => readRound(), '', frozen()));
+  if (roundStored.kind !== 'none' && (roundIssue === '' || roundIssue === 'bad')) actions.append(button('清掉續學點', 'round-clear', () => { void clearRound(); }, '', frozen()));
+  roundPanel.append(actions);
+  if (focused) (Array.from(roundPanel.querySelectorAll<HTMLElement>('[data-focus]')).find(e => e.dataset.focus === focused && !e.matches(':disabled')) ?? notice).focus({ preventScroll: true });
+}
+
 function face(id: string): HTMLElement {
   const item = node('span', 'learn-tile'); item.setAttribute('role', 'img'); item.setAttribute('aria-label', tileName(id)); item.append(tileFace(kindOf(id))); return item;
 }
@@ -212,6 +382,14 @@ function cards(ids: string[]): HTMLElement { const row = node('div', 'learn-tile
 function say(message: string, focus = true): void { feedback.textContent = message; if (focus) feedback.focus(); }
 function mistake(message: string): void { assisted = true; say(message); }
 function start(transfer: boolean): void {
+  if (isRound()) {
+    if (roundDirty() && !confirm('重新開始會放棄本頁尚未保存的段落（已存的續學點不受影響）。確定？')) return;
+    mark('read'); stage = transfer ? 'transfer' : 'guided'; detail = '';
+    roundSession = startRound((index + 1) as RoundCourse, stage); roundOwn = null; assisted = roundSession.cp.assisted;
+    syncLeaveGuard(); render(); renderRoundPanel();
+    say(transfer ? `${index === 6 ? '換例：改用第8課那一副固定牌例自己試。' : '同一副第8課固定牌例，這次自己試（不是新洗的牌，也不是陌生題）。'}看提示、回看圖解、錯答看推導或按重試，本次會列為提示下完成。` : '示範開始：會一步一步告訴你做什麼，示範完成列為提示下完成。', false);
+    return;
+  }
   mark('read'); stage = transfer ? 'transfer' : 'guided'; assisted = !transfer; detail = '';
   step = transfer && (index === 3 || index === 5) ? 1 : 0;
   round = index === 1 ? createTeachingRound(transfer) : index === 3 ? chiExample(transfer ? 'p' : 'm')
@@ -641,24 +819,56 @@ function supplement(): HTMLElement | null {
   return box;
 }
 function render(): void {
+  if (isRound() && !roundSession && (stage === 'guided' || stage === 'transfer')) stage = 'read';
   const nav = document.querySelector<HTMLElement>('#lesson-nav')!; nav.replaceChildren();
-  const go = (i: number) => { index = i; stage = 'read'; round = null; detail = ''; render(); say('可跳課；本頁未完成的操作不續存，已保存完成紀錄保留。', false); };
+  const go = (i: number) => {
+    if (roundSession && roundDirty() && !confirm(`第${roundSession.course}課有尚未保存的段落；切換課程後本頁段落不保留（已存的續學點不受影響）。確定？`)) return;
+    roundSession = null; roundOwn = null; index = i; stage = 'read'; round = null; detail = ''; syncLeaveGuard(); render(); renderRoundPanel();
+    say(i >= 6 ? '可跳課；第7–8課的段落可用「保存並暫停」另存續學點，其他未完成操作不續存。' : '可跳課；本頁未完成的操作不續存，已保存完成紀錄保留。', false);
+  };
   lessons.forEach((l, i) => { const b = button(`${i + 1}. ${l.title}`, `lesson-${i}`, () => go(i), ''); if (i === index) b.setAttribute('aria-current', 'step'); nav.append(b); });
   root.replaceChildren(); const heading = node('h2', '', `第${index + 1}課：${lessons[index].title}`); heading.tabIndex = -1; root.append(heading);
   const explanation = node('div'); explanation.append(node('p', '', lessons[index].text));
   if (index === 0) explanation.append(cards(['1m','1p','1s','1z','5z','7z','f1','f5']));
   if (index === 2) explanation.append(cards(['1m','2m','3m','5z','5z','5z','7z','7z']));
+  if (index === 6) explanation.append(node('p', 'muted', '「換例自己試」會改用第8課的那一副固定牌例。'));
+  if (index === 7) explanation.append(appendix());
   const actions = node('div', 'lesson-actions');
   actions.append(button('我讀完了，開始示範', 'learn-guided', () => start(false), ''), button('換例自己試', 'learn-transfer', () => start(true), ''));
+  const kept = isRound() && roundSession?.course === index + 1 ? roundSession : null;
+  if (stage === 'read' && kept) actions.append(button(`繼續本段（${modeName(kept.mode)}・${SEGMENTS[kept.cp.point]}）`, 'learn-continue', () => { stage = kept.mode; render(); say('回到剛才的段落。', false); }, ''));
   if (stage === 'read' || stage === 'done') root.append(explanation, actions);
   if (stage === 'done') {
     const last = index === lessons.length - 1, more = supplement();
     if (more) root.append(more);
-    root.append(node('p', 'learn-note', last ? '本段完成。第1–6課入門試用到此；第7–8課尚未開放。可以換例、重練，或返回牌室。' : '本段完成。可以換例、重練或選下一課。'));
+    root.append(node('p', 'learn-note', last ? '本段完成。第1–8課入門到此；可以換例、重練，或返回牌室。教學示例結束，正常對戰使用另一次洗牌及原存檔；牌室會提供繼續原局，新開一將仍會先確認。'
+      : isRound() ? '本段完成。可以換例、重練或選下一課。已存的續學點不會自動清掉，可在續學點區自行清除。' : '本段完成。可以換例、重練或選下一課。'));
     const after = node('div', 'lesson-actions');
     if (last) { const home = node('a', '', '返回牌室'); home.href = './'; after.append(home); }
     else after.append(button(`下一課：${lessons[index + 1].title}`, 'learn-next', () => go(index + 1), ''));
     root.append(after);
+  }
+  else if (stage !== 'read' && isRound() && roundSession) {
+    const session = roundSession;
+    const recap = node('details'), summary = node('summary', '', '回看圖解（本次會列提示下完成）');
+    // While a save waits for its lock the lesson is frozen: the recap cannot open (or change the assisted flag) either.
+    summary.addEventListener('click', event => { if (roundBusy) { event.preventDefault(); return; } if (!recap.open) { if (assist(session)) { syncLeaveGuard(); renderRoundPanel(); refreshRoundControls(); } say('已回看圖解，本次完成將列提示下完成。', false); } });
+    recap.append(summary, explanation); root.append(recap);
+    const activity = node('section'); activity.setAttribute('aria-label', '本課操作任務');
+    const taskTitle = node('h3', '', `第${index + 1}課 · ${modeName(session.mode)}`); taskTitle.tabIndex = -1; activity.append(taskTitle);
+    try {
+      renderWholeRound(session, activity, {
+        say, changed: () => { syncLeaveGuard(); render(); renderRoundPanel(); },
+        flagged: () => { syncLeaveGuard(); renderRoundPanel(); refreshRoundControls(); },
+        complete: (wasAssisted, message) => { assisted = wasAssisted; roundSession = null; roundOwn = null; complete(`${message} `); syncLeaveGuard(); renderRoundPanel(); },
+        save: () => { void saveRound(); }, saveBlocked: roundSaveBlocked, saveStatus: roundSaveStatus,
+      });
+    } catch { activity.append(node('p', 'learn-note', '示例操作未能套用，沒有記為完成。請重開此示例再試；正常牌局與原進度不受影響。')); }
+    activity.append(button('回到本課圖解', 'learn-back', () => { stage = 'read'; render(); say('本段保留在本頁，可按「繼續本段」回來；尚未保存的段落離頁不保留。', false); }, ''));
+    root.append(activity);
+    // Keep the reader near the next action instead of jumping to the top on every step.
+    const target = activity.querySelector<HTMLElement>('[data-round-focus]') ?? taskTitle;
+    target.focus({ preventScroll: true }); target.scrollIntoView({ block: 'nearest' }); return;
   }
   else if (stage !== 'read') {
     const recap = node('details'), summary = node('summary', '', '回看圖解（本次會列提示下完成）');
@@ -675,4 +885,4 @@ function render(): void {
   }
   heading.focus();
 }
-setupReport(); loadProgress(); render();
+setupReport(); loadProgress(); readRound(); render();

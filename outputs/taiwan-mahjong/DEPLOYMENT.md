@@ -4,6 +4,8 @@
 
 現行網址：https://zhai2liu.github.io/taiwan-mahjong/；repository：zhai2Liu/taiwan-mahjong。本機origin及About Website已同步。**最新來源、驗證及Actions見[HANDOFF](HANDOFF.md)**；本文件維護發布流程，避免多處版本資訊失去同步。
 
+2026-10-22課程相容補充：現行tw16:learn:v2仍是beginner-1-8-v1八筆旗標，開放7–8後，舊六課頁面讀到新旗標會停止覆寫；請刷新新版，不要在舊版重新建立進度。第7–8課續學點另在tw16:learn:round:v1，舊版不會讀取，不代表被清掉；回退時保留新鍵原文，升回相容新版可再接續。這是格式／舊解析器及原文保留的技術界線，不把2026-10-17五鍵演練當成已驗新鍵的正式回退；實際交付依HANDOFF。未知版／壞檔仍不可因發布清空。
+
 歷史改名驗收（2026-10-06）：M5.3來源ff6de93，workflow37357698468 build／deploy成功；下段M4亦為歷史紀錄，舊owner網址不是現行入口。
 
 帳號改名會改變github.io來源；舊網址的localStorage不能由新網址直接讀取，本次未清除舊存檔。不宣稱自動遷移成功。

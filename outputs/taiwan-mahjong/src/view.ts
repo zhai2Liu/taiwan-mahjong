@@ -148,8 +148,8 @@ function home(model: ViewModel, send: Send): HTMLElement {
   routeHeading.append(heading, node('p', '', '不用依序完成，隨時選擇適合你的入口。')); routes.append(routeHeading);
   const cards = node('div', 'home-cards');
   const learnCard = node('article', 'home-card');
-  learnCard.append(node('span', 'home-card-label', '01 / 還不會打'), node('h3', '', '從零學習'), node('p', 'home-card-description', '認牌、摸打、吃碰、聽牌到結算。\n用第1–6課，走出入門的第一步。'));
-  const learn = node('a', 'button home-action', '從零學台灣麻將（第1–6課）'); learn.href = './learn.html'; learn.dataset.focus = 'home-learn'; learnCard.append(learn, node('p', 'home-card-note', '入門試用版・可操作牌例'));
+  learnCard.append(node('span', 'home-card-label', '01 / 還不會打'), node('h3', '', '從零學習'), node('p', 'home-card-description', '認牌、摸打、吃碰、聽牌到結算，再完整打一局。\n用第1–8課，走出入門的第一步。'));
+  const learn = node('a', 'button home-action', '從零學台灣麻將（第1–8課）'); learn.href = './learn.html'; learn.dataset.focus = 'home-learn'; learnCard.append(learn, node('p', 'home-card-note', '入門試用版・可操作牌例'));
   const practiceCard = node('article', 'home-card');
   practiceCard.append(node('span', 'home-card-label', '02 / 想打得更好'), node('h3', '', '練習判斷'), node('p', 'home-card-description', '慢慢比較進牌與捨牌，\n看懂每個選擇背後的取捨。'), button('純練習模式', 'practice', () => send({ type: 'practice' }), 'button home-action'));
   const trial = node('a', 'home-text-link', '決策題試讀'); trial.href = './training.html'; trial.dataset.focus = 'home-trial';

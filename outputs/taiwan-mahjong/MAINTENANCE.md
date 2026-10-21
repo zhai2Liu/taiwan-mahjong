@@ -30,15 +30,17 @@ S3.2：hand-review.ts從原決策快照算證據，claimResolution另對同局�
 
 S3.1九題試讀：兩份TRAINING JSON負責題幹／答案／牌面／範圍；scripts/training-content.mjs負責四能力導引、固定九題允許名單與完整內容雜湊，生成器及review-trial同讀。不要直接改生成的training-data.ts。畫面分類只改瀏覽順序，drafts仍按原題位置保留，匯出必含所有題；舊schema2版本不符轉人工，schema1保留缺完整版本警告。新增分類回歸在test/e2e/training-guidance.spec.js，詳見[S3.1](S31-VALIDATION.md)。修改題量先處理允許名單／題族與舊匯出相容，不另外散落九題常數；人類資料和合成檔分開，接收見[審閱流程](TRIAL-REVIEW.md)。
 
-S2新手課：learn.html／src/learning.ts與learning.css為獨立頁；learning-model.ts管六課文字及前三課引擎操作，learning-fixtures.ts為4–6課固定教材，learning-progress.ts管v2、唯讀舊v1、容量與Web Locks。內容／保存契約見[BEGINNER-LEARNING](BEGINNER-LEARNING.md)，本輪驗收見[S23](S23-INTEGRATION-VALIDATION.md)。改完成條件先同步版本與帶入對照；不能因擴課直接把三筆舊v1判壞。重建只寫v2、確認並核對原文，等待時停用課程動作，不動Session／練習／檢討／試讀。三頁HTML的全部preload／JS／CSS都要驗，不假定固定資源數。
+S2新手課：learn.html／src/learning.ts與learning.css為獨立頁；learning-model.ts管八課文字及前三課操作，learning-fixtures.ts為4–6課教材，learning-progress.ts管v2完成旗標及唯讀v1明確帶入。第7–8課依下段專用模組，內容與保存契約見[BEGINNER-LEARNING](BEGINNER-LEARNING.md)，最新驗收／發布只查HANDOFF。改完成條件先定版本與對照，不能因擴課判舊紀錄壞。三頁HTML全部preload／JS／CSS均須驗，不假定固定資源數。
 
 S2.2回饋：learn.html的原生details／form獨立於lesson及progress重繪，learning.ts僅匯出純文字白名單快照，沒有新保存鍵。beforeunload須同時考慮課程dirty與回饋欄；課程保存成功不能清除回饋提醒，清空回饋也不能清除課程未存提醒。URL下載失敗仍留下可複製預覽，blocked時不把預設旗標當有效進度。不能將開始下載稱作已確認落盤；不把回饋視為正式試用、公開同意或自動上傳。回歸test/e2e/learning-feedback.spec.js，接收界線見[試用紀錄](BEGINNER-TRIAL.md)。
 
 S2.3教材：[S23教材](S23-LESSON-PREPARATION.md)供4–6課文字、示範、換例與回饋；learning-fixtures.ts只配置固定教學局面，所有動作仍交凍結引擎並assertState。test/learning-next.test.mjs保留26具名牌例，另比對runtime示例及實際操作。結算只讀settlement.score／delta與scoreLines，不重付；下一局莊位應以本局門風標示原座位，避免用下一局門風把接莊者一律寫成東門。禁打給原因，打牌手勢須與摸打課及正常對戰一致。
 
-S2.3保存：[相容規格](S23-PROGRESS-COMPATIBILITY.md)定tw16:learn:v2八筆／六課開放、4KiB、舊v1逐字保留與明確帶入。有效v2不依賴v1；未知原文保留，缺v2才預覽舊版。帶入以v1→v2固定鎖順序、鎖內原文／不存在核對，只寫一次v2；缺鎖不降級，等鎖停用進度操作，失敗保留本頁。前三課旗標逐位帶入，7–8不可標完成；不建立同步／備份鍵或通用遷移器。C01–C12實際結果依[S23驗收](S23-INTEGRATION-VALIDATION.md)，不是單靠規格通過。
+S2保存：[相容規格](S23-PROGRESS-COMPATIBILITY.md)保留S2.3當時六課的C01–C12驗收；現行v2仍八筆／4KiB、beginner-1-8-v1，S2.4開放7–8，前六課原值保持。有效v2不依賴v1；未知原文保留，缺v2才預覽舊版。帶入以v1→v2固定鎖順序、鎖內原文／不存在核對，只寫一次v2；缺鎖不降級，失敗保留本頁。只重建v2須確認及核對原文，不能順便刪續學點或其他存檔。不建立通用遷移器或同步／備份鍵。
 
-S2.4：[第7–8課腳本／實桌附錄及檢查點契約](S24-LESSON-PREPARATION.md)對應src/learning-round.ts與test/learning-round-core.test.mjs，原test/learning-round.test.mjs保留獨立參考。從完整144張經真實DEAL重播兩吃法、他家胡與過；每次回傳新局面，UI須用getObservation(0)呈現。檢查點只收encoder產生的512字元內正規原文，scriptVersion同時綁牌堆及引擎語義；沒有保存接線，tw16:learn:v2仍只存六課完成旗標。下一包再接第7–8課互動、真正暫停／中途保存及正常對戰連接，不能把純核心還原當成已續學。
+S2.4：[整局教材與契約](S24-LESSON-PREPARATION.md)的src/learning-round.ts從完整144張經DEAL重播；test/learning-round-core.test.mjs逐點對照，原test/learning-round.test.mjs為獨立參考。src/learning-round-view.ts管7–8課分段任務／台項收付／實桌附錄，僅用getObservation(state,0)呈現。合法偏離只在本頁保留執行後的公開Observation，禁止保存，明確重試才回原檢查點；選過是合法停止點，均不等於完成。實際答完結算與莊位檢核才標完成，不看輸贏。
+
+src/learning-round-store.ts只有嚴格codec及可注入Storage／Locks的CAS保存／刪除，鍵tw16:learn:round:v1，四欄封套2048 bytes；內嵌512字元內的core正規原文，scriptVersion同時綁牌堆及引擎語義。learning.ts負責已讀原文、錯誤／衝突、兩區狀態與離頁保護。syncSavePanels在各類保存結束依當下busy重算兩區及按鈕；不可只恢復舊DOM參照，否則並行的v2／round保存會把新按鈕卡在disabled。freezeControls以原生inert保護課程（含summary），保留外部status可讀並復原原狀。Web Locks缺失不降級，其他頁storage及真實BFCache返回都比對原文；不要自動重載丟掉本頁。錯誤、未知原文可複製／下載，刪除需確認及鎖內CAS，只動round鍵，不動Session／其他模式。test/learning-round-store.test.mjs與test/e2e/learning-round.spec.js為主要回歸，真實BFCache必須persisted＋同文件marker，不能因未還原改成skip。
 
 S4.2牌面語意／選取：[限定驗收](S42-ACCESSIBILITY.md)。共用view.tile以role=img呈現名稱，裝飾牌及他家暗手維持隱藏；不能為可及性把暗槓未知牌種填回DOM。learning.css在forced-colors用雙線框，保持內距／邊框總尺寸及獨立焦點；對應test/e2e/accessibility.spec.js，含light／dark、暗槓遮罩與未推進牌局。
 

@@ -2,7 +2,21 @@
 
 更新：2026-10-22（Asia/Taipei）。方向依[PRODUCT-DIRECTION](PRODUCT-DIRECTION.md)，排程依[ROADMAP](ROADMAP.md)，修改位置依[MAINTENANCE](MAINTENANCE.md)。本輪以前及展開的CI證據保留[歷史交接](HANDOFF-HISTORY-20261017.md)；不要沿歷史「下一步」自動開工。
 
-## 本輪：S2.4a第7–8課整局核心
+## 本輪：S2.4b八課入門與獨立續學已完成本機驗收
+
+2026-10-22，使用者要求持續推進直到本次五小時額度用完。專案仍在既有new-chat路徑，基準main4eb13e4、分支codex/learning-round-ui-20261022。Codex定範圍／契約及驗收，實際Claude Code既有claude.ai Pro會話5c796624-5967-4003-a3fe-e73f14f53130完成實作、自測及同會話修正；brief、各輪JSON、原始檢查及截圖留work/learning-round-ui-20261022/。**候選已通過下列本機限定技術驗收，PR／main與正式發布尚待；這不是真人理解或實機手機驗證。**
+
+本包開放第7–8課：完整固定示例、兩種吃法／過、合法偏離後明確重試、自摸及未贏結算、台項／付款／莊位檢核、實桌附錄、暫停與回圖解接續。獨立tw16:learn:round:v1四欄續學封套只存牌局段落及受助，小題重新確認；v2只存八課累積旗標，前六課語義及v1原文保留。正常對戰回既有牌室接原局或確認新開，不帶固定牆。結算優先呈現台項收付，公開牌列表用原生details按需展開，不算提示、不重付；活動中直接查附錄答案仍算受助。規則／引擎／計台／AI／Session、依賴及原八分支參考均無改動。
+
+審查發現並退回修正：非劇本捨牌後只保留公開Observation，直到明確重試才回復，偏離屬dirty且不可保存；等待時以原生inert保護summary等教學動作，status區保留可讀；活動查附錄跨重載保留受助。另以兩把延遲鎖重現v2先完成時側邊按鈕卡disabled，修為syncSavePanels依當下busy重算各區，兩種釋放順序都納回歸。BFCache先前2項skip已取消，使用完整Chromium、尊重override，Windows僅已確認spawn UNKNOWN才fallback既有Chrome；必須persisted與同文件marker，不能把無快取還原當通過。Codex另讓獨立建立的context沿project viewport，確實驗桌面／窄版。
+
+Claude最終437項Node／build／120項瀏覽器全過、0skip；Codex已獨立重跑同數量，Chrome全回歸120（2.2分），Edge補2項真BFCache＋2項明示合成事件共4案通過。Chrome155.0.8059.85／Edge155.0.4283.62各四模式真BFCache與衝突共8流程全過、其他鍵保持、0pageerror。另獨立對照舊v2解析器15625個合法六課旗標、125個v1組合全部保持，舊頁拒絕新7–8旗標而非降格。Chrome／Edge實際1440／320各完成第7課示範存claim重載、受助放槍及未求助自摸、原v1／其他模式原文與回正常原局保持，0pageerror、無橫向溢出；兩鎖獨立重現修後按鈕已恢復。桌面／窄版結算截圖已目視，台項與收付直接可見；非實機手機／Safari／真人輔具。
+
+正式文件已同步八課、完成旗標與續學點邊界、模組修改位置、舊頁／回退注意與T6–T8形成性任務，沒有新增正式文件檔。接手先查session.json及最終CI／發布補記，不再把舊準備稿未接線當現況。真人仍0，S2.2／S4理解待驗；S6、正式評量及本人授權／Release事項不因本包自動放行。
+
+帳戶開始五小時15%，檢查點29／43／61／71%已用；是共用帳戶快照，不是精確對話token。70%後只收斂本包及驗收，不新開大範圍；接近上限優先提交／發布／交接，不使用額度重設或自動續跑。
+
+## 前包：S2.4a第7–8課整局核心
 
 2026-10-22，承接使用者「推進專案進度」，先完成第7–8課的純整局腳本及最少檢查點。Codex PM／SA定義範圍並驗收，實際Claude Code CLI以既有claude.ai Pro實作及同會話自測；分支codex/lesson-round-core-20261022，基準0c1db73。原教學8路徑測試完整保留，新增src/learning-round.ts及test/learning-round-core.test.mjs；只更新既有教材／維護／路線文件，不新增平台、依賴或保存鍵。brief、會話c9da2894-103b-47a1-b2f0-3b3c3bbb8161、結果與檢查紀錄在work/lesson-round-core-20261022/。
 
@@ -74,7 +88,8 @@ Codex檢視四個實作檔、確認原斷言未弱化，獨立重跑408項Node�
 | tw16:TW16-CLASSIC-v1:save | Session／GameState v1；decodeSession→engine.restore，結算已付款，不重付 |
 | tw16:practice:v1 | 練習v1；種子與日誌重播核對 |
 | tw16:review:v2 | 白名單快照、容量／版本、Web Locks |
-| tw16:learn:v1／v2 | v1 schema1三課原文只讀保留；v2 schema2、beginner-1-8-v1八筆／六課開放，明確帶入；本機及正式兩寬均已驗 |
+| tw16:learn:v1／v2 | v1 schema1三課原文只讀保留；v2 schema2、beginner-1-8-v1八課累積旗標，明確帶入；前六課語義保持 |
+| tw16:learn:round:v1 | 第7–8課獨立續學點，嚴格四欄2048 bytes，內嵌512字元內core原文；CAS／Web Locks、壞原文與跨頁保護，不存GameState／未提交選項 |
 | tw16:trial:v1 | 保存封套schema1含schema3報告、128KiB、Web Locks ifAvailable＋expectedRaw，只自動讀同版 |
 
 教練偏好tw16:coach:v1為on／off／after。壞檔、未知版、讀寫失敗及跨頁衝突保留原文與本頁內容，不清空localStorage修復。試讀保存位置只在按鈕保存時更新，切題不自動寫入；曝光自陳不是首次證明，揭示後鎖定。CLI讀schema1／2／3、審閱reportVersion2；未授權任意匯入、靜默遷移或後端。
