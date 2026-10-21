@@ -4,8 +4,9 @@ export const COURSE_VERSION = 'beginner-1-8-v1';
 export const LEGACY_LEARN_KEY = 'tw16:learn:v1';
 export const LEGACY_COURSE_VERSION = 'beginner-1-3-v1';
 export const LESSON_COUNT = 8;
-// ponytail: lessons 7–8 stay closed and must remain false until their content ships.
-export const OPEN_LESSONS = 6;
+// S2.4b opens lessons 7–8 in the same beginner-1-8-v1 record; lessons 1–6 keep their meaning bit for bit. An older
+// six-lesson page rejects a record with lesson 7–8 flags and stops overwriting it (no downgrade, no new key).
+export const OPEN_LESSONS = 8;
 export type LessonProgress = { read: boolean; guided: boolean; independent: boolean };
 export type LearningProgress = { schemaVersion: 2; courseVersion: string; rulesVersion: 'TW16-CLASSIC-v1'; lessons: LessonProgress[] };
 export type LegacyLearningProgress = { schemaVersion: 1; courseVersion: string; rulesVersion: 'TW16-CLASSIC-v1'; lessons: LessonProgress[] };

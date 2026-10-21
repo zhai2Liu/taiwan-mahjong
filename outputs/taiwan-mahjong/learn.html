@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="從零學台灣十六張麻將：第1–6課入門試用，透過認牌、摸打補花、組牌、吃碰槓、聽牌與結算示例親手練習，學習進度獨立保存在此瀏覽器。">
+  <meta name="description" content="從零學台灣十六張麻將：第1–8課入門試用，透過認牌、摸打補花、組牌、吃碰槓、聽牌、結算與完整一局示例親手練習，學習進度獨立保存在此瀏覽器。">
   <title>從零學台灣麻將｜從零到一百的麻將路</title>
   <link rel="stylesheet" href="/src/learning.css">
 </head>
@@ -16,8 +16,8 @@
     <div class="learn-intro">
       <p class="learn-eyebrow">從第一張牌開始</p>
       <h1>從零學台灣麻將</h1>
-      <p class="learn-version">入門試用版 · 第1–6課 · TW16-CLASSIC-v1</p>
-      <p>短圖解、親手做、換例再試。都是固定教學示例，不改對戰、練習或檢討存檔。第7–8課尚未開放，原六步操作導覽仍在牌室。</p>
+      <p class="learn-version">入門試用版 · 第1–8課 · TW16-CLASSIC-v1</p>
+      <p>短圖解、親手做、換例再試。都是固定教學示例，不改對戰、練習或檢討存檔；第7–8課帶你走完整一局，可暫停並另存續學點。原六步操作導覽仍在牌室，正常對戰隨時可從牌室開始。</p>
       <p><a href="#learning-feedback-form">哪裡看不懂或操作卡住？提供學習回饋</a></p>
     </div>
     <nav id="lesson-nav" aria-label="選擇入門課程"></nav>
@@ -28,11 +28,12 @@
       </div>
       <aside class="learning-sidebar" aria-label="進度與保存說明">
         <section id="learning-progress" aria-label="本機學習進度"></section>
-        <p class="muted">只保存閱讀與整段完成紀錄；未完成的操作離頁或重載會重新開始。自行完成只表示本次換例未使用提示、未回看圖解，也未經錯答推導；重練、牌面可讀名稱與本機紀錄都不是陌生題能力認證。</p>
+        <section id="learning-round-save" aria-label="第7–8課續學點"></section>
+        <p class="muted">學習進度只保存閱讀與整段完成紀錄；第1–6課未完成的操作離頁或重載會重新開始。第7–8課可按「保存並暫停」另存一個續學點，只存牌局段落與提示紀錄，不存結算小檢核的作答。自行完成只表示本次換例未使用提示、未回看圖解、未經錯答推導，也未按重試；重練、牌面可讀名稱與本機紀錄都不是陌生題能力認證。</p>
       </aside>
     </div>
     <details class="learning-feedback">
-      <summary id="learning-feedback-title">提供第1–6課試用回饋（選填）</summary>
+      <summary id="learning-feedback-title">提供第1–8課試用回饋（選填）</summary>
       <p>寫下一個卡點就有幫助。下載後，請自行把文字檔附回專案對話；不會自動傳送，也不需填姓名或聯絡方式。</p>
       <form id="learning-feedback-form">
         <label for="learning-feedback-scope">回饋針對哪裡？</label>
@@ -41,7 +42,7 @@
         <input id="learning-feedback-device" maxlength="160" placeholder="例如：電腦、Chrome；或手機、Safari">
         <label for="learning-feedback-note">最不清楚的一句或最卡的操作</label>
         <textarea id="learning-feedback-note" rows="4" maxlength="2000" required placeholder="你在哪一步、原本以為會怎樣、實際看到了什麼？若有看提示或請人協助，也可以寫下來。"></textarea>
-        <p class="muted">切換課程會保留本頁文字；重新整理或關閉可能遺失，請先下載或複製。檔案會附課程版本、當下畫面與第1–6課進度，不包含牌局、練習手牌或其他試讀作答。</p>
+        <p class="muted">切換課程會保留本頁文字；重新整理或關閉可能遺失，請先下載或複製。檔案會附課程版本、當下畫面與第1–8課進度，不包含牌局、續學點、練習手牌或其他試讀作答。</p>
         <button type="submit">下載學習回饋</button>
         <p id="learning-feedback-status" role="status"></p>
         <div id="learning-feedback-preview-panel" hidden>

@@ -53,6 +53,6 @@ test('四能力切題保留草稿／已揭示答案，分類匯出仍是完整�
   await page.setViewportSize({ width: 320, height: 844 });
   await expect(picker).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  await expect(page.getByRole('link', { name: '第1–6課入門（另開分頁）', exact: true })).toHaveAttribute('target', '_blank');
+  await expect(page.getByRole('link', { name: '第1–8課入門（另開分頁）', exact: true })).toHaveAttribute('target', '_blank');
   expect(await page.evaluate(() => localStorage.length)).toBe(0);
 });

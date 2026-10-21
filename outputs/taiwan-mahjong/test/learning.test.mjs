@@ -13,25 +13,31 @@ const legacyRaw = flags => JSON.stringify({ schemaVersion: 1, courseVersion: LEG
 const legacyCombos = [blank, { read: true, guided: false, independent: false }, { read: true, guided: true, independent: false },
   { read: true, guided: false, independent: true }, { read: true, guided: true, independent: true }];
 
-test('新版進度：v2鍵、八筆布林、只開放六課，嚴格版本與容量，完成須已閱讀', () => {
-  assert.equal(LEARN_KEY, 'tw16:learn:v2'); assert.equal(COURSE_VERSION, 'beginner-1-8-v1'); assert.equal(lessons.length, 6);
+test('新版進度：v2鍵、八筆布林、開放八課，嚴格版本與容量，完成須已閱讀', () => {
+  assert.equal(LEARN_KEY, 'tw16:learn:v2'); assert.equal(COURSE_VERSION, 'beginner-1-8-v1'); assert.equal(lessons.length, 8);
   const p = emptyProgress(); assert.deepEqual(decodeLearningProgress(null), p);
   assert.equal(p.schemaVersion, 2); assert.equal(p.lessons.length, 8);
   assert.deepEqual(decodeLearningProgress(encodeLearningProgress(p)), p);
   for (const mutate of [v => v.schemaVersion = 1, v => v.schemaVersion = 3, v => v.courseVersion = LEGACY_COURSE_VERSION, v => v.rulesVersion = 'other', v => v.extra = 1,
     v => v.lessons.push(v.lessons[0]), v => v.lessons.pop(), v => v.lessons.length = 3, v => v.lessons[0].read = 'yes', v => v.lessons[0].extra = false,
-    v => v.lessons[0].independent = true, v => v.lessons[6].read = true, v => Object.assign(v.lessons[7], { read: true, guided: true })]) {
+    v => v.lessons[0].independent = true, v => v.lessons[6].guided = true, v => Object.assign(v.lessons[7], { read: false, independent: true })]) {
     const copy = structuredClone(p); mutate(copy); assert.throws(() => decodeLearningProgress(JSON.stringify(copy)));
   }
+  // Lessons 7–8 are open now: their legal flags round-trip in the same key and schema.
+  const opened = structuredClone(p); opened.lessons[6] = { read: true, guided: true, independent: false }; opened.lessons[7] = { read: true, guided: false, independent: true };
+  assert.deepEqual(decodeLearningProgress(JSON.stringify(opened)), opened);
   for (const raw of ['{broken', '', 'null', '[]', ' '.repeat(4097)]) assert.throws(() => decodeLearningProgress(raw));
-  assert.ok(new TextEncoder().encode(encodeLearningProgress({ ...p, lessons: p.lessons.map((_, i) => i < 6 ? { read: true, guided: true, independent: true } : blank) })).length <= 4096);
+  assert.ok(new TextEncoder().encode(encodeLearningProgress({ ...p, lessons: p.lessons.map(() => ({ read: true, guided: true, independent: true })) })).length <= 4096);
 });
-test('閱讀、提示下及自行完成分列，不修改舊紀錄；第7–8課不能標記', () => {
+test('閱讀、提示下及自行完成分列，不修改舊紀錄；第7–8課可標記，範圍外不能', () => {
   const p = emptyProgress(), guided = markLesson(p, 0, 'guided'), independent = markLesson(guided, 5, 'independent');
   assert.deepEqual(p.lessons[0], blank);
   assert.deepEqual(independent.lessons[0], { read: true, guided: true, independent: false });
   assert.deepEqual(independent.lessons[5], { read: true, guided: false, independent: true });
-  for (const i of [-1, 6, 7, 8, 1.5]) assert.throws(() => markLesson(p, i, 'read'));
+  const later = markLesson(markLesson(independent, 6, 'guided'), 7, 'independent');
+  assert.deepEqual(later.lessons.slice(0, 6), independent.lessons.slice(0, 6), 'lessons 1–6 kept bit for bit');
+  assert.deepEqual(later.lessons.slice(6), [{ read: true, guided: true, independent: false }, { read: true, guided: false, independent: true }]);
+  for (const i of [-1, 8, 9, 1.5]) assert.throws(() => markLesson(p, i, 'read'));
 });
 test('舊版v1嚴格解碼；帶入前三課逐位複製、第4–8課全false，不把合法舊值改寫', () => {
   for (const combo of legacyCombos) {
