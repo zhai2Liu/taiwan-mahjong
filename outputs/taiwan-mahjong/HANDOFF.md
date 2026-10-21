@@ -2,14 +2,17 @@
 
 更新：2026-10-21（Asia/Taipei）。方向依[PRODUCT-DIRECTION](PRODUCT-DIRECTION.md)，排程依[ROADMAP](ROADMAP.md)，修改位置依[MAINTENANCE](MAINTENANCE.md)。本輪以前及展開的CI證據保留[歷史交接](HANDOFF-HISTORY-20261017.md)；不要沿歷史「下一步」自動開工。
 
-## 本輪：電腦吃碰門檻本機補驗完成，待指定CI與發布
+## 本輪：電腦吃碰門檻驗收、合併與發布完成
 
 2026-10-21使用者要求完成上次工作；接續Claude來源b16ac096e858d440ff72389025c656717775a8a7、基準main09ee410，在codex/ai-claim-validation-20261021補驗。原始背景、修正後統計及A–E逐項處置見[驗收文件§8](AI-CLAIM-TUNING-20261020.md)。未實裝安全平手偏好、人格／攻守或後五課。
 
 - 統計分開提案與仲裁成立；實際每局吃碰明槓7.336→3.757，原7.664→3.893是提案。六將146→140局、零台胡26.7%→18.4%；全桌胡法組成不等於某策略捨牌放槍率。
 - 補自風／圈風／非台字、恰好一步聽、只有暗槓等邊界。404項Node、build、58項預設Chromium（51.2秒）通過。TW16_BROWSER_PATH指定Chrome三項通過，故意錯誤路徑退出1；CI維持預設。
 - 舊引擎＋新AI對整理後引擎＋同AI：六將140局、18,764步完整狀態／事件相等，還原相等。舊Session編碼原文及局面保持；舊AI吃的遠手，新AI過且可合法提交。接受基礎策略更新後沿新版續玩，格式仍v1；S6策略版本與舊策略保留另設計。
-- 證據work/ai-claim-validation-20261021/。下一步：指定head PR完整CI成功後合併，等main部署並核對三頁／資源及受影響操作，不能把本機驗收當發布。額度開始五小時2%，收尾再記；非精確token，未重設或自動續跑。
+- [PR#32](https://github.com/zhai2Liu/taiwan-mahjong/pull/32)最終head64ba3e8e288a2c60902d0aca8db8faa2a3a9d14f的Actions39546273593／build119045052861成功404／58（47.0秒），89份文件667連結通過，PR無Pages。已合併並回main，**正式Pages來源a9b645608d8eaada47b0db8f3ae4154095a90b12**；main Actions39546532410／build119045847342成功404／58（47.3秒），deploy119046328504成功。後續純文件收尾不代表另一個runtime版本。
+- 正式三頁HTML及八項唯一JS／CSS皆HTTP200、SHA-256等於本機建置；新index-Cz31J2DV.js／view-B4x6kR6k.js／learn-DqCMdygM.js，其餘五資源不變。正式Chrome155.0.8059.85於1440／320px實際從首頁續開合成舊檔：操作前原文保持、新AI過且只推進一步、原暗手／牌組／分數保持、暫停後不再推進、其他鍵保持、0pageerror及無橫溢出；桌面正式畫面與窄版本機畫面已目視。此為隔離合成驗收，不是真人理解或手機／Safari實機。
+- 完整logs、live-assets.log、live-result.json、截圖及合成舊檔在work/ai-claim-validation-20261021/。臨時4235（session24323／PID38812）核對路徑及port後關閉，4235無監聽；全部驗收context關閉，原4173及日常profile未動。本包無剩餘程式／發布待辦；B1安全平手、D3文字修訂等維持驗收文件的獨立候選，後五課仍等前三課真人回饋，S6未啟動。
+- 帳戶本輪開始五小時2%（resetsAt1792575628），最後檢查1%（resetsAt1792594522），屬不同窗口，不能相減當本包用量；非精確token，未自行重設或新增自動續跑。上輪在100%時中斷的唯讀評估已由本包補齊A–E結論、修正、驗收與發布。
 
 ## 前包：人性化 AI 與遊玩體驗追加評估完成
 
