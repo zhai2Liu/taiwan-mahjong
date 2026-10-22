@@ -4,6 +4,8 @@
 
 ## 當前執行與下一包
 
+2026-10-23續作：安全修補[PR#39](https://github.com/zhai2Liu/taiwan-mahjong/pull/39)已合併發布b85a9b2，PR／main各437／124及正式三頁8資源、兩瀏覽器兩寬通過，詳HANDOFF。現在啟動決策題可靠本機自存；以下後包順序保持，未實裝項目不預填完成。
+
 **2026-10-23最新順序：** 依使用者授權自定優先事項，先完成Vite8.3.2→8.3.5安全修補及完整驗收／發布，再推進「決策題可靠本機自存」。GPT 6.1 Sol／High已完成後包唯讀評估，程式沿Claude Code RD分工；每包驗收與發布只依HANDOFF，不以歷史成功代替。
 
 前包五項快改與現行舊文字清理已由[PR#38](https://github.com/zhai2Liu/taiwan-mahjong/pull/38)合併發布2275091；獨立與PR／main各437項Node／124項瀏覽器通過，正式三頁資源及兩瀏覽器兩寬核對完成，詳HANDOFF。
