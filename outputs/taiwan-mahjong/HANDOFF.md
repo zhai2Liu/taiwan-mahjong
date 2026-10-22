@@ -1,10 +1,22 @@
 # 現行交接入口
 
-更新：2026-10-22（Asia/Taipei）。方向依[PRODUCT-DIRECTION](PRODUCT-DIRECTION.md)，排程依[ROADMAP](ROADMAP.md)，修改位置依[MAINTENANCE](MAINTENANCE.md)。本輪以前及展開的CI證據保留[歷史交接](HANDOFF-HISTORY-20261017.md)；不要沿歷史「下一步」自動開工。
+更新：2026-10-23（Asia/Taipei）。方向依[PRODUCT-DIRECTION](PRODUCT-DIRECTION.md)，排程依[ROADMAP](ROADMAP.md)，修改位置依[MAINTENANCE](MAINTENANCE.md)。本輪以前及展開的CI證據保留[歷史交接](HANDOFF-HISTORY-20261017.md)；不要沿歷史「下一步」自動開工。
 
 以下「前包」段落保留當時的發布與待辦快照；其中六課、尚未整合或下一包等描述不代表現況。當前開放八課，交付狀態以本輪及「進度與不能代理的門檻」表為準。
 
-## 本輪：快速操作與舊文字修整
+## 本輪：Vite 安全修補
+
+2026-10-23依使用者「繼續作業，優先做什麼你決定」，先處理已知安全維護。基準4e0ad3c，分支codex/vite-security-20261023；完整audit再次確認Vite8.3.2為1個high套件、6則公告。核對[維護者Windows公告](https://github.com/vitejs/launch-editor/security/advisories/GHSA-587h-7wmj-h5pm)及[8.3.5正式版本](https://github.com/vitejs/vite/releases/tag/v8.3.5)後，實際Claude Code會話3b8f8939-2f1e-4e6a-abcd-d2fdffffa375只修改package.json／package-lock.json，Vite固定8.3.5；既有claude.ai Pro及權限保持。
+
+傳遞變更只有Rolldown1.2.15及15平台binding、其@oxc-project/types0.155.0、PostCSS8.5.31與其nanoid3.3.20，沒有新增套件或頂層依賴；TypeScript／Playwright等其餘鎖版保持。完整audit包含dev，修補後0公告不等於全面安全稽核。正式Pages只供應靜態檔，未執行Vite開發伺服器；沒有正式站被利用的證據。
+
+Claude自測437項Node／build／124項瀏覽器通過、0skip。第一次安裝誤在repo根目錄留下三個被忽略的npm產物，清理命令未獲工具授權；Codex已核對建立時間、內容及絕對路徑，把它們移入work/vite-security-20261023/mistaken-root-install隔離，沒有刪除既有遊戲資料。另兩次探索命令遭拒，必要更新及檢查皆已執行，沒有擴大Claude權限。Codex在正確目錄乾淨npm ci、鎖檔雜湊不變，獨立完整audit為0，437項Node及build通過；其餘驗收／發布補記於本節。brief／原始audit／結果及獨立檢查在work/vite-security-20261023/。
+
+下一包優先「決策題可靠本機自存」，GPT 6.1 Sol／High已唯讀核對現存手動保存與Web Locks／原文衝突保護。最小範圍為選項／揭示／理由與續答位置，保存狀態直接可見、不中斷作答；忙碌期間合併最新快照，失敗不無限重試，清除／重讀取消待存，舊欄位及其他模式保持。方案在同一work目錄next-autosave-brief.md，尚未派工或實裝；單題重練其後。既有解釋返回暫停牌桌已有明確繼續，順位較低。人工教材編審仍依BEGINNER-LEARNING，不自動啟動S6、改答案或新增上傳。
+
+Codex獨立124項瀏覽器回歸通過（2.4分、0skip，含真BFCache），程式／測試／CI無修改。鎖檔20個套件項目全部屬指定依賴鏈，無新增／移除項目；本機Chrome／Edge於1440／320四組入口、原局往返、教學鍵盤收合與答題鎖定通過、0pageerror／無橫溢出，已目視窄版牌桌與桌面課程。91份文件822本機連結及差異空白檢查通過。新建置JS雜湊有變，正式發布後須重新核對，不沿用PR#38產物。帳戶檢查點五小時已用51%，為共用帳戶快照，後續先收斂發布與交接。
+
+## 前包：快速操作與舊文字修整
 
 2026-10-22使用者要求先完成五項快改及舊文字，較難項目和作品集補強等本包結束後再評估，並加入可能人工重新編輯新手教程。基準fc9eebb、分支codex/quick-ux-20261022；計畫、Claude結果及驗收留work/quick-ux-20261022/。GPT 6.1 Sol／High子代理完成有界派工，真實Claude Code CLI會話a5ff3335-d431-4857-9204-40eae7641807實作／自測437項Node、build及124項瀏覽器通過。子代理後因Codex帳戶額度中止；主代理接續文件與獨立驗收，程式未由Codex接手。一次探索性合併shell指令被拒，改用原工具完成，必要檢查無拒絕；未更動供應者／計費。
 
