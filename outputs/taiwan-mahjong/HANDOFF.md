@@ -12,7 +12,11 @@
 
 新增[人工教材編審的後續範圍](BEGINNER-LEARNING.md#快速操作修整與後續人工編審)；只列待評估，本包不重寫八課、不修改完成紀錄語義。難項、自存／重練／續玩／匯入、Vite修補、作品集刷新與S6皆未實作。
 
-主代理檢視實際程式與測試差異，獨立重跑437項Node、build、124項瀏覽器（2.3分），皆通過、0skip。新增導航與收合回歸未刪弱原保護；本機Chrome／Edge各1440／320驗入口、原局往返、工具鍵盤／焦點、答案鎖定，全部通過、0pageerror與無橫溢出；已目視320牌桌及1440學習頁。凍結引擎／AI／計台／Session、存檔codec／題庫答案及依賴保持；正式發布結果另補記。
+主代理檢視實際程式與測試差異，獨立重跑437項Node、build、124項瀏覽器（2.3分），皆通過、0skip。新增導航與收合回歸未刪弱原保護；本機Chrome／Edge各1440／320驗入口、原局往返、工具鍵盤／焦點、答案鎖定，全部通過、0pageerror與無橫溢出；已目視320牌桌及1440學習頁。凍結引擎／AI／計台／Session、存檔codec／題庫答案及依賴保持。
+
+[PR#38](https://github.com/zhai2Liu/taiwan-mahjong/pull/38)最終head b2757925ae6de6eb2bba85dea4be01f139d8e7f8，Actions39770063181／build119795060688通過437／124（2.4分）、0skip及91份文件822連結；PR部署依規則跳過。以新鮮head／base、mergeable clean及指定head防護合併；正式來源**2275091129a6d4f2dd8ac1ea325ccf267f2501fd**，tree與驗收head相同。main Actions39770590629／build119796823247同樣437／124（2.4分）、0skip與文件檢查通過，deploy119798250857成功。
+
+正式三頁HTML及8項唯一JS／CSS皆HTTP200，SHA-256與本機驗收建置一致；正式Chrome／Edge各1440／320再次完成入口、原局往返、收合鍵盤／焦點及答題鎖定，0pageerror、無橫溢出。live-assets.log／live-ui.log及隔離context截圖在同一work目錄；context及臨時4226／4240服務均關閉，日常4173與使用者profile未動。程式、文件與發布收尾完成；純文件收尾不代表另一個網站runtime。後續只評估本節列出的延後項目，手機實機／Safari／真人理解仍未驗。
 
 ## 前包：玩家回饋收集已撤下並完成正式驗收
 
