@@ -4,7 +4,7 @@
 
 以下「前包」段落保留當時的發布與待辦快照；其中六課、尚未整合或下一包等描述不代表現況。當前開放八課，交付狀態以本輪及「進度與不能代理的門檻」表為準。
 
-## 本輪：撤下玩家回饋收集（本機驗收通過，待發布核對）
+## 本輪：玩家回饋收集已撤下並完成正式驗收
 
 2026-10-22使用者指出沒有上傳服務時，填寫回饋、下載再交回不符合正常使用情境，要求先全部撤下。Codex定範圍／驗收，實際Claude Code CLI負責程式及自測，既有claude.ai Pro不切換計費；基準0ebe3e3，分支codex/remove-feedback-20261022，brief／結果在work/remove-feedback-20261022/。本次不包含前包另列的Vite安全修補。
 
@@ -12,7 +12,11 @@
 
 Claude最終437項Node／build／120項瀏覽器通過，0skip；Codex已審查實際差異及測試修改，獨立重跑437／build／120（2.2分）通過。原回饋專屬斷言改驗入口不存在，未存、衝突、焦點、壞檔、八課及真BFCache保留；新增舊意見／曝光逐字保全。初稿合成測試資料把只有意見的紀錄標為draft，依原解析規則修正成unanswered後整套通過，沒有放寬格式。早期兩個額外CLI命令遭拒，改用原允許完整命令完成，未擴大權限或改計費；最後小修正同會話完成，無新增拒絕。
 
-Codex另以Chrome155.0.8059.85／Edge155.0.4283.62於1440／320各驗兩頁：收集控制／交回文字不存在、八課可切換、作答與解析／重載正常、舊九題feedback／exposure保存及備份完全相同、其他模式原文保持、0pageerror／無橫溢出，該組流程只有同來源GET。目視發現備份預覽原在工具外，已退回同會話修正為隨原生details一起收合，重開原文保留；最終兩寬已再驗。Chrome／Edge四模式真BFCache與衝突共8流程通過；browser-history腳本及showcase錄製器僅同步新標籤，未重錄或替換影片。後者由Codex作單純文字修正並檢查語法。91份正式文件821個本機連結、0問題；凍結規則／引擎／計台／AI／Session、保存格式與依賴無差異。證據在同一work目錄，待PR／main及正式站核對後補記。
+Codex另以Chrome155.0.8059.85／Edge155.0.4283.62於1440／320各驗兩頁：收集控制／交回文字不存在、八課可切換、作答與解析／重載正常、舊九題feedback／exposure保存及備份完全相同、其他模式原文保持、0pageerror／無橫溢出，該組流程只有同來源GET。目視發現備份預覽原在工具外，已退回同會話修正為隨原生details一起收合，重開原文保留；最終兩寬已再驗。Chrome／Edge四模式真BFCache與衝突共8流程通過；browser-history腳本及showcase錄製器僅同步新標籤，未重錄或替換影片。後者由Codex作單純文字修正並檢查語法。91份正式文件821個本機連結、0問題；凍結規則／引擎／計台／AI／Session、保存格式與依賴無差異。證據留在同一work目錄，最終PR／main與正式站核對如下。
+
+[PR#37](https://github.com/zhai2Liu/taiwan-mahjong/pull/37)最終head b0433f9b82e726fb62c376c6261df74585f613c5，Actions39735375251／build119679706640成功437／120（2.1分）、91份文件821連結，PR deploy119680827250依規則跳過。重新核對head、base及mergeable clean後，以指定head合併；**正式Pages來源06680023cbf491143cefdda4df17752edb5d7870**，main tree與驗收head相同。main Actions39735812156／build119681099928成功437／120（2.3分）、同一文件檢查通過，deploy119682295336成功。
+
+正式三頁HTML及8項唯一JS／CSS全HTTP200，SHA-256與驗收建置一致；更新learn-jsy4ZQDK.js／learn-CCkWnC6_.css、training-wjnhJg38.js／training-Bvg6n3C0.css，其餘四資源保持。正式Chrome／Edge於1440／320再次完成無收集入口、作答解析／重載、舊九題意見與曝光原值保存、完整備份及收合預覽、其他鍵原文保持；0pageerror、無溢出，該流程無外部請求。live-assets.log／live-ui.log及截圖在同一work目錄；所有驗收context與臨時服務均已關閉，日常4173與profiles未動。本包程式、發布與文件收尾完成；純文件提交不代表另一個runtime。實機手機／Safari／真人理解仍未驗，Vite安全修補仍為後續獨立待辦。
 
 ## 前包：S2.4b八課入門與獨立續學已發布並完成正式驗收
 
