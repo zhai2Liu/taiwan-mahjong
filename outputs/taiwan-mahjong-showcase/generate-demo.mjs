@@ -54,7 +54,7 @@ try {
   for (const name of ['1與3萬', '3與4萬']) await lesson.getByRole('checkbox', { name, exact: true }).check();
   await lesson.locator('#reason').fill('合成示範：123萬與234萬皆為連續三張；合法不代表一定值得吃。');
   await chapter(lesson, '06-answer', '選13與34，分別組成123萬、234萬\n先作答並留下理由，再查看推導', 5000);
-  await lesson.getByRole('button', { name: '提交並看推導', exact: true }).click();
+  await lesson.getByRole('button', { name: '看答案與推導', exact: true }).click();
   await lesson.locator('section.answer').scrollIntoViewIfNeeded();
   await chapter(lesson, '07-explanation', '答案集合與推導可核對；自由文字理由仍未評閱\n提供類別導引的練習，不是正式能力測驗', 5000);
   await lesson.getByRole('button', { name: '保存作答到此瀏覽器', exact: true }).click();

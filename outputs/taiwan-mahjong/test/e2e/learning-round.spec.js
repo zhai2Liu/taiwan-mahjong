@@ -208,11 +208,9 @@ for (const kind of ['hint', 'mistake', 'recap']) test(`受助黏住（${kind}）
   await expect.poll(async () => (await course(page)).lessons[7]).toEqual({ read: true, guided: true, independent: false });
 });
 
-test('保存並暫停→重載→接續：補花、吃牌回應、可胡、結算各點不重摸不重付；暫停焦點、返回圖解保留本段、回饋草稿保留', async ({ page }) => {
+test('保存並暫停→重載→接續：補花、吃牌回應、可胡、結算各點不重摸不重付；暫停焦點、返回圖解保留本段', async ({ page }) => {
   const errors = []; page.on('pageerror', e => errors.push(e.message));
   await seeded(page);
-  await page.getByRole('link', { name: '哪裡看不懂或操作卡住？提供學習回饋' }).click();
-  const draft = page.getByLabel('最不清楚的一句或最卡的操作'); await draft.fill('第7課吃牌那段卡住');
   await click(page, '7. 帶你打一局'); await click(page, '我讀完了，開始示範');
   await l7Opening(page);
   const reload = async () => {
@@ -228,7 +226,6 @@ test('保存並暫停→重載→接續：補花、吃牌回應、可胡、結�
   await click(page, '繼續'); await expect(button(page, '補花：從牌尾補一張')).toBeVisible();
   await click(page, '回到本課圖解'); await click(page, '繼續本段（親手做示範・摸到花、待補花）');
   await expect(button(page, '補花：從牌尾補一張')).toBeVisible();
-  await expect(draft).toHaveValue('第7課吃牌那段卡住');
   await click(page, '保存並暫停');
   await expect(panel(page)).toContainText('已保存並暫停');
   await expect.poll(() => read(page, ROUND_KEY)).toBe(saved(7, 'guided', 7, 'flower', true));
@@ -256,15 +253,11 @@ test('保存並暫停→重載→接續：補花、吃牌回應、可胡、結�
   await expect(note(page)).toContainText('結算小檢核的作答沒有保存，會重新問一次');
   await expect(lesson(page)).toContainText('依上面明細，這次牌型合計幾台？');
   await expect(lesson(page)).toContainText('你（北門） ＋160'); await expect(lesson(page)).not.toContainText('＋320');
-  // The feedback draft is page-only (a reload may lose it, as the form says); switching or resuming keeps it.
-  await page.getByRole('link', { name: '哪裡看不懂或操作卡住？提供學習回饋' }).click();
-  await draft.fill('結算那段想再看一次');
   await l7Result(page);
   await expect.poll(async () => (await course(page)).lessons[6]).toEqual({ read: true, guided: true, independent: false });
   await expect(panel(page)).toContainText('已存：第7課（親手做示範）・結算');
   await click(page, '8. 換一局，自己試'); await click(page, '接續已存教學');
   await expect(lesson(page)).toContainText('依上面明細，這次牌型合計幾台？');
-  await expect(draft).toHaveValue('結算那段想再看一次');
   // Clearing the resume point needs a confirmation and touches only the round key.
   page.once('dialog', d => d.dismiss()); await click(page, '清掉續學點');
   expect(await read(page, ROUND_KEY)).not.toBeNull();

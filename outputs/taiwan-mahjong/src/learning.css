@@ -34,8 +34,5 @@ button:hover:not(:disabled){background:#eaf0e3}button:disabled{opacity:.6;cursor
 .round-appendix{margin-block:16px}.round-appendix table{width:100%;table-layout:fixed;border-collapse:collapse;font-size:13px}
 .round-appendix th,.round-appendix td{border:1px solid #abbcad;padding:6px;vertical-align:top;text-align:left;overflow-wrap:anywhere}.round-appendix thead th{background:#eaf0e3}
 .learn-answer{display:block;width:100%;text-align:left;margin-block:12px}.learn-answer .learn-tile{width:28px;height:40px;margin:2px}
-.learning-feedback{margin-top:24px;padding:12px 20px;border:1px solid #d6ddd2;border-radius:14px;background:#fffef9;font-size:14px;scroll-margin-top:16px}
-.learning-feedback summary{font-weight:600}.learning-feedback form{max-width:760px}.learning-feedback label{display:block;margin:12px 0 5px}
-.learning-feedback :is(select,input,textarea){font:inherit;width:100%;max-width:100%;padding:9px 10px;border:1px solid #92a78e;border-radius:6px;background:#fff;color:#203d32}.learning-feedback textarea{resize:vertical;min-height:100px}
 @media(max-width:1000px){main{padding-inline:24px}.learning-workspace{grid-template-columns:1fr}.learning-sidebar{max-width:none}#learning-progress{padding:20px}.learning-sidebar .lesson-actions button{width:auto}}
 @media(max-width:540px){main{padding-inline:16px}.learn-page-header{min-height:64px}.learn-page-header span{font-size:10px}.learn-intro{padding-top:18px}h1{font-size:28px}#lesson{padding:18px}#lesson h2{font-size:21px}.learn-table{font-size:13px;padding:8px;gap:5px}.learn-tiles{gap:7px}.learn-tile{width:32px;height:45px}#lesson-nav button{flex:1 1 100%;text-align:left}.learning-sidebar .lesson-actions button{width:100%}#learning-progress{padding:18px}}

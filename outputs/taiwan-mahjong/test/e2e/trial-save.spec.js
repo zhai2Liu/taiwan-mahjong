@@ -1,40 +1,63 @@
 import { test, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
-import { TRIAL_KEY, decodeTrialDraft } from '../../dist/training-draft.js';
+import { TRIAL_KEY, decodeTrialDraft, encodeTrialDraft } from '../../dist/training-draft.js';
+import { trainingQuestions, trainingContentRevision } from '../../dist/training-data.js';
 import { reviewTrial } from '../../scripts/review-trial.mjs';
 
 const save = page => page.getByRole('button', { name: '保存作答到此瀏覽器', exact: true });
 const raw = page => page.evaluate(key => localStorage.getItem(key), TRIAL_KEY);
-const manage = async page => { const panel = page.getByText('管理本機保存／回復原檔', { exact: true }); if (!(await panel.evaluate(e => e.parentElement.open))) await panel.click(); };
+const manage = async page => { const panel = page.getByText('本機保存／備份', { exact: true }); if (!(await panel.evaluate(e => e.parentElement.open))) await panel.click(); };
 const confirm = (page, accept) => page.once('dialog', dialog => accept ? dialog.accept() : dialog.dismiss());
 
-test('手動保存 → 重載同版續答／曝光鎖定 → 真實schema3下載審閱 → 已存可離頁', async ({ page }) => {
+test('舊存檔回饋／曝光原值保留：無收集UI，切題、重讀、保存、備份都不清空，新題仍空白', async ({ page }) => {
   const markers = { 'tw16:TW16-CLASSIC-v1:save': 'game-marker', 'tw16:practice:v1': 'practice-marker', 'tw16:learn:v1': 'learning-marker', 'tw16:review:v2': 'review-marker' };
-  await page.addInitScript(markers => { for (const [key, value] of Object.entries(markers)) if (localStorage.getItem(key) === null) localStorage.setItem(key, value); }, markers);
-  await page.goto('/training.html?skill=claim-cost'); expect(await raw(page)).toBeNull();
-  await page.getByText('選填：以前是否看過本題（預設不確定）', { exact: true }).click();
-  await page.locator('#prior-exposure').selectOption('unseen-self-report');
+  const legacy = { feedback: '舊版合成回饋 <b>原樣</b>，非真人資料', exposure: 'unseen-self-report' };
+  const seeded = encodeTrialDraft({ schemaVersion: 1, questionId: 'C01', skill: 'claim-cost', report: {
+    schemaVersion: 3, contentRevision: trainingContentRevision, rulesVersion: 'TW16-CLASSIC-v1', mode: 'L3-B0-content-trial', reasonAssessment: 'not-reviewed', guidanceMode: 'topic-guided',
+    questions: trainingQuestions.map(q => q.id === 'C01'
+      ? { id: q.id, prompt: q.prompt, status: 'unanswered', selected: [], reason: '', ...legacy }
+      : { id: q.id, prompt: q.prompt, status: 'unanswered', selected: [], reason: '', feedback: '', exposure: 'unknown' }) } });
+  await page.addInitScript(({ markers, key, seeded }) => {
+    for (const [k, value] of Object.entries({ ...markers, [key]: seeded })) if (localStorage.getItem(k) === null) localStorage.setItem(k, value);
+  }, { markers, key: TRIAL_KEY, seeded });
+  const errors = []; page.on('pageerror', e => errors.push(e.message));
+  await page.goto('/training.html'); await expect(page.locator('#storage-status')).toContainText('已載入');
+  await expect(page.getByRole('heading', { level: 2 })).toHaveText('第 1 / 3 題 · 吃碰取捨');
+  await expect(page.getByText('題號 C01', { exact: true })).toBeVisible();
+  await expect(page.locator('#trial-feedback, #prior-exposure')).toHaveCount(0);
+  await expect(page.locator('body')).not.toContainText(/回饋|交回|回報問題|看過這題|看過本題/);
   for (const name of ['1與3萬', '3與4萬']) await page.getByRole('checkbox', { name, exact: true }).check();
   await page.locator('#reason').fill('S3.3 合成理由，非真人資料');
-  await page.getByRole('button', { name: '提交並看推導', exact: true }).click();
-  await expect(page.locator('#prior-exposure')).toBeDisabled();
-  await page.getByText('提供本題回饋（選填）', { exact: true }).click(); await page.locator('#trial-feedback').fill('合成回饋');
+  await page.getByRole('button', { name: '看答案與推導', exact: true }).click();
+  await page.getByRole('button', { name: '下一題', exact: true }).click(); await page.getByRole('button', { name: '上一題', exact: true }).click();
   await page.getByRole('button', { name: '下一題', exact: true }).click(); await save(page).click();
   await expect(page.locator('#storage-status')).toContainText('已保存作答');
-  const stored = decodeTrialDraft(await raw(page)); expect(stored.questionId).toBe('C02'); expect(stored.report.questions.find(q => q.id === 'C01').exposure).toBe('unseen-self-report');
+  const stored = decodeTrialDraft(await raw(page)); expect(stored.questionId).toBe('C02');
+  expect(stored.report.questions.find(q => q.id === 'C01')).toMatchObject({ status: 'submitted-and-revealed', reason: 'S3.3 合成理由，非真人資料', ...legacy });
+  expect(stored.report.questions.filter(q => q.id !== 'C01').every(q => q.feedback === '' && q.exposure === 'unknown')).toBe(true);
+  await manage(page); await page.getByRole('button', { name: '重新讀取保存', exact: true }).click();
+  expect(decodeTrialDraft(await raw(page)).report.questions.find(q => q.id === 'C01')).toMatchObject(legacy);
   const warnings = []; page.on('dialog', dialog => { warnings.push(dialog.type()); void dialog.dismiss(); });
   // No topic query on the next visit: restore the saved cursor/category.
   await page.goto('/training.html'); await expect(page.locator('#storage-status')).toContainText('已載入');
   await expect(page.getByRole('heading', { level: 2 })).toHaveText('第 2 / 3 題 · 吃碰取捨');
   await page.getByRole('button', { name: '上一題', exact: true }).click();
-  await expect(page.locator('#reason')).toHaveValue('S3.3 合成理由，非真人資料'); await expect(page.locator('#prior-exposure')).toBeDisabled();
-  await expect(page.locator('#trial-feedback')).toHaveValue('合成回饋');
-  const pending = page.waitForEvent('download'); await page.getByRole('button', { name: '匯出作答紀錄（含理由與回饋）', exact: true }).click();
-  const text = await readFile(await (await pending).path(), 'utf8'), data = JSON.parse(text), report = reviewTrial(text);
+  await expect(page.locator('#reason')).toHaveValue('S3.3 合成理由，非真人資料');
+  await expect(page.getByRole('button', { name: '下載全部試讀回饋' })).toHaveCount(0);
+  await manage(page); const pending = page.waitForEvent('download'); await page.getByRole('button', { name: '下載本頁作答備份', exact: true }).click();
+  const download = await pending; expect(download.suggestedFilename()).toBe('taiwan-mahjong-trial-answers.json');
+  const text = await readFile(await download.path(), 'utf8'), data = JSON.parse(text), report = reviewTrial(text);
+  // The preview belongs to the collapsed tools: closing the summary hides it, reopening keeps the same text.
+  const preview = page.getByLabel('最近一次下載內容（可自行複製）', { exact: true }), tools = page.getByText('本機保存／備份', { exact: true });
+  await expect(preview).toBeVisible(); expect(JSON.parse(await preview.inputValue())).toEqual(data);
+  await tools.click(); await expect(preview).toBeHidden();
+  await tools.click(); await expect(preview).toBeVisible(); expect(JSON.parse(await preview.inputValue())).toEqual(data);
   expect(data.schemaVersion).toBe(3); expect(data.guidanceMode).toBe('topic-guided'); expect(data.questions).toHaveLength(9);
+  expect(data.questions.find(q => q.id === 'C01')).toMatchObject({ reason: 'S3.3 合成理由，非真人資料', ...legacy });
   expect(report.questions.find(q => q.id === 'C01').exposureStatus).toBe('unseen-self-report'); expect(report.questions.find(q => q.id === 'C01').comparison).toBe('選項集合符合目前答案');
+  expect(decodeTrialDraft(await raw(page)).report.questions.find(q => q.id === 'C01')).toMatchObject(legacy);
   await page.getByRole('link', { name: '返回牌室', exact: true }).click(); await expect(page).toHaveURL('http://127.0.0.1:4226/');
-  expect(warnings).toEqual([]);
+  expect(warnings).toEqual([]); expect(errors).toEqual([]);
   expect(await page.evaluate(keys => Object.fromEntries(keys.map(key => [key, localStorage.getItem(key)])), Object.keys(markers))).toEqual(markers);
 });
 
@@ -65,7 +88,7 @@ test('鍵盤保存與清除保留焦點，等待期間的新焦點不被搶回',
   await manage(page); const clear = page.getByRole('button', { name: '清除本機保存（保留本頁）', exact: true });
   await clear.focus(); confirm(page, true); await page.keyboard.press('Enter');
   await expect(page.locator('#storage-status')).toContainText('已清除');
-  await expect(page.getByText('管理本機保存／回復原檔', { exact: true })).toBeFocused();
+  await expect(page.getByText('本機保存／備份', { exact: true })).toBeFocused();
   expect(await raw(page)).toBeNull(); await expect(page.locator('#reason')).toHaveValue('等待時新增');
 });
 
