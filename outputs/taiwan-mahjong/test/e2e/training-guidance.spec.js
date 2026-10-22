@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 import { reviewTrial, CONTENT_REVISION } from '../../scripts/review-trial.mjs';
 
-test('四能力切題保留草稿／已揭示答案，分類匯出仍是完整九題', async ({ page }) => {
+test('四能力切題保留草稿／已揭示答案，分類下的作答備份仍是完整九題', async ({ page }) => {
   await page.goto('/training.html');
   const picker = page.getByRole('combobox', { name: '練習重點', exact: true });
   await expect(picker.locator('option')).toHaveText(['全部（9 題）', '牌效（2 題）', '吃碰取捨（3 題）', '安全牌（2 題）', '莊家連莊（2 題）']);
@@ -20,7 +20,7 @@ test('四能力切題保留草稿／已揭示答案，分類匯出仍是完整�
   await picker.selectOption('claim-cost');
   await expect(page.getByRole('heading', { level: 2 })).toHaveText('第 1 / 3 題 · 吃碰取捨');
   for (const name of ['1與3萬', '3與4萬']) await page.getByRole('checkbox', { name, exact: true }).check();
-  await page.getByRole('button', { name: '提交並看推導', exact: true }).click();
+  await page.getByRole('button', { name: '看答案與推導', exact: true }).click();
   await expect(page.locator('#answer')).toHaveText('選擇集合符合本題答案');
   await expect(page.getByRole('checkbox', { name: '1與4萬', exact: true })).not.toBeChecked();
   await picker.selectOption('safety-scope');
@@ -33,19 +33,18 @@ test('四能力切題保留草稿／已揭示答案，分類匯出仍是完整�
   await expect(page.getByRole('checkbox', { name: '1與3萬', exact: true })).toBeDisabled();
   await page.getByRole('button', { name: '下一題', exact: true }).click();
   await page.getByRole('button', { name: '下一題', exact: true }).click();
-  await expect(page.getByText('題號 C03 · 回報問題時可附上此題號', { exact: true })).toBeVisible();
+  await expect(page.getByText('題號 C03', { exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: '下一題', exact: true })).toBeDisabled();
-  await page.getByText('提供本題回饋（選填）', { exact: true }).click();
-  await page.locator('#trial-feedback').fill('分類內的合成回饋');
+  await page.getByText('本機保存／備份', { exact: true }).click();
   const pending = page.waitForEvent('download');
-  await page.getByRole('button', { name: '匯出作答紀錄（含理由與回饋）', exact: true }).click();
+  await page.getByRole('button', { name: '下載本頁作答備份', exact: true }).click();
   const raw = await readFile(await (await pending).path(), 'utf8'), exported = JSON.parse(raw), report = reviewTrial(raw);
   expect(exported.questions).toHaveLength(9);
   expect(exported.contentRevision).toBe(CONTENT_REVISION);
   expect(report.counts).toEqual({ unanswered: 7, draft: 1, 'submitted-and-revealed': 1 });
   expect(report.questions.find(q => q.id === 'E01').reason).toBe('S3.1 合成草稿，非真人資料');
   expect(report.questions.find(q => q.id === 'C01').comparison).toBe('選項集合符合目前答案');
-  expect(report.questions.find(q => q.id === 'C03').feedback).toBe('分類內的合成回饋');
+  expect(exported.questions.every(q => q.feedback === '' && q.exposure === 'unknown')).toBe(true);
   await picker.selectOption('all');
   await expect(page.getByRole('checkbox').first()).toBeChecked();
   await expect(page.locator('#reason')).toHaveValue('S3.1 合成草稿，非真人資料');

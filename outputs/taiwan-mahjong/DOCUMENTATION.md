@@ -9,7 +9,7 @@
 | 認識作品／試玩 | 根目錄作品介紹 → 操作展示 → 使用與開發 |
 | 接續工作 | 工作規範 → 現行交接 → 工作包路線；再按任務讀規格與驗收 |
 | 確認規則／保存 | 固定桌規 → 概念契約 → 維護指南與對應模組的契約 |
-| 回報或安排試用 | 人工回饋清單 → 新手試用／試讀紀錄審閱 |
+| 查人工驗證界線／舊檔相容 | 人工驗證清單 → 歷史新手任務／舊作答紀錄審閱；回饋收集已停用 |
 | 查既有成果 | 對應階段驗收 → 發布紀錄；不用舊「下一步」啟動新工作 |
 
 ## 文件如何判讀
@@ -40,7 +40,7 @@
 | [MAINTENANCE.md](MAINTENANCE.md) — 維護指南 | 程式修改位置、資料流與保存界線 |
 | [DEPLOYMENT.md](DEPLOYMENT.md) — 部署與回復 | GitHub Pages、指定來源核對及回復流程 |
 | [LOCAL-TERMS.md](LOCAL-TERMS.md) — 台灣用詞 | 玩家文字與內部用詞對照 |
-| [HUMAN-FEEDBACK-CHECKLIST.md](HUMAN-FEEDBACK-CHECKLIST.md) — 人工回饋清單 | 目前可試用項目及需要本人決定的事項 |
+| [HUMAN-FEEDBACK-CHECKLIST.md](HUMAN-FEEDBACK-CHECKLIST.md) — 人工驗證清單 | 尚未驗證的界線與本人決定事項；無玩家回饋提交流程 |
 
 ### 固定桌規與 M0 基準
 
@@ -55,8 +55,8 @@
 | 文件 | 用途與界線 |
 |---|---|
 | [BEGINNER-LEARNING.md](BEGINNER-LEARNING.md) — 新手課程規格 | 八課、v2完成旗標／獨立續學點及唯讀v1相容契約 |
-| [BEGINNER-TRIAL.md](BEGINNER-TRIAL.md) — 新手試用 | T0–T5與整局T6–T8任務、觀察模板及回饋接收，真人待驗 |
-| [TRIAL-REVIEW.md](TRIAL-REVIEW.md) — 試讀紀錄審閱 | 匯出 JSON 的接收、格式檢查與人工審閱 |
+| [BEGINNER-TRIAL.md](BEGINNER-TRIAL.md) — 歷史新手試用 | T0–T8維護驗證參考；頁面回饋收集已撤下，真人理解仍待驗 |
+| [TRIAL-REVIEW.md](TRIAL-REVIEW.md) — 舊作答紀錄審閱 | 舊檔相容、格式檢查與資料復原，不是玩家交回管道 |
 | [S23-LESSON-PREPARATION.md](S23-LESSON-PREPARATION.md) — 第 4–6 課準備 | 原教材與26個引擎牌例；互動整合見本輪驗收 |
 | [S23-PROGRESS-COMPATIBILITY.md](S23-PROGRESS-COMPATIBILITY.md) — 課程進度相容 | 2026-10-21採納v2另鍵、明確帶入；實際C01–C12見整合驗收 |
 | [S23-INTEGRATION-VALIDATION.md](S23-INTEGRATION-VALIDATION.md) — 第4–6課互動與保存整合 | 本輪定稿、相容驗收與發布追蹤；真人理解另記 |

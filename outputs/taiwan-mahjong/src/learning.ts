@@ -7,7 +7,7 @@ import type { GameState, Intent, Meld, Seat } from './model.js';
 import { lessons, recognitionQuestions, createTeachingRound, runTeachingOthers, teachingStep, resolveTeachingDiscard, compositionTiles, collectGroup, collectPair, completedComposition, invalidHandChoices } from './learning-model.js';
 import { kinds, has, act, discardKind, settleClaims, chiExample, ponExample, priorityExample, PRIORITY_CHOICES, closedKongExample, openKongExample, addedKongExample, lesson4Limits,
   WAIT_HAND, WAIT_TRANSFER_HAND, ronExample, selfDrawExample, changeWaitExample, ownDiscardExample, settlementGuided, settlementTransfer, nextHand, settlementSupplements } from './learning-fixtures.js';
-import { LEARN_KEY, LEGACY_LEARN_KEY, COURSE_VERSION, OPEN_LESSONS, emptyProgress, decodeLearningProgress, decodeLegacyLearningProgress, encodeLearningProgress, markLesson, saveLearningProgress, importLearningProgress } from './learning-progress.js';
+import { LEARN_KEY, LEGACY_LEARN_KEY, OPEN_LESSONS, emptyProgress, decodeLearningProgress, decodeLegacyLearningProgress, encodeLearningProgress, markLesson, saveLearningProgress, importLearningProgress } from './learning-progress.js';
 import type { LegacyLearningProgress, LessonProgress } from './learning-progress.js';
 import { ROUND_KEY, readRoundSave, decodeRoundSave, encodeRoundSave, saveRoundProgress, removeRoundProgress } from './learning-round-store.js';
 import type { RoundCourse, RoundRead } from './learning-round-store.js';
@@ -17,12 +17,6 @@ import type { RoundSession } from './learning-round-view.js';
 const root = document.querySelector<HTMLElement>('#lesson')!, progressPanel = document.querySelector<HTMLElement>('#learning-progress')!;
 const roundPanel = document.querySelector<HTMLElement>('#learning-round-save')!;
 const feedback = document.querySelector<HTMLElement>('#lesson-feedback')!;
-// Keep the optional report outside the lesson/progress renders so switching lessons preserves the draft.
-const reportScope = document.querySelector<HTMLSelectElement>('#learning-feedback-scope')!;
-const reportDevice = document.querySelector<HTMLInputElement>('#learning-feedback-device')!;
-const reportNote = document.querySelector<HTMLTextAreaElement>('#learning-feedback-note')!;
-const reportStatus = document.querySelector<HTMLElement>('#learning-feedback-status')!;
-let reportExportSnapshot: string | undefined;
 let progress = emptyProgress(), raw: string | null | undefined, blocked = false, dirty = false, busy = false, saveNotice = '';
 /** Old three-lesson record awaiting an explicit choice; only set while the new record is missing. */
 type Legacy = { kind: 'valid'; raw: string; progress: LegacyLearningProgress } | { kind: 'bad'; raw: string } | { kind: 'unreadable' };
@@ -46,51 +40,9 @@ function roundDirty(): boolean {
   try { return encodeRoundSave(sessionSave(roundSession)) !== roundRaw; } catch { return true; }
 }
 const warnLeave = (event: BeforeUnloadEvent) => { event.preventDefault(); event.returnValue = 'true'; };
-function syncLeaveGuard(): void { window.removeEventListener('beforeunload', warnLeave); if (dirty || roundDirty() || reportNote.value.trim() || reportDevice.value.trim()) window.addEventListener('beforeunload', warnLeave); }
+function syncLeaveGuard(): void { window.removeEventListener('beforeunload', warnLeave); if (dirty || roundDirty()) window.addEventListener('beforeunload', warnLeave); }
 const openLessons = () => progress.lessons.slice(0, OPEN_LESSONS);
 
-const reportSnapshot = () => JSON.stringify([reportScope.value, reportDevice.value, reportNote.value]);
-function updateReportStatus(): void {
-  syncLeaveGuard();
-  reportStatus.textContent = reportExportSnapshot !== undefined && reportExportSnapshot !== reportSnapshot()
-    ? '回饋在上次交由瀏覽器下載後有新修改，請重新下載或複製。'
-    : reportNote.value.trim() || reportDevice.value.trim() ? '回饋只留在本頁，離開前請先下載或複製並確認內容。' : '';
-}
-function setupReport(): void {
-  lessons.forEach((lesson, i) => reportScope.append(node('option', '', `第${i + 1}課：${lesson.title}`)));
-  for (const control of [reportScope, reportDevice, reportNote]) control.addEventListener('input', updateReportStatus);
-  // Native form restoration can occur after pageshow; use the visible draft, without altering lesson flags.
-  window.addEventListener('pageshow', () => { setTimeout(updateReportStatus, 0); });
-  document.querySelector<HTMLFormElement>('#learning-feedback-form')!.addEventListener('submit', event => {
-    event.preventDefault();
-    if (!reportNote.value.trim()) { reportStatus.textContent = '請先寫下一個卡點或建議。'; reportNote.focus(); return; }
-    const preview = document.querySelector<HTMLTextAreaElement>('#learning-feedback-preview')!;
-    const stageName = { read: '圖解', guided: '親手做示範', transfer: '換例自己試', done: '本段完成' }[stage];
-    const entry = document.querySelector<HTMLScriptElement>('script[type="module"][src]')?.getAttribute('src') ?? '未記錄';
-    preview.value = [
-      '台灣十六張第1–8課入門試用回饋（供人工核對）',
-      `匯出時間：${new Date().toISOString()}`, `課程版本：${COURSE_VERSION}；桌規：TW16-CLASSIC-v1`,
-      `匯出頁面：${location.origin}${location.pathname}`, `匯出時頁面程式：${entry}`,
-      `回饋範圍：${reportScope.value}`, `裝置與瀏覽器（自述）：${reportDevice.value.trim() || '未提供'}`,
-      `匯出時所在畫面：第${index + 1}課 ${lessons[index].title}／${stageName}`,
-      '', '玩家回饋原文：', reportNote.value, '',
-      '本頁進度快照（累積紀錄，可能來自先前練習，不代表本次理解或首次完成）：',
-      ...(blocked ? ['進度來源未確認：讀取或衝突未解，本次不列完成旗標。'] : openLessons().map((p, i) => `第${i + 1}課：已閱讀${p.read ? '是' : '否'}／提示下完成${p.guided ? '是' : '否'}／換例自行完成${p.independent ? '是' : '否'}`)),
-      `保存狀態：${blocked ? '讀取或衝突未解，無法確認與保存檔一致' : dirty ? '本頁有尚未保存的進度' : '本頁旗標與最後讀取或保存的紀錄一致'}`,
-      '', '此檔不是作答紀錄或正式驗收，不自動判定真人來源、曝光或學習成效；未包含未完成操作的續存資料。',
-      '請自行附回專案對話。提供回饋不等於同意公開原文、截圖或個人資訊。',
-    ].join('\n');
-    document.querySelector<HTMLElement>('#learning-feedback-preview-panel')!.hidden = false;
-    let url: string | undefined;
-    try {
-      url = URL.createObjectURL(new Blob([preview.value], { type: 'text/plain;charset=utf-8' }));
-      const link = node('a'); link.href = url; link.download = 'taiwan-mahjong-learning-feedback.txt'; link.click();
-      reportExportSnapshot = reportSnapshot();
-      reportStatus.textContent = '已交由瀏覽器下載；請確認檔案後自行附回專案對話。若未出現檔案，可複製下方內容，不會自動上傳。';
-    } catch { reportStatus.textContent = '下載未成功，原回饋仍留在本頁；請複製下方內容。'; }
-    finally { if (url) { const old = url; setTimeout(() => URL.revokeObjectURL(old), 1000); } syncLeaveGuard(); }
-  });
-}
 function readLegacy(): Legacy | null {
   let text: string | null;
   try { text = localStorage.getItem(LEGACY_LEARN_KEY); } catch { return { kind: 'unreadable' }; }
@@ -885,4 +837,4 @@ function render(): void {
   }
   heading.focus();
 }
-setupReport(); loadProgress(); readRound(); render();
+loadProgress(); readRound(); render();

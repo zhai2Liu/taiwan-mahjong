@@ -55,7 +55,7 @@ try {
         assert.match(await page.locator('.progress-list').innerText(), /第3課：已閱讀 ✓/);
       } else {
         assert.equal(await page.locator('#save-local').isDisabled(), true); assert.equal(await page.locator('#reason').inputValue(), originalReason);
-        await page.getByText('管理本機保存／回復原檔', { exact: true }).click();
+        await page.getByText('本機保存／備份', { exact: true }).click();
         page.once('dialog', dialog => { assert.equal(dialog.type(), 'confirm'); void dialog.accept(); });
         await page.getByRole('button', { name: '重新讀取保存', exact: true }).click();
         assert.equal(await page.locator('#reason').inputValue(), remoteReason);

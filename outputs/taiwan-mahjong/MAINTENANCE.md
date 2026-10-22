@@ -18,7 +18,7 @@ README是使用與開發總入口；[DOCUMENTATION](DOCUMENTATION.md)維護全�
 
 S1.4首頁：view.header／home及style.css首頁區段管理品牌、三路入口和有存檔時的優先續玩。淺色按鈕／焦點／保存工具限定`.home-shell`；不要改成全域顏色而影響深色牌桌、練習或body上的dialog。保留home-entry焦點、UICommand、舊存檔確認及learn／training網址；`test/e2e/home.spec.js`驗三路鍵盤、教學回焦、320px／強制色彩、續玩和取消新局。詳[首頁重設計](HOME-REDESIGN-20261018.md)，不用替配色新增算法測試。
 
-S1.5試讀排版：training.render將分類／保存狀態、本題牌例／作答及保存／交回分區；DOM仍依牌例→作答→推導→換題→保存／交回排列，900px以下直列。`test/e2e/trial-layout.spec.js`巡覽九題／320px，原有trial-save／training-guidance／core保護狀態契約。詳[試讀工作區](TRIAL-WORKSPACE-20261018.md)；調排版不能改題目／內容版本、標準答案或保存語義。
+S1.5試讀排版：training.render將分類／保存狀態、本題牌例／作答及本機保存分區；DOM依牌例→作答→推導→換題→本機保存／備份排列，900px以下直列。交回區已撤下。`test/e2e/trial-layout.spec.js`巡覽九題／320px，原有trial-save／training-guidance／core保護狀態契約。歷史排版見[試讀工作區](TRIAL-WORKSPACE-20261018.md)；調排版不能改題目／內容版本、標準答案或保存語義。
 
 試讀保存焦點：training.restoreStorageFocus在saveLocal／clearLocal結束時，只於焦點仍body且原控制未因換題被移除才回焦，若原按鈕已停用則回管理summary。等待期間的新焦點不搶回；同步重讀仍依新題標題。trial-save.spec.js含鍵盤成功／失敗、延後鎖與清除的回歸；首頁綠底小標籤另沿既有muted色，限定驗收見[S42](S42-ACCESSIBILITY.md)。
 
@@ -32,7 +32,7 @@ S3.1九題試讀：兩份TRAINING JSON負責題幹／答案／牌面／範圍；
 
 S2新手課：learn.html／src/learning.ts與learning.css為獨立頁；learning-model.ts管八課文字及前三課操作，learning-fixtures.ts為4–6課教材，learning-progress.ts管v2完成旗標及唯讀v1明確帶入。第7–8課依下段專用模組，內容與保存契約見[BEGINNER-LEARNING](BEGINNER-LEARNING.md)，最新驗收／發布只查HANDOFF。改完成條件先定版本與對照，不能因擴課判舊紀錄壞。三頁HTML全部preload／JS／CSS均須驗，不假定固定資源數。
 
-S2.2回饋：learn.html的原生details／form獨立於lesson及progress重繪，learning.ts僅匯出純文字白名單快照，沒有新保存鍵。beforeunload須同時考慮課程dirty與回饋欄；課程保存成功不能清除回饋提醒，清空回饋也不能清除課程未存提醒。URL下載失敗仍留下可複製預覽，blocked時不把預設旗標當有效進度。不能將開始下載稱作已確認落盤；不把回饋視為正式試用、公開同意或自動上傳。回歸test/e2e/learning-feedback.spec.js，接收界線見[試用紀錄](BEGINNER-TRIAL.md)。
+玩家回饋收集已依2026-10-22指示撤下：learn.html／learning.ts不再有回饋表單、TXT、report草稿或其離頁判斷；lesson-feedback仍是答題狀態，不可一起刪。training.ts不再呈現意見／曝光自陳控制、意見TXT與交回邀請；舊Draft／TrialRecord中的feedback及exposure仍須讀寫原值以保護舊檔，不升版、不清除。JSON僅置於本機工具作個人備份／原檔復原；下載不解除未存或跨頁保護。test/e2e/learning-feedback.spec.js改驗撤下入口及課程保護，training-page／training-guidance／trial-save保護舊欄位、完整備份與錯誤回退；[試用紀錄](BEGINNER-TRIAL.md)只留歷史維護參考。
 
 S2.3教材：[S23教材](S23-LESSON-PREPARATION.md)供4–6課文字、示範、換例與回饋；learning-fixtures.ts只配置固定教學局面，所有動作仍交凍結引擎並assertState。test/learning-next.test.mjs保留26具名牌例，另比對runtime示例及實際操作。結算只讀settlement.score／delta與scoreLines，不重付；下一局莊位應以本局門風標示原座位，避免用下一局門風把接莊者一律寫成東門。禁打給原因，打牌手勢須與摸打課及正常對戰一致。
 

@@ -18,7 +18,6 @@
       <h1>從零學台灣麻將</h1>
       <p class="learn-version">入門試用版 · 第1–8課 · TW16-CLASSIC-v1</p>
       <p>短圖解、親手做、換例再試。都是固定教學示例，不改對戰、練習或檢討存檔；第7–8課帶你走完整一局，可暫停並另存續學點。原六步操作導覽仍在牌室，正常對戰隨時可從牌室開始。</p>
-      <p><a href="#learning-feedback-form">哪裡看不懂或操作卡住？提供學習回饋</a></p>
     </div>
     <nav id="lesson-nav" aria-label="選擇入門課程"></nav>
     <div class="learning-workspace">
@@ -32,25 +31,6 @@
         <p class="muted">學習進度只保存閱讀與整段完成紀錄；第1–6課未完成的操作離頁或重載會重新開始。第7–8課可按「保存並暫停」另存一個續學點，只存牌局段落與提示紀錄，不存結算小檢核的作答。自行完成只表示本次換例未使用提示、未回看圖解、未經錯答推導，也未按重試；重練、牌面可讀名稱與本機紀錄都不是陌生題能力認證。</p>
       </aside>
     </div>
-    <details class="learning-feedback">
-      <summary id="learning-feedback-title">提供第1–8課試用回饋（選填）</summary>
-      <p>寫下一個卡點就有幫助。下載後，請自行把文字檔附回專案對話；不會自動傳送，也不需填姓名或聯絡方式。</p>
-      <form id="learning-feedback-form">
-        <label for="learning-feedback-scope">回饋針對哪裡？</label>
-        <select id="learning-feedback-scope"><option>整體操作／不確定</option></select>
-        <label for="learning-feedback-device">裝置與瀏覽器（選填）</label>
-        <input id="learning-feedback-device" maxlength="160" placeholder="例如：電腦、Chrome；或手機、Safari">
-        <label for="learning-feedback-note">最不清楚的一句或最卡的操作</label>
-        <textarea id="learning-feedback-note" rows="4" maxlength="2000" required placeholder="你在哪一步、原本以為會怎樣、實際看到了什麼？若有看提示或請人協助，也可以寫下來。"></textarea>
-        <p class="muted">切換課程會保留本頁文字；重新整理或關閉可能遺失，請先下載或複製。檔案會附課程版本、當下畫面與第1–8課進度，不包含牌局、續學點、練習手牌或其他試讀作答。</p>
-        <button type="submit">下載學習回饋</button>
-        <p id="learning-feedback-status" role="status"></p>
-        <div id="learning-feedback-preview-panel" hidden>
-          <label for="learning-feedback-preview">最近一次匯出內容（可自行複製）</label>
-          <textarea id="learning-feedback-preview" readonly rows="8"></textarea>
-        </div>
-      </form>
-    </details>
     <noscript>請啟用JavaScript以進行教學。</noscript>
   </main>
   <script type="module" src="/src/learning.ts"></script>

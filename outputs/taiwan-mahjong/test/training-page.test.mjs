@@ -14,7 +14,7 @@ test('試讀包只有九道已複核訓練題，保留候選與額外資料不�
  assert.ok(all.filter(q=>q.purpose!=='training').every(q=>!JSON.stringify(trainingQuestions).includes(q.prompt)));
 });
 
-test('試讀控制與回饋：揭示界線、草稿保留、只匯出意見及下載失敗回退',async()=>{
+test('試讀控制：揭示界線、草稿保留、本機作答備份及下載失敗回退，沒有回饋收集出口',async()=>{
  let focused, downloaded, blob, downloadFailure=false;
  const leaveHandlers=new Set();
  class Element {
@@ -39,57 +39,49 @@ test('試讀控制與回饋：揭示界線、草稿保留、只匯出意見及�
   window:{addEventListener(type,fn){if(type==='pageshow'||type==='storage')return;assert.equal(type,'beforeunload');leaveHandlers.add(fn);},removeEventListener(type,fn){assert.equal(type,'beforeunload');leaveHandlers.delete(fn);}},
   setTimeout:fn=>fn(),document:{querySelector:()=>root,createElement:tag=>new Element(tag)}});
  assert.equal(leaveHandlers.size,0);
- click('下載全部試讀回饋');assert.equal(downloaded,undefined);
+ const texts=()=>all().map(x=>x.textContent).join('\n');
+ assert.equal(root.querySelector('#trial-feedback'),undefined);assert.equal(root.querySelector('#prior-exposure'),undefined);
+ assert.doesNotMatch(texts(),/回饋|交回|回報問題|看過本題/);
+ assert.equal(find('button','提交並看推導'),undefined);assert.ok(find('button','看答案與推導'));
  assert.equal(find('h3'),undefined);submit();assert.equal(find('h3'),undefined);
+ assert.ok(all().some(x=>x.textContent==='請先選擇至少一項，再看答案。'));
  for(const input of all().filter(x=>x.tag==='input')){input.checked=true;input.listeners.change();}
  const reason=find('textarea');reason.value='<script>測試</script>';reason.listeners.input();
  assert.equal(leaveHandlers.size,1);
- click('匯出作答紀錄（含理由與回饋）');
+ click('下載本頁作答備份');
  const draftReport=JSON.parse(await blob.text());assert.equal(draftReport.questions[0].status,'draft');
  assert.equal(draftReport.questions[1].status,'unanswered');assert.equal(find('h3'),undefined);
- const firstFeedback=root.querySelector('#trial-feedback');firstFeedback.value='第一題的措辭不清楚';firstFeedback.listeners.input();
- assert.match(root.querySelector('#draft-status').textContent,/作答紀錄.*新修改/);
+ reason.value+='（補充）';reason.listeners.input();
+ assert.match(root.querySelector('#draft-status').textContent,/下載備份後有新修改/);
  click('下一題');assert.equal(find('h3'),undefined);
- const secondFeedback=root.querySelector('#trial-feedback');secondFeedback.value='第二題按鈕太遠';secondFeedback.listeners.input();
- click('上一題');assert.equal(find('textarea').value,reason.value);assert.equal(root.querySelector('#trial-feedback').value,firstFeedback.value);
+ click('上一題');assert.equal(find('textarea').value,reason.value);
  submit();assert.equal(find('h3').textContent,'有選項需要再核對');assert.equal(focused.id,'answer');
  assert.ok(all().filter(x=>x.tag==='input').every(x=>x.disabled));assert.equal(find('textarea').readOnly,true);
  click('下一題');click('上一題');assert.equal(find('h3').textContent,'有選項需要再核對');
- click('下載全部試讀回饋');assert.equal(downloaded.download,'taiwan-mahjong-trial-feedback.txt');
- const report=await blob.text();assert.ok(report.includes('題號 E01\n第一題的措辭不清楚'));assert.ok(report.includes('題號 E02\n第二題按鈕太遠'));
- assert.ok(!report.includes(reason.value));assert.ok(!report.includes(trainingQuestions[0].derivation));
- assert.equal(root.querySelector('#feedback-export').value,report);
- downloadFailure=true;click('下載全部試讀回饋');assert.ok(all().some(x=>x.textContent.includes('瀏覽器無法下載')));
- assert.equal(root.querySelector('#trial-feedback').value,firstFeedback.value);
- downloadFailure=false;click('匯出作答紀錄（含理由與回饋）');
+ downloadFailure=true;click('下載本頁作答備份');assert.ok(all().some(x=>x.textContent.includes('瀏覽器無法下載')));
+ assert.equal(JSON.parse(root.querySelector('#backup-preview').value).questions[0].reason,reason.value);
+ assert.match(root.querySelector('#draft-status').textContent,/下載備份後有新修改/);
+ downloadFailure=false;click('下載本頁作答備份');
  assert.equal(downloaded.download,'taiwan-mahjong-trial-answers.json');
  const answers=JSON.parse(await blob.text());assert.equal(answers.schemaVersion,3);assert.equal(answers.questions.length,9);
  assert.equal(answers.reasonAssessment,'not-reviewed');assert.equal(answers.schemaVersion,3);assert.equal(answers.contentRevision,trainingContentRevision);
  assert.equal(answers.questions[0].status,'submitted-and-revealed');
  assert.deepEqual(answers.questions[0].selected,trainingQuestions[0].choices);
- assert.equal(answers.questions[0].reason,reason.value);assert.equal(answers.questions[1].feedback,secondFeedback.value);
+ assert.equal(answers.questions[0].reason,reason.value);
+ assert.ok(answers.questions.every(q=>q.feedback===''&&q.exposure==='unknown'),'新作答沿用空回饋與unknown');
  assert.equal(answers.questions[1].status,'unanswered');
  assert.equal(answers.questions[0].prompt,trainingQuestions[0].prompt);
  assert.ok(!JSON.stringify(answers).includes(trainingQuestions[0].derivation));
  assert.ok(answers.questions.every(q=>!('accepted' in q)&&!('score' in q)));
  assert.equal(leaveHandlers.size,1,'交由瀏覽器下載不能當成檔案已保存');
- const feedback=root.querySelector('#trial-feedback');feedback.value+='（修改）';feedback.listeners.input();
- assert.match(root.querySelector('#draft-status').textContent,/作答紀錄、試讀回饋.*新修改/);
- downloadFailure=true;click('匯出作答紀錄（含理由與回饋）');
- assert.match(root.querySelector('#draft-status').textContent,/作答紀錄、試讀回饋.*新修改/);
- assert.equal(leaveHandlers.size,1);
- downloadFailure=false;click('匯出作答紀錄（含理由與回饋）');
- assert.match(root.querySelector('#draft-status').textContent,/試讀回饋.*新修改/);
- assert.ok(!root.querySelector('#draft-status').textContent.includes('作答紀錄'));
- click('下載全部試讀回饋');assert.ok(!root.querySelector('#draft-status').textContent.includes('新修改'));
+ assert.ok(!root.querySelector('#draft-status').textContent.includes('新修改'));
  click('下一題');const secondReason=find('textarea');secondReason.value='新理由';secondReason.listeners.input();
- assert.match(root.querySelector('#draft-status').textContent,/作答紀錄.*新修改/);
- assert.ok(!root.querySelector('#draft-status').textContent.includes('試讀回饋'));
+ assert.match(root.querySelector('#draft-status').textContent,/下載備份後有新修改/);
  secondReason.value='';secondReason.listeners.input();
- assert.ok(!root.querySelector('#draft-status').textContent.includes('新修改'),'回復原內容不需再次匯出');
+ assert.ok(!root.querySelector('#draft-status').textContent.includes('新修改'),'回復原內容不需再次下載備份');
 });
 
-test('離頁防護：空白無提醒、只有回饋或理由也保護、取消與切題保留、清空解除',()=>{
+test('離頁防護：空白無提醒、只有理由也保護、取消與切題保留、清空解除',()=>{
  const made=[], handlers=new Set();let downloads=0;
  class Element {
   listeners={};constructor(tag){this.tag=tag;made.push(this);}
@@ -108,14 +100,13 @@ test('離頁防護：空白無提醒、只有回饋或理由也保護、取消�
  const input=(id,value)=>{field(id).value=value;field(id).listeners.input();};
  const click=text=>made.find(x=>x.tag==='button'&&x.textContent===text).listeners.click();
  assert.equal(handlers.size,0);
- click('匯出作答紀錄（含理由與回饋）');assert.equal(downloads,1);assert.equal(handlers.size,0);
- input('trial-feedback','只有回饋');input('trial-feedback','只有回饋！');assert.equal(handlers.size,1);
+ click('下載本頁作答備份');assert.equal(downloads,1);assert.equal(handlers.size,0);
+ input('reason','只有理由');input('reason','只有理由！');assert.equal(handlers.size,1);
  const event={prevented:false,returnValue:undefined,preventDefault(){this.prevented=true;}};
  for(const fn of handlers)fn(event);
- assert.equal(event.prevented,true);assert.equal(event.returnValue,'true');assert.equal(field('trial-feedback').value,'只有回饋！');
- click('下一題');assert.equal(handlers.size,1);click('上一題');assert.equal(field('trial-feedback').value,'只有回饋！');
- input('trial-feedback','');assert.equal(handlers.size,0);
- input('reason','只有理由');assert.equal(handlers.size,1);input('reason','');assert.equal(handlers.size,0);
+ assert.equal(event.prevented,true);assert.equal(event.returnValue,'true');assert.equal(field('reason').value,'只有理由！');
+ click('下一題');assert.equal(handlers.size,1);click('上一題');assert.equal(field('reason').value,'只有理由！');
+ input('reason','');assert.equal(handlers.size,0);
  const choice=made.find(x=>x.tag==='input');choice.checked=true;choice.listeners.change();assert.equal(handlers.size,1);
  choice.checked=false;choice.listeners.change();assert.equal(handlers.size,0);assert.equal(field('draft-status').hidden,true);
 });
