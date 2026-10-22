@@ -1,4 +1,4 @@
-import { node, button, tileName, scoreLines } from './view.js';
+import { node, button, tileName, scoreLines, preserveDetails } from './view.js';
 import { tileFace } from './tile-face.js';
 import { kindOf, seatWind } from './tiles.js';
 import { legalActions } from './engine.js';
@@ -146,14 +146,18 @@ function renderLegacy(old: Legacy): HTMLElement {
 }
 function renderProgress(): void {
   const focused = progressPanel.contains(document.activeElement) ? (document.activeElement as HTMLElement).dataset.focus : undefined;
+  const restoreDetails = preserveDetails(progressPanel);
   progressPanel.replaceChildren(node('h2', '', '本機學習進度'));
   const notice = node('p', '', saveNotice || '紀錄只存在此瀏覽器，不是證書或牌技分數。'); notice.id = 'save-notice'; notice.dataset.focus = 'learn-save-notice'; notice.tabIndex = -1; notice.setAttribute('role', 'status'); progressPanel.append(notice);
   const list = node('ul', 'progress-list');
   openLessons().forEach((p, i) => list.append(node('li', '', `第${i + 1}課：已閱讀${p.read ? ' ✓' : ' —'} · 提示下完成${p.guided ? ' ✓' : ' —'} · 換例自行完成${p.independent ? ' ✓' : ' —'}`)));
   progressPanel.append(list);
   if (legacy && raw === null && !blocked) progressPanel.append(renderLegacy(legacy));
+  if (dirty && !legacy) { const retry = node('div', 'lesson-actions'); retry.append(button('重試保存進度', 'learn-retry', () => { void save(); }, '', frozen() || blocked)); progressPanel.append(retry); }
+  // Secondary tools fold away; any read error, conflict or pending old-record choice opens them for rescue.
+  const tools = node('details', 'learn-tools'); tools.dataset.persist = 'learn-progress-tools';
+  tools.append(node('summary', '', '重新讀取或重建進度'));
   const actions = node('div', 'lesson-actions');
-  if (dirty && !legacy) actions.append(button('重試保存進度', 'learn-retry', () => { void save(); }, '', frozen() || blocked));
   actions.append(button('重新讀取保存紀錄', 'learn-load', () => {
     if (dirty && !confirm('重新讀取成功後會放棄本頁尚未保存的新手紀錄，未完成操作仍不續存。確定？')) return;
     loadProgress();
@@ -165,8 +169,9 @@ function renderProgress(): void {
     catch { saveNotice = '重新建立失敗或原檔已被其他頁更新；原資料及本頁紀錄保留，請重新讀取後再決定。'; }
     finally { restore(); busy = false; syncLeaveGuard(); syncSavePanels(); }
   }, '', frozen() || raw === undefined));
-  progressPanel.append(actions);
-  progressPanel.append(node('p', 'muted', '只有六課的舊版頁面讀到第7–8課完成時，會停止覆寫、不會降格；請重新整理成新版頁面再繼續。'));
+  tools.append(actions, node('p', 'muted', '只有六課的舊版頁面讀到第7–8課完成時，會停止覆寫、不會降格；請重新整理成新版頁面再繼續。'));
+  progressPanel.append(tools); restoreDetails();
+  if (blocked || legacy) tools.open = true;
   if (focused) (Array.from(progressPanel.querySelectorAll<HTMLElement>('[data-focus]')).find(e => e.dataset.focus === focused && !e.matches(':disabled')) ?? notice).focus({ preventScroll: true });
 }
 /** The round-key text this page currently believes is stored (the bad text itself while it is shown read-only). */
@@ -300,6 +305,7 @@ function resumeStored(): void {
 }
 function renderRoundPanel(): void {
   const focused = roundPanel.contains(document.activeElement) ? (document.activeElement as HTMLElement).dataset.focus : undefined;
+  const restoreDetails = preserveDetails(roundPanel);
   roundPanel.replaceChildren(node('h2', '', '第7–8課續學點'));
   const notice = node('p', '', roundNotice || '第7–8課可另存一個續學點，只存牌局段落與提示紀錄；完成旗標仍存在上方學習進度，兩者分開。');
   notice.id = 'round-notice'; notice.dataset.focus = 'round-notice'; notice.tabIndex = -1; notice.setAttribute('role', 'status'); roundPanel.append(notice);
@@ -319,11 +325,14 @@ function renderRoundPanel(): void {
     }, ''));
     if (roundDownloadNotice) roundPanel.append(node('p', 'muted', roundDownloadNotice));
   }
+  if (roundStored.kind === 'valid') { const resume = node('div', 'lesson-actions'); resume.append(button('接續已存教學', 'round-continue', () => resumeStored(), '', frozen() || roundIssue === 'unreadable')); roundPanel.append(resume); }
+  const tools = node('details', 'learn-tools'); tools.dataset.persist = 'round-tools';
+  tools.append(node('summary', '', '重新讀取或清掉續學點'));
   const actions = node('div', 'lesson-actions');
-  if (roundStored.kind === 'valid') actions.append(button('接續已存教學', 'round-continue', () => resumeStored(), '', frozen() || roundIssue === 'unreadable'));
   actions.append(button('重新讀取續學點', 'round-reload', () => readRound(), '', frozen()));
   if (roundStored.kind !== 'none' && (roundIssue === '' || roundIssue === 'bad')) actions.append(button('清掉續學點', 'round-clear', () => { void clearRound(); }, '', frozen()));
-  roundPanel.append(actions);
+  tools.append(actions); roundPanel.append(tools); restoreDetails();
+  if (roundIssue) tools.open = true;
   if (focused) (Array.from(roundPanel.querySelectorAll<HTMLElement>('[data-focus]')).find(e => e.dataset.focus === focused && !e.matches(':disabled')) ?? notice).focus({ preventScroll: true });
 }
 
