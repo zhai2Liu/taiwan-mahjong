@@ -99,12 +99,15 @@ function header(model: ViewModel, send: Send): HTMLElement {
   const text = node('div'); text.append(node('h1', '', model.game ? '台灣十六張' : '從零到一百的麻將路'), node('p', '', model.game ? '一張一刻，好好打牌。' : '台灣十六張・學習與決策練習'));
   brand.append(mark, text); head.append(brand);
   const tools = node(model.game ? 'div' : 'nav', 'header-tools');
-  if (model.game) tools.append(pill('本地公平 AI', 'fair-pill'));
-  else {
+  if (model.game) {
+    // A full page load returns home; the saved game stays and failed saves keep the native leave warning.
+    const routes = node('a', 'button button-quiet', '選擇玩法'); routes.href = './'; routes.dataset.focus = 'choose-route';
+    tools.append(pill('本地公平 AI', 'fair-pill'), routes);
+  } else {
     tools.setAttribute('aria-label', '牌室導覽');
     const routes = node('a', 'home-nav-link', '選擇玩法'); routes.href = '#home-routes'; routes.dataset.focus = 'home-routes'; tools.append(routes);
   }
-  tools.append(button('新手教學', 'tutorial', () => send({ type: 'tutorial' }), 'button button-quiet'));
+  tools.append(button('操作說明', 'tutorial', () => send({ type: 'tutorial' }), 'button button-quiet'));
   if (model.game) {
     const coachLabel = node('label', 'speed-label', '提示');
     const coachSelect = node('select'); coachSelect.dataset.focus = 'coach-mode'; coachSelect.setAttribute('aria-label', '對戰提示模式');
@@ -149,7 +152,7 @@ function home(model: ViewModel, send: Send): HTMLElement {
   const cards = node('div', 'home-cards');
   const learnCard = node('article', 'home-card');
   learnCard.append(node('span', 'home-card-label', '01 / 還不會打'), node('h3', '', '從零學習'), node('p', 'home-card-description', '認牌、摸打、吃碰、聽牌到結算，再完整打一局。\n用第1–8課，走出入門的第一步。'));
-  const learn = node('a', 'button home-action', '從零學台灣麻將（第1–8課）'); learn.href = './learn.html'; learn.dataset.focus = 'home-learn'; learnCard.append(learn, node('p', 'home-card-note', '入門試用版・可操作牌例'));
+  const learn = node('a', 'button home-action', '新手課程（第1–8課）'); learn.href = './learn.html'; learn.dataset.focus = 'home-learn'; learnCard.append(learn, node('p', 'home-card-note', '入門試用版・可操作牌例'));
   const practiceCard = node('article', 'home-card');
   practiceCard.append(node('span', 'home-card-label', '02 / 想打得更好'), node('h3', '', '練習判斷'), node('p', 'home-card-description', '慢慢比較進牌與捨牌，\n看懂每個選擇背後的取捨。'), button('純練習模式', 'practice', () => send({ type: 'practice' }), 'button home-action'));
   const trial = node('a', 'home-text-link', '決策題試讀'); trial.href = './training.html'; trial.dataset.focus = 'home-trial';

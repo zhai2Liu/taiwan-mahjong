@@ -55,9 +55,9 @@ test('試讀控制：揭示界線、草稿保留、本機作答備份及下載�
  assert.match(root.querySelector('#draft-status').textContent,/下載備份後有新修改/);
  click('下一題');assert.equal(find('h3'),undefined);
  click('上一題');assert.equal(find('textarea').value,reason.value);
- submit();assert.equal(find('h3').textContent,'有選項需要再核對');assert.equal(focused.id,'answer');
+ submit();assert.equal(find('h3').textContent,'還有選項要確認');assert.equal(focused.id,'answer');
  assert.ok(all().filter(x=>x.tag==='input').every(x=>x.disabled));assert.equal(find('textarea').readOnly,true);
- click('下一題');click('上一題');assert.equal(find('h3').textContent,'有選項需要再核對');
+ click('下一題');click('上一題');assert.equal(find('h3').textContent,'還有選項要確認');
  downloadFailure=true;click('下載本頁作答備份');assert.ok(all().some(x=>x.textContent.includes('瀏覽器無法下載')));
  assert.equal(JSON.parse(root.querySelector('#backup-preview').value).questions[0].reason,reason.value);
  assert.match(root.querySelector('#draft-status').textContent,/下載備份後有新修改/);

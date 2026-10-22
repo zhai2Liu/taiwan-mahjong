@@ -15,16 +15,17 @@ test('首頁三條路線可鍵盤到達，操作導覽回焦，窄畫面入口�
   await page.goto('/');
   await expect(page.getByRole('heading', { name: '從零到一百的麻將路', exact: true })).toBeVisible();
   await expect(page.getByRole('navigation', { name: '牌室導覽', exact: true })).toBeVisible();
-  const learn = page.getByRole('link', { name: '從零學台灣麻將（第1–8課）', exact: true });
+  const learn = page.getByRole('link', { name: '新手課程（第1–8課）', exact: true });
   const trial = page.getByRole('link', { name: '決策題試讀', exact: true });
   await expect(learn).toHaveAttribute('href', './learn.html');
   await expect(trial).toHaveAttribute('href', './training.html');
-  await page.getByRole('button', { name: '新手教學', exact: true }).focus();
+  await page.getByRole('button', { name: '操作說明', exact: true }).focus();
   await page.keyboard.press('Enter');
   await expect(page.getByRole('dialog', { name: '認識台灣十六張', exact: true })).toBeVisible();
+  await expect(page.locator('dialog .eyebrow')).toHaveText('操作說明 · 1／6');
   await page.keyboard.press('Escape');
   await expect(page.locator('dialog')).toHaveCount(0);
-  await expect(page.getByRole('button', { name: '新手教學', exact: true })).toBeFocused();
+  await expect(page.getByRole('button', { name: '操作說明', exact: true })).toBeFocused();
   const controls = [learn, page.getByRole('button', { name: '純練習模式', exact: true }), trial, page.getByRole('button', { name: '開始一將', exact: true })];
   for (const control of controls) {
     await page.keyboard.press('Tab');
@@ -86,7 +87,7 @@ test('別頁更新牌局時，首頁連結保持鍵盤焦點且不覆寫存檔',
   const other = await page.context().newPage();
   await page.goto('/'); await other.goto('/');
   const samples = [...new Set(createBrowserFixtures().map(item => encodeSession(item.session)))];
-  for (const [index, name] of ['從零學台灣麻將（第1–8課）', '決策題試讀'].entries()) {
+  for (const [index, name] of ['新手課程（第1–8課）', '決策題試讀'].entries()) {
     const link = page.getByRole('link', { name, exact: true });
     await link.focus();
     await other.evaluate(({ key, raw }) => localStorage.setItem(key, raw), { key: saveKey, raw: samples[index] });

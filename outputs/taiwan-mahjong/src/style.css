@@ -192,3 +192,5 @@ body:has(.home-shell){background:#f4f3ed}
 .review-picker { display: grid; gap: 6px; margin-block: 16px; font-weight: 700; }
 .review-picker select { width: 100%; min-height: 44px; color: #213d33; background: #fffdf7; border: 1px solid #819a87; border-radius: 6px; padding: 8px; }
 @media (max-width: 540px) { .review-top { top: -16px; } }
+/* Header route links are anchors styled like the neighbouring quiet buttons. */
+.site-header a.button-quiet { display: inline-flex; align-items: center; text-decoration: none; }

@@ -21,7 +21,9 @@ test('四能力切題保留草稿／已揭示答案，分類下的作答備份�
   await expect(page.getByRole('heading', { level: 2 })).toHaveText('第 1 / 3 題 · 吃碰取捨');
   for (const name of ['1與3萬', '3與4萬']) await page.getByRole('checkbox', { name, exact: true }).check();
   await page.getByRole('button', { name: '看答案與推導', exact: true }).click();
-  await expect(page.locator('#answer')).toHaveText('選擇集合符合本題答案');
+  await expect(page.locator('#answer')).toHaveText('答對了');
+  await expect(page.locator('.answer')).toContainText('補充：理由不會自動評閱');
+  await expect(page.locator('.answer')).not.toContainText('牌效只比較這一步');
   await expect(page.getByRole('checkbox', { name: '1與4萬', exact: true })).not.toBeChecked();
   await picker.selectOption('safety-scope');
   await expect(page.getByRole('heading', { level: 2 })).toHaveText('第 1 / 2 題 · 安全牌');
@@ -29,7 +31,7 @@ test('四能力切題保留草稿／已揭示答案，分類下的作答備份�
   await picker.selectOption('dealer-continuation');
   await expect(page.getByRole('heading', { level: 2 })).toHaveText('第 1 / 2 題 · 莊家連莊');
   await picker.selectOption('claim-cost');
-  await expect(page.locator('#answer')).toHaveText('選擇集合符合本題答案');
+  await expect(page.locator('#answer')).toHaveText('答對了');
   await expect(page.getByRole('checkbox', { name: '1與3萬', exact: true })).toBeDisabled();
   await page.getByRole('button', { name: '下一題', exact: true }).click();
   await page.getByRole('button', { name: '下一題', exact: true }).click();
@@ -52,6 +54,6 @@ test('四能力切題保留草稿／已揭示答案，分類下的作答備份�
   await page.setViewportSize({ width: 320, height: 844 });
   await expect(picker).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  await expect(page.getByRole('link', { name: '第1–8課入門（另開分頁）', exact: true })).toHaveAttribute('target', '_blank');
+  await expect(page.getByRole('link', { name: '新手課程（第1–8課，另開分頁）', exact: true })).toHaveAttribute('target', '_blank');
   expect(await page.evaluate(() => localStorage.length)).toBe(0);
 });

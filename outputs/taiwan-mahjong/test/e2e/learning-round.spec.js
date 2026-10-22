@@ -33,6 +33,8 @@ async function seeded(page, extra = {}) {
   await page.addInitScript(data => { for (const [k, v] of Object.entries(data)) if (localStorage.getItem(k) === null) localStorage.setItem(k, v); }, { ...otherSaves, [LEARN_KEY]: v2Start, ...extra });
   await page.goto('/learn.html');
 }
+// Reload/rebuild/clear tools are folded in native details during normal use; open them like a user would.
+async function openTools(page) { for (const s of await page.locator('.learn-tools > summary').all()) if (!await s.evaluate(e => e.parentElement.open)) await s.click(); }
 async function cancelReload(page) {
   const pending = page.waitForEvent('dialog'), reload = page.evaluate(() => location.reload());
   const dialog = await pending; expect(dialog.type()).toBe('beforeunload'); await dialog.dismiss(); await reload;
@@ -259,6 +261,7 @@ test('保存並暫停→重載→接續：補花、吃牌回應、可胡、結�
   await click(page, '8. 換一局，自己試'); await click(page, '接續已存教學');
   await expect(lesson(page)).toContainText('依上面明細，這次牌型合計幾台？');
   // Clearing the resume point needs a confirmation and touches only the round key.
+  await openTools(page);
   page.once('dialog', d => d.dismiss()); await click(page, '清掉續學點');
   expect(await read(page, ROUND_KEY)).not.toBeNull();
   page.once('dialog', d => d.accept()); await click(page, '清掉續學點');
@@ -385,7 +388,7 @@ test('等鎖時雙擊只寫一次：課程、導覽、保存與重建全部暫�
     window.__roundWrites = 0; const set = Storage.prototype.setItem;
     Storage.prototype.setItem = function(k, v) { if (k === key) window.__roundWrites++; return set.call(this, k, v); };
   }, ROUND_KEY);
-  await seeded(page);
+  await seeded(page); await openTools(page);
   await click(page, '7. 帶你打一局'); await click(page, '我讀完了，開始示範'); await l7Opening(page);
   await page.evaluate(key => {
     window.__pause = true; const request = navigator.locks.request.bind(navigator.locks);
@@ -473,6 +476,7 @@ test('等鎖期間教學區inert：回看、提示、導覽都不能改受助；
   await page.getByText('回看圖解（本次會列提示下完成）', { exact: true }).click();
   await expect(panel(page)).toContainText('本段尚未保存');
   await page.evaluate(() => { window.__releaseLock = null; window.__pause = true; });
+  await openTools(page);
   page.once('dialog', d => d.accept()); await click(page, '重新建立新手進度');
   await expect.poll(() => page.evaluate(() => typeof window.__releaseLock)).toBe('function');
   await expect(lesson(page)).toHaveJSProperty('inert', true);
@@ -518,7 +522,7 @@ for (const first of ['v2', 'round']) test(`兩把鎖並行（先放${first === '
     window.__writes = { [round]: 0, [learn]: 0 }; window.__counting = false; const set = Storage.prototype.setItem;
     Storage.prototype.setItem = function(k, v) { if (window.__counting && k in window.__writes) window.__writes[k]++; return set.call(this, k, v); };
   }, [ROUND_KEY, LEARN_KEY]);
-  await seeded(page);
+  await seeded(page); await openTools(page);
   await page.evaluate(keys => {
     window.__counting = true; window.__hold = Object.fromEntries(keys.map(k => [k, true])); window.__release = {};
     const request = navigator.locks.request.bind(navigator.locks);

@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import { createBrowserFixtures } from '../../scripts/browser-fixtures.mjs';
 import { createPractice, PRACTICE_KEY } from '../../dist/practice.js';
 import { LEARN_KEY, emptyProgress, markLesson, encodeLearningProgress } from '../../dist/learning-progress.js';
+import { ROUND_KEY } from '../../dist/learning-round-store.js';
 
 const otherSaves = {
   'tw16:TW16-CLASSIC-v1:save': JSON.stringify(createBrowserFixtures().find(s => s.name === 'feedbackReady').session),
@@ -32,6 +33,8 @@ async function round(page, transfer, recap = false) {
   await expect(page.locator('#lesson')).toContainText('一般手牌 16 張');
   await page.getByRole('button', { name: '下家', exact: true }).click();
 }
+// Reload/rebuild tools fold away in normal use; open them like a user would.
+async function openTools(page) { const s = page.locator('#learning-progress .learn-tools > summary'); if (!await s.evaluate(e => e.parentElement.open)) await s.click(); }
 async function select(page, ids) { for (const id of ids) await page.locator(`#lesson [data-tile="${id}"]`).click(); }
 async function composition(page, transfer) {
   await page.getByRole('button', { name: transfer ? '換例自己試' : '我讀完了，開始示範', exact: true }).click();
@@ -57,7 +60,7 @@ test('三課示範與換例、含槓組牌、提示標記、重載與舊檔隔�
   await expect(page.locator('#learning-progress')).toContainText('第3課：已閱讀 ✓');
   expect(await page.evaluate(keys => Object.fromEntries(keys.map(k => [k, localStorage.getItem(k)])), Object.keys(otherSaves))).toEqual(otherSaves);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  page.once('dialog', d => d.accept());
+  await openTools(page); page.once('dialog', d => d.accept());
   await page.getByRole('button', { name: '重新建立新手進度', exact: true }).click();
   await expect.poll(async () => (await course(page)).lessons.every(p => !p.read)).toBe(true);
   await page.getByRole('button', { name: '換例自己試', exact: true }).click();
@@ -94,6 +97,7 @@ test('保存失敗保留本頁、重試；壞檔清除要確認，跨頁更新�
       return callback(lock);
     });
   }, LEARN_KEY);
+  await openTools(page);
   page.once('dialog', d => d.accept()); await page.getByRole('button', { name: '重新建立新手進度', exact: true }).click();
   await expect(page.getByRole('button', { name: '1. 認牌與桌面', exact: true })).toBeDisabled();
   await expect.poll(async () => page.evaluate(() => typeof window.__releaseLearningLock)).toBe('function');
@@ -138,6 +142,33 @@ test('保存失敗保留本頁、重試；壞檔清除要確認，跨頁更新�
   await unreadable.close();
 });
 
+test('次要工具預設收合、鍵盤可展開；重讀後保持展開與焦點；跨頁衝突自動展開救援，警告不收合', async ({ page, context }) => {
+  await seededPage(page);
+  const tools = page.locator('#learning-progress .learn-tools'), reread = page.getByRole('button', { name: '重新讀取保存紀錄', exact: true });
+  await expect(page.locator('#save-notice')).toBeVisible(); await expect(page.locator('#learning-progress .progress-list')).toBeVisible();
+  await expect(tools).not.toHaveAttribute('open', ''); await expect(reread).toBeHidden();
+  await expect(page.locator('#learning-round-save .learn-tools')).not.toHaveAttribute('open', '');
+  await tools.locator('summary').focus(); await page.keyboard.press('Enter');
+  await expect(reread).toBeVisible();
+  await page.keyboard.press('Tab'); await expect(reread).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#save-notice')).toContainText('已讀取');
+  await expect(tools).toHaveAttribute('open', ''); await expect(reread).toBeFocused();
+  const second = await context.newPage(); await seededPage(second);
+  const secondTools = second.locator('#learning-progress .learn-tools'), roundTools = second.locator('#learning-round-save .learn-tools');
+  await expect(secondTools).not.toHaveAttribute('open', ''); await expect(roundTools).not.toHaveAttribute('open', '');
+  await page.evaluate(([key, value]) => localStorage.setItem(key, value), [LEARN_KEY, encodeLearningProgress(markLesson(emptyProgress(), 2, 'read'))]);
+  await expect(second.locator('#save-notice')).toContainText('另一頁已更動學習進度');
+  await expect(secondTools).toHaveAttribute('open', '');
+  await second.getByRole('button', { name: '重新讀取保存紀錄', exact: true }).focus();
+  await expect(second.getByRole('button', { name: '重新讀取保存紀錄', exact: true })).toBeFocused();
+  await page.evaluate(key => localStorage.setItem(key, '{broken-round'), ROUND_KEY);
+  await expect(second.locator('#round-notice')).toContainText('另一頁已變更或清除第7–8課續學點');
+  await expect(roundTools).toHaveAttribute('open', '');
+  await expect(second.getByRole('button', { name: '重新讀取續學點', exact: true })).toBeVisible();
+  await second.close();
+});
+
 for (const failure of ['read-error', 'broken', 'future']) test(`重讀${failure}保留本頁未存進度及離頁提醒，修復後才採用保存紀錄`, async ({ page }) => {
   const original = encodeLearningProgress(markLesson(emptyProgress(), 0, 'read'));
   const bad = failure === 'broken' ? '{broken' : JSON.stringify({ ...emptyProgress(), schemaVersion: 3 });
@@ -156,7 +187,7 @@ for (const failure of ['read-error', 'broken', 'future']) test(`重讀${failure}
     if (failure === 'read-error') window.__failLearningRead = true;
     else { window.__failLearningWrite = false; localStorage.setItem(key, bad); window.__failLearningWrite = true; }
   }, { key: LEARN_KEY, bad, failure });
-  page.once('dialog', d => d.accept()); await page.getByRole('button', { name: '重新讀取保存紀錄', exact: true }).click();
+  await openTools(page); page.once('dialog', d => d.accept()); await page.getByRole('button', { name: '重新讀取保存紀錄', exact: true }).click();
   expect(await page.locator('.progress-list').innerText()).toBe(memory);
   await expect(page.locator('#save-notice')).toContainText('本頁紀錄仍保留');
   await expect(page.getByRole('button', { name: '重試保存進度', exact: true })).toBeDisabled();

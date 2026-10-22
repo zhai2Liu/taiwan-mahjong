@@ -179,11 +179,13 @@ function render(focus = true): void {
   workspace.append(board, form); question.append(workspace); root.append(question);
   if (draft.revealed) {
     const answer = el('section'); answer.className = 'answer';
-    const title = el('h3', draft.selected.size === q.accepted.length && q.accepted.every(id => draft.selected.has(id)) ? '選擇集合符合本題答案' : '有選項需要再核對');
+    const title = el('h3', draft.selected.size === q.accepted.length && q.accepted.every(id => draft.selected.has(id)) ? '答對了' : '還有選項要確認');
     title.id = 'answer'; title.tabIndex = -1;
     const list = el('ul');
     for (const c of q.choices) if (q.accepted.includes(c.id)) list.append(el('li', c.text));
-    answer.append(title, el('p', '成立的選項：'), list, el('p', q.derivation), el('p', '理由：未評閱。請自行對照推導與適用範圍；選對不代表已證明理解或整體牌技。'));
+    answer.append(title, el('p', '成立的選項：'), list, el('p', q.derivation));
+    const note = el('p', `補充：理由不會自動評閱，請自行對照推導；答對只表示本題選項相符，不是牌技評量。${q.skill === 'efficiency' ? '牌效只比較這一步的局部進牌。' : ''}`); note.className = 'muted';
+    answer.append(note);
     question.append(answer);
   }
   const nav = el('nav'); nav.setAttribute('aria-label', '題目切換');

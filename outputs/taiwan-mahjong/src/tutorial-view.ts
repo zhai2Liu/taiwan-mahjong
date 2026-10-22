@@ -10,7 +10,7 @@ export function showTutorial(root: HTMLElement): void {
   dialog.addEventListener('close', () => { dialog.remove(); root.querySelector<HTMLElement>('[data-focus="tutorial"]')?.focus({ preventScroll: true }); }, { once: true });
   function render(): void {
     const heading = node('h2', '', titles[step]); heading.id = 'tutorial-title'; heading.tabIndex = -1;
-    const top = node('div', 'tutorial-top'); top.append(node('p', 'eyebrow', `新手操作教學 · ${step + 1}／${titles.length}`), button('關閉教學', 'tutorial-close', close, 'button button-quiet'));
+    const top = node('div', 'tutorial-top'); top.append(node('p', 'eyebrow', `操作說明 · ${step + 1}／${titles.length}`), button('關閉操作說明', 'tutorial-close', close, 'button button-quiet'));
     const body = node('div', 'tutorial-body');
     const text = (content: string) => body.append(node('p', '', content));
     const cards = (kinds: string[]) => { const row = node('div', 'tutorial-tiles'); kinds.forEach(k => row.append(tile(k, 'tile-small'))); body.append(row); };
@@ -19,7 +19,7 @@ export function showTutorial(root: HTMLElement): void {
       cards(['1m', '5m', '9m', '1p', '5p', '9p', '1s', '5s', '9s']);
       text('萬、筒（也叫餅）、條（也叫索）各有1到9；同花色連號3張叫順子，3張相同的牌也能湊成一組。東南西北中發白不能組順子。花牌不放進一般胡牌形，亮出後通常自動補牌；花胡例外由遊戲判定，例如一家已有七花、別家亮出最後一花時立即結算，不再補牌。');
       cards(['1z', '2z', '3z', '4z', '5z', '6z', '7z', 'f1']);
-      text('以下是獨立示範，不改目前牌局或練習存檔。開啟教學會暫停對戰，關閉後需自行繼續。桌規以本遊戲TW16-CLASSIC-v1為準。');
+      text('以下是獨立示範，不改目前牌局或練習存檔。開啟操作說明會暫停對戰，關閉後需自行繼續。桌規以本遊戲TW16-CLASSIC-v1為準。');
     } else if (step === 1) {
       text('先單擊或Tab選牌看清楚，再快速連點同一張兩次打出；Enter／空白鍵也能出牌。先在這副示範手牌試一次。');
       const hand = node('div', 'hand tutorial-hand'); hand.setAttribute('role', 'group'); hand.setAttribute('aria-label', '示範手牌，不影響正式牌局');
@@ -80,7 +80,7 @@ export function showTutorial(root: HTMLElement): void {
       text('「聽牌」是再進一張合適的牌，就能湊成胡牌牌型。提示會說至少還需幾次有效進牌才可聽牌；這是牌型改善的下限，不是還需摸幾次，也不保證能胡。拆法示例只是一種湊牌方式，搭數不等於聽牌距離。');
       text('單擊手牌可比較打牌後離聽牌多遠，以及哪些進牌有幫助。距離相同再比較剩餘有效張數；0張表示後續未知牌估計中已無該牌，不能只看「已聽牌」；當下已有合法胡牌按鈕時仍可胡。吃碰的牌效建議也不包含台數、防守或槓後風險。');
       text('對戰比例只用公開資訊，未知牌包含別家手牌及牌尾，不是實際摸牌機率。純練習沒有對手，使用136張一般牌的不放回牌池，顯示下一張改善機率。');
-      text('想慢慢熟悉操作，先進「純練習模式」；回對戰時先按「繼續牌局」。教練可收合或關閉，隨時從「新手教學」再看一遍。');
+      text('想慢慢熟悉操作，先進「純練習模式」；回對戰時先按「繼續牌局」。教練可收合或關閉，隨時從「操作說明」再看一遍。');
     }
     const footer = node('div', 'tutorial-footer');
     footer.append(button('上一步', 'tutorial-prev', () => { step--; render(); }, 'button button-secondary', step === 0), button(step === titles.length - 1 ? '完成，回到原畫面' : '下一步', 'tutorial-next', () => { if (step === titles.length - 1) close(); else { step++; render(); } }, 'button button-primary'));
