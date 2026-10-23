@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 import { reviewTrial, CONTENT_REVISION } from '../../scripts/review-trial.mjs';
+import { TRIAL_KEY, decodeTrialDraft } from '../../dist/training-draft.js';
 
 test('四能力切題保留草稿／已揭示答案，分類下的作答備份仍是完整九題', async ({ page }) => {
   await page.goto('/training.html');
@@ -55,5 +56,10 @@ test('四能力切題保留草稿／已揭示答案，分類下的作答備份�
   await expect(picker).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await expect(page.getByRole('link', { name: '新手課程（第1–8課，另開分頁）', exact: true })).toHaveAttribute('target', '_blank');
-  expect(await page.evaluate(() => localStorage.length)).toBe(0);
+  // Answers and the current topic are saved automatically to the trial key only.
+  await expect(page.locator('#storage-status')).toContainText('已保存作答');
+  expect(await page.evaluate(() => Object.keys(localStorage))).toEqual([TRIAL_KEY]);
+  const saved = decodeTrialDraft(await page.evaluate(key => localStorage.getItem(key), TRIAL_KEY));
+  expect(saved.skill).toBe('all'); expect(saved.report.questions.find(q => q.id === 'E01').reason).toBe('S3.1 合成草稿，非真人資料');
+  expect(saved.report.questions.find(q => q.id === 'C01').status).toBe('submitted-and-revealed');
 });

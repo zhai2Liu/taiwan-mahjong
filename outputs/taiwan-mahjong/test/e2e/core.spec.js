@@ -132,8 +132,11 @@ test('試讀作答／真實備份下載 → 修改提醒 → 取消離頁／重�
   expect(answers.questions[0]).toMatchObject({ id: 'E01', status: 'submitted-and-revealed', reason: 'S1.2b 合成理由', feedback: '', exposure: 'unknown' });
   expect(answers.questions[0].selected).toHaveLength(1);
   await page.getByRole('button', { name: '下一題', exact: true }).click();
+  // Autosave would otherwise clear the guard; a failed write must keep the leave warnings, and a download alone is not a save.
+  await page.evaluate(() => { const native = Storage.prototype.setItem; Storage.prototype.setItem = function(k, v) { if (k === 'tw16:trial:v1') throw new DOMException('full', 'QuotaExceededError'); return native.call(this, k, v); }; });
   await page.locator('#reason').fill('下載後新增的合成理由');
   await expect(page.locator('#draft-status')).toContainText('作答在下載備份後有新修改');
+  await expect(page.locator('#storage-status')).toContainText('保存未成功');
   await page.getByRole('link', { name: '返回牌室', exact: true }).click();
   const leave = page.getByRole('dialog', { name: '離開決策題試讀？', exact: true });
   await expect(leave.getByRole('button', { name: '留在本頁', exact: true })).toBeFocused();

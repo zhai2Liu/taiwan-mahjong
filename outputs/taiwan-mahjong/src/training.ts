@@ -16,7 +16,12 @@ let index = trainingQuestions.findIndex(q => skill === 'all' || q.skill === skil
 let leaveGuardActive = false;
 let answersExportSnapshot: string | undefined;
 const answersSnapshot = () => JSON.stringify(drafts.map(d => [[...d.selected].sort(), d.reason, d.feedback, d.revealed, d.exposure]));
-let savedRaw: string | null | undefined, savedData: string | undefined, saveBlocked = false, saveBusy = false, saveMessage = '';
+let savedRaw: string | null | undefined, savedData: string | undefined, savedPosition: string | undefined, saveBlocked = false, saveBusy = false, saveMessage = '';
+// Autosave: player changes mark the page touched and schedule one write; a write requested while busy runs once afterwards with the latest snapshot.
+// After a confirmed clear, moving between questions alone does not write again until an answer changes or the player saves.
+let touched = false, autoPaused = false, saveFailed = false, saveQueued = false, saveTimer: ReturnType<typeof setTimeout> | undefined;
+// While a clear is in flight, only answer changes (not moves) may write once it finishes.
+let clearing = false, answeredWhileClearing = false;
 const storage = { getItem: (key: string) => localStorage.getItem(key), setItem: (key: string, value: string) => localStorage.setItem(key, value), removeItem: (key: string) => localStorage.removeItem(key) };
 function currentRecord(): TrialRecord {
   return { schemaVersion: 3, contentRevision: trainingContentRevision, rulesVersion: 'TW16-CLASSIC-v1', mode: 'L3-B0-content-trial', reasonAssessment: 'not-reviewed', guidanceMode: 'topic-guided',
@@ -25,7 +30,9 @@ function currentRecord(): TrialRecord {
       selected: q.choices.filter(c => drafts[i].selected.has(c.id)), reason: drafts[i].reason, feedback: drafts[i].feedback, exposure: drafts[i].exposure })) };
 }
 const dataSnapshot = () => JSON.stringify(currentRecord().questions);
-const safelySaved = () => !saveBlocked && savedData !== undefined && savedData === dataSnapshot();
+const position = () => `${trainingQuestions[index].id}|${skill}`;
+const dataSaved = () => !saveBlocked && savedData !== undefined && savedData === dataSnapshot();
+const safelySaved = () => dataSaved() && savedPosition === position();
 function readSaved(preferRoute = false): void {
   savedRaw = undefined;
   try {
@@ -35,9 +42,11 @@ function readSaved(preferRoute = false): void {
       return { selected: new Set(row.selected.map(c => c.id)), reason: row.reason, feedback: row.feedback, revealed: row.status === 'submitted-and-revealed', exposure: row.exposure! };
     }) : emptyDrafts();
     skill = saved?.skill ?? 'all'; index = saved ? trainingQuestions.findIndex(q => q.id === saved.questionId) : 0;
+    // Baseline is the file's own position; a topic link only moves the cursor and is written after the next real change.
+    savedData = saved ? dataSnapshot() : undefined; savedPosition = saved ? position() : undefined;
     if (preferRoute && requestedSkill !== null) { skill = trainingSkills.some(s => s.id === requestedSkill) ? requestedSkill : 'all'; index = trainingQuestions.findIndex(q => skill === 'all' || q.skill === skill); }
-    savedData = saved ? dataSnapshot() : undefined; saveBlocked = false;
-    saveMessage = saved ? '已載入此瀏覽器保存的作答；修改後請再次保存。' : '尚未在此瀏覽器保存；可手動保存續答。';
+    saveBlocked = false; touched = autoPaused = saveFailed = false;
+    saveMessage = saved ? '已載入此瀏覽器保存的作答，之後的修改會自動保存。' : '作答後會自動保存到此瀏覽器。';
   } catch { saveBlocked = true; saveMessage = savedRaw === undefined ? '無法讀取本機保存，停止覆寫未知資料；本頁仍可作答，請下載本頁作答備份。' : '保存格式或題目版本不同，原檔已保留且停止覆寫。可下載原檔，或確認後清除本機保存。'; }
 }
 function checkOtherSave(): void {
@@ -49,45 +58,79 @@ function restoreStorageFocus(control: Element | null): void {
   if (document.activeElement !== document.body || !(control instanceof HTMLButtonElement) || !control.isConnected) return;
   (control.disabled ? root.querySelector<HTMLElement>('.trial-storage summary') : control)?.focus();
 }
+function cancelPendingSave(): void { clearTimeout(saveTimer); saveTimer = undefined; saveQueued = false; }
+function scheduleSave(delay: number): void {
+  touched = true; autoPaused = saveFailed = false; if (clearing) answeredWhileClearing = true;
+  clearTimeout(saveTimer); saveTimer = setTimeout(() => { saveTimer = undefined; void saveLocal(); }, delay);
+}
+function moved(): void { if (!autoPaused && !clearing) scheduleSave(0); }
 async function saveLocal(): Promise<void> {
-  if (saveBusy || saveBlocked || savedRaw === undefined) return;
+  clearTimeout(saveTimer); saveTimer = undefined;
+  if (saveBusy) { saveQueued = true; return; }
+  saveQueued = false;
+  if (saveBlocked || savedRaw === undefined) return;
   const focused = document.activeElement;
   const captured: StoredTrial = { schemaVersion: 1, questionId: trainingQuestions[index].id, skill, report: currentRecord() };
-  saveBusy = true; updateDraftStatus();
-  try { savedRaw = await saveTrialDraft(storage, savedRaw, captured); savedData = JSON.stringify(captured.report.questions); saveMessage = safelySaved() ? '已保存作答到此瀏覽器，下次會自動載入；不會上傳。' : '已保存按下按鈕時的作答，還有新修改未保存。'; }
-  catch (error) { if (error instanceof Error && error.message === 'TRIAL_CONFLICT') { saveBlocked = true; saveMessage = '另一頁已變更保存，停止覆寫；本頁作答仍保留，請先下載本頁作答備份再重讀。'; } else saveMessage = '本次保存未成功，原檔與本頁作答仍保留；可重試或下載本頁作答備份。'; }
+  saveBusy = true; touched = true; autoPaused = saveFailed = false; saveMessage = '保存中…'; updateDraftStatus();
+  try { savedRaw = await saveTrialDraft(storage, savedRaw, captured); savedData = JSON.stringify(captured.report.questions); savedPosition = `${captured.questionId}|${captured.skill}`; saveMessage = '已保存作答到此瀏覽器，下次開啟會接著練；不會上傳。'; }
+  catch (error) {
+    // Failures stop this write, any merged follow-up and a pending debounce; the save button or the player's next change tries again.
+    cancelPendingSave(); saveFailed = true;
+    const code = error instanceof Error ? error.message : '';
+    if (code === 'TRIAL_CONFLICT') { saveBlocked = true; saveMessage = '另一頁已變更保存，停止覆寫；本頁作答仍保留，請先下載本頁作答備份再重讀。'; }
+    else if (code === 'TRIAL_UNREADABLE') { saveBlocked = true; saveMessage = '無法核對本機保存，停止覆寫；本頁作答仍保留，請先下載本頁作答備份再重讀。'; }
+    else saveMessage = '保存未成功，原檔與本頁作答仍保留；可按「保存作答到此瀏覽器」重試，或下載本頁作答備份。';
+  }
   finally { saveBusy = false; updateDraftStatus(); restoreStorageFocus(focused); }
+  if (saveQueued && !safelySaved()) void saveLocal(); else saveQueued = false;
 }
 async function clearLocal(): Promise<void> {
   if (saveBusy || savedRaw === undefined || !window.confirm('清除這個瀏覽器保存的試讀作答？本頁內容先保留，可再保存或下載備份；牌局、練習及新手進度不變。')) return;
   const focused = document.activeElement;
-  saveBusy = true; updateDraftStatus();
-  try { await clearTrialDraft(storage, savedRaw); savedRaw = null; savedData = undefined; saveBlocked = false; saveMessage = '本機保存已清除；本頁作答仍保留，離頁前可再保存或下載備份。'; }
-  catch { saveMessage = '清除未成功或原檔已更動，原資料與本頁作答保留；請重新讀取再決定。'; }
-  finally { saveBusy = false; updateDraftStatus(); restoreStorageFocus(focused); }
+  cancelPendingSave(); clearing = true; answeredWhileClearing = false; saveBusy = true; updateDraftStatus();
+  try {
+    await clearTrialDraft(storage, savedRaw); savedRaw = null; savedData = savedPosition = undefined; saveBlocked = saveFailed = false;
+    // An answer changed while clearing is new work and saves its latest snapshot; moves alone stay cleared.
+    autoPaused = !answeredWhileClearing; touched = answeredWhileClearing || hasContent();
+    if (!answeredWhileClearing) cancelPendingSave();
+    saveMessage = '本機保存已清除；本頁作答仍保留。再修改作答才會自動保存，也可按「保存作答到此瀏覽器」。';
+  }
+  catch (error) {
+    cancelPendingSave();
+    // Unverifiable or changed files stop writes until an explicit reread; quota/lock problems stay retryable.
+    const code = error instanceof Error ? error.message : '';
+    if (code === 'TRIAL_CONFLICT' || code === 'TRIAL_UNREADABLE') { saveBlocked = true; saveMessage = '無法核對或另一頁已變更本機保存，清除未完成並停止覆寫；原資料與本頁作答保留，請先下載本頁作答備份再重讀。'; }
+    else saveMessage = '清除未成功，原資料與本頁作答保留；可再試一次或重新讀取再決定。';
+  }
+  finally { clearing = false; saveBusy = false; updateDraftStatus(); restoreStorageFocus(focused); }
+  if (saveQueued) void saveLocal();
 }
 // ponytail: native leave warnings are best effort; manual local save is independent of browser downloads.
 function warnBeforeLeave(event: BeforeUnloadEvent): void { event.preventDefault(); event.returnValue = 'true'; }
+const hasContent = () => drafts.some(d => d.selected.size || d.reason.length || d.feedback.length || d.revealed || d.exposure !== 'unknown');
 function updateDraftStatus(): void {
-  const hasContent = drafts.some(d => d.selected.size || d.reason.length || d.feedback.length || d.revealed || d.exposure !== 'unknown');
-  const needsGuard = hasContent && (!safelySaved() || saveBusy);
+  const content = hasContent();
+  // Emptying the page or only moving can still differ from the file, so touched changes are guarded until a save matches them.
+  const needsGuard = content && saveBlocked || touched && (saveBusy || !safelySaved());
   if (needsGuard !== leaveGuardActive) {
     if (needsGuard) window.addEventListener('beforeunload', warnBeforeLeave);
     else window.removeEventListener('beforeunload', warnBeforeLeave);
     leaveGuardActive = needsGuard;
   }
   const storageStatus = root.querySelector<HTMLElement>('#storage-status');
-  const storageNotice = `${saveMessage}${savedData !== undefined && !safelySaved() ? ' 本頁有尚未確認保存的內容。' : ''}`;
+  // Only promise an automatic save while one is actually scheduled or queued.
+  const pending = (saveTimer !== undefined || saveQueued) && !saveBusy && !saveFailed && !saveBlocked && !safelySaved();
+  const storageNotice = pending ? '有修改，稍後自動保存…' : saveMessage;
   if (storageStatus && storageStatus.textContent !== storageNotice) storageStatus.textContent = storageNotice;
   for (const [id, disabled] of [['save-local', saveBusy || saveBlocked || savedRaw === undefined], ['read-local', saveBusy], ['clear-local', saveBusy || savedRaw === undefined || savedRaw === null], ['recover-local', saveBusy || typeof savedRaw !== 'string']] as const) {
     const control = root.querySelector<HTMLButtonElement>('#' + id); if (control) control.disabled = disabled;
   }
   const status = root.querySelector<HTMLElement>('#draft-status');
   if (!status) return;
-  status.hidden = !hasContent;
+  status.hidden = !content;
   const notice = answersExportSnapshot !== undefined && answersExportSnapshot !== answersSnapshot()
-    ? `作答在下載備份後有新修改，備份檔不含這些修改。${safelySaved() ? '目前作答已確認保存在此瀏覽器。' : '新內容仍只留在本頁。'}`
-    : safelySaved() ? '目前作答已確認保存在此瀏覽器，不會上傳。' : '內容只留在本頁。離開前請保存到此瀏覽器，或下載本頁作答備份並確認檔案；僅交由瀏覽器下載仍會提醒離頁。';
+    ? `作答在下載備份後有新修改，備份檔不含這些修改。${dataSaved() ? '目前作答已保存在此瀏覽器。' : '新內容尚未保存到此瀏覽器。'}`
+    : dataSaved() ? '目前作答已保存在此瀏覽器，不會上傳。' : '目前作答尚未保存到此瀏覽器。';
   if (status.textContent !== notice) status.textContent = notice;
 }
 // The browser may restore form fields after pageshow without restoring our drafts; redraw from owned state after that restoration.
@@ -129,7 +172,7 @@ function render(focus = true): void {
   picker.value = skill;
   picker.addEventListener('change', () => {
     if (picker.value !== 'all' && !trainingSkills.some(s => s.id === picker.value)) return;
-    skill = picker.value; index = trainingQuestions.findIndex(q => skill === 'all' || q.skill === skill); render();
+    skill = picker.value; index = trainingQuestions.findIndex(q => skill === 'all' || q.skill === skill); moved(); render();
   });
   const pickerGroup = el('div'); pickerGroup.className = 'trial-picker'; pickerGroup.append(label, picker);
   const goals = el('div'); goals.className = 'trial-goals'; goals.append(el('p', category.goal), el('p', category.limit));
@@ -161,20 +204,21 @@ function render(focus = true): void {
   for (const choice of q.choices) {
     const label = el('label'), input = el('input');
     input.type = 'checkbox'; input.value = choice.id; input.checked = draft.selected.has(choice.id); input.disabled = draft.revealed;
-    input.addEventListener('change', () => { if (input.checked) draft.selected.add(choice.id); else draft.selected.delete(choice.id); updateDraftStatus(); });
+    input.addEventListener('change', () => { if (input.checked) draft.selected.add(choice.id); else draft.selected.delete(choice.id); scheduleSave(0); updateDraftStatus(); });
     label.append(input, el('span', choice.text)); options.append(label);
   }
   const reasonLabel = el('label', '我的理由（選填，不會自動評分）'), reason = el('textarea');
   reason.id = 'reason'; reasonLabel.htmlFor = reason.id; reason.maxLength = 2000; reason.rows = 3;
   reason.value = draft.reason; reason.readOnly = draft.revealed;
-  reason.addEventListener('input', () => { draft.reason = reason.value; updateDraftStatus(); });
+  // Saving never redraws, so the field keeps focus and any in-progress IME text; the final value is saved after typing pauses.
+  reason.addEventListener('input', () => { draft.reason = reason.value; scheduleSave(400); updateDraftStatus(); });
   const submit = el('button', '看答案與推導'); submit.type = 'submit'; submit.disabled = draft.revealed;
   const message = el('p'); message.setAttribute('role', 'status');
   form.append(el('p', '請選出全部成立的敘述；理由可留空。'), options, reasonLabel, reason, submit, message);
   form.addEventListener('submit', event => {
     event.preventDefault(); if (draft.revealed) return;
     if (!draft.selected.size) { message.textContent = '請先選擇至少一項，再看答案。'; return; }
-    draft.revealed = true; render(false); root.querySelector<HTMLElement>('#answer')?.focus();
+    draft.revealed = true; scheduleSave(0); render(false); root.querySelector<HTMLElement>('#answer')?.focus();
   });
   workspace.append(board, form); question.append(workspace); root.append(question);
   if (draft.revealed) {
@@ -191,7 +235,7 @@ function render(focus = true): void {
   const nav = el('nav'); nav.setAttribute('aria-label', '題目切換');
   for (const [text, delta] of [['上一題', -1], ['下一題', 1]] as const) {
     const button = el('button', text); button.type = 'button'; button.disabled = position + delta < 0 || position + delta >= visible.length;
-    button.addEventListener('click', () => { index = visible[position + delta].i; render(); }); nav.append(button);
+    button.addEventListener('click', () => { index = visible[position + delta].i; moved(); render(); }); nav.append(button);
   }
   question.append(nav, el('p', `本頁已揭示 ${drafts.filter(d => d.revealed).length} / ${trainingQuestions.length} 題；這是閱讀進度，不是成績。`));
   if (skill !== 'all') question.append(el('p', `本分類已揭示 ${visible.filter(({ i }) => drafts[i].revealed).length} / ${visible.length} 題；切換重點保留本頁作答，作答備份包含全部 ${trainingQuestions.length} 題。`));
@@ -219,7 +263,7 @@ function render(focus = true): void {
   save.addEventListener('click', () => { void saveLocal(); }); clear.addEventListener('click', () => { void clearLocal(); });
   read.addEventListener('click', () => {
     if (saveBusy || leaveGuardActive && !window.confirm('重新讀取會放棄本頁未保存的作答與理由。若要保留，請先下載本頁作答備份。確定？')) return;
-    readSaved(); render();
+    cancelPendingSave(); readSaved(); render();
   });
   recover.addEventListener('click', () => {
     if (typeof savedRaw !== 'string' || saveBusy) return;
@@ -232,7 +276,7 @@ function render(focus = true): void {
   savedPanel.append(el('summary', '本機保存／備份'), savedActions,
     el('p', '作答備份是全部九題選項與理由的JSON檔，供你自己留存；本頁不會匯入檔案，也不會上傳。'), exportStatus, previewPanel);
   const storageArea = el('section'); storageArea.className = 'trial-storage'; storageArea.setAttribute('aria-label', '本機保存與備份');
-  const localArea = el('div'); localArea.append(el('strong', '留在這裡，下次接著練'), el('p', '手動保存後，下次開啟會自動載入同版作答。保存會一併記住當下的題目與分類；之後切題不會自動更新保存位置。資料只在此瀏覽器；共用裝置離開前可清除本機保存。'), save, draftStatus, savedPanel);
+  const localArea = el('div'); localArea.append(el('strong', '留在這裡，下次接著練'), el('p', '選擇、看答案、切題後會自動保存到此瀏覽器，理由在停止輸入後保存；下次開啟從同一題接著練。也可按下方按鈕立即保存。資料只在此瀏覽器；共用裝置離開前可清除本機保存。'), save, draftStatus, savedPanel);
   storageArea.append(localArea); root.append(storageArea);
   updateDraftStatus();
   if (focus) heading.focus();

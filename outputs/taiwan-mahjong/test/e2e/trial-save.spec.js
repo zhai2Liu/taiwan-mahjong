@@ -43,6 +43,7 @@ test('舊存檔回饋／曝光原值保留：無收集UI，切題、重讀、保
   await expect(page.getByRole('heading', { level: 2 })).toHaveText('第 2 / 3 題 · 吃碰取捨');
   await page.getByRole('button', { name: '上一題', exact: true }).click();
   await expect(page.locator('#reason')).toHaveValue('S3.3 合成理由，非真人資料');
+  await expect(page.locator('#storage-status')).toContainText('已保存作答'); expect(decodeTrialDraft(await raw(page)).questionId).toBe('C01');
   await expect(page.getByRole('button', { name: '下載全部試讀回饋' })).toHaveCount(0);
   await manage(page); const pending = page.waitForEvent('download'); await page.getByRole('button', { name: '下載本頁作答備份', exact: true }).click();
   const download = await pending; expect(download.suggestedFilename()).toBe('taiwan-mahjong-trial-answers.json');
@@ -61,7 +62,7 @@ test('舊存檔回饋／曝光原值保留：無收集UI，切題、重讀、保
   expect(await page.evaluate(keys => Object.fromEntries(keys.map(key => [key, localStorage.getItem(key)])), Object.keys(markers))).toEqual(markers);
 });
 
-test('鍵盤保存與清除保留焦點，等待期間的新焦點不被搶回', async ({ page }) => {
+test('鍵盤保存與清除保留焦點，等待期間的新焦點不被搶回；舊快照成功後接著保存最新修改', async ({ page }) => {
   await page.goto('/training.html'); await page.locator('#reason').fill('合成焦點檢查');
   await save(page).focus(); await page.keyboard.press('Enter');
   await expect(page.locator('#storage-status')).toContainText('已保存作答'); await expect(save(page)).toBeFocused();
@@ -79,12 +80,18 @@ test('鍵盤保存與清除保留焦點，等待期間的新焦點不被搶回',
   }, TRIAL_KEY);
   await save(page).focus(); await page.keyboard.press('Enter'); await expect(save(page)).toBeDisabled();
   await expect.poll(() => page.evaluate(() => typeof window.__finishFocusSave)).toBe('function');
-  await page.locator('#reason').fill('等待時新增'); await page.evaluate(() => window.__finishFocusSave());
-  await expect(save(page)).toBeEnabled(); await expect(page.locator('#reason')).toBeFocused();
-  await expect(page.locator('#storage-status')).toContainText('還有新修改未保存');
+  await page.locator('#reason').fill('等待時新增');
+  await page.evaluate(() => { const finish = window.__finishFocusSave; window.__finishFocusSave = undefined; finish(); });
+  await expect.poll(async () => JSON.parse(await raw(page)).report.questions[0].reason).toBe('按下保存時');
+  await expect(page.locator('#reason')).toBeFocused();
+  // The older snapshot's success keeps the newer edit guarded; one follow-up write waits on the same held lock.
+  await expect.poll(() => page.evaluate(() => typeof window.__finishFocusSave)).toBe('function');
+  await expect(page.locator('#storage-status')).toContainText('保存中');
+  expect(await page.evaluate(() => { const event = new Event('beforeunload', { cancelable: true }); dispatchEvent(event); return event.defaultPrevented; })).toBe(true);
   expect(JSON.parse(await raw(page)).report.questions[0].reason).toBe('按下保存時');
-  await page.evaluate(() => navigator.locks.request = window.__nativeFocusRequest);
-  await save(page).focus(); await page.keyboard.press('Enter'); await expect(page.locator('#storage-status')).toContainText('已保存作答');
+  await page.evaluate(() => { navigator.locks.request = window.__nativeFocusRequest; window.__finishFocusSave(); });
+  await expect(page.locator('#storage-status')).toContainText('已保存作答'); await expect(page.locator('#reason')).toBeFocused();
+  expect(JSON.parse(await raw(page)).report.questions[0].reason).toBe('等待時新增');
   await manage(page); const clear = page.getByRole('button', { name: '清除本機保存（保留本頁）', exact: true });
   await clear.focus(); confirm(page, true); await page.keyboard.press('Enter');
   await expect(page.locator('#storage-status')).toContainText('已清除');
@@ -119,8 +126,11 @@ test('跨頁衝突不覆寫，重讀先確認；舊內容原檔可下載，清�
   await page.goto('/training.html'); const other = await context.newPage(); await other.goto('/training.html');
   await page.locator('#reason').fill('A'); await save(page).click(); await expect(page.locator('#storage-status')).toContainText('已保存作答');
   await expect(save(other)).toBeDisabled(); await manage(other); await other.getByRole('button', { name: '重新讀取保存', exact: true }).click();
-  await other.locator('#reason').fill('B未存'); await page.locator('#reason').fill('A更新'); await save(page).click();
-  await expect(save(other)).toBeDisabled(); await expect(other.locator('#reason')).toHaveValue('B未存');
+  await page.locator('#reason').fill('A更新'); await save(page).click(); await expect(page.locator('#storage-status')).toContainText('已保存作答');
+  // Once another page has written, this page's edits stay local: no autosave, no overwrite.
+  await expect(save(other)).toBeDisabled(); await other.locator('#reason').fill('B未存');
+  await expect(other.locator('#storage-status')).toContainText('另一頁'); await expect(other.locator('#reason')).toHaveValue('B未存');
+  expect(JSON.parse(await raw(page)).report.questions[0].reason).toBe('A更新');
   await manage(other); confirm(other, false); await other.getByRole('button', { name: '重新讀取保存', exact: true }).click(); await expect(other.locator('#reason')).toHaveValue('B未存');
   confirm(other, true); await other.getByRole('button', { name: '重新讀取保存', exact: true }).click(); await expect(other.locator('#reason')).toHaveValue('A更新');
   const old = JSON.parse(await raw(other)); old.report.contentRevision = '0'.repeat(64); const bad = JSON.stringify(old);

@@ -35,7 +35,8 @@ test('寫入／讀取／缺鎖／忙碌／衝突都保留原檔，清除也必�
   await assert.rejects(saveTrialDraft(store, null, draft, available), /CONFLICT/);
   await assert.rejects(clearTrialDraft(store, null, available), /CONFLICT/);
   await assert.rejects(saveTrialDraft({ ...store, setItem() { throw Error('quota'); } }, raw, draft, available), /quota/);
-  await assert.rejects(saveTrialDraft({ ...store, getItem() { throw Error('read'); } }, raw, draft, available), /read/);
+  await assert.rejects(saveTrialDraft({ ...store, getItem() { throw Error('read'); } }, raw, draft, available), /TRIAL_UNREADABLE/);
+  await assert.rejects(clearTrialDraft({ ...store, getItem() { throw Error('read'); } }, raw, available), /TRIAL_UNREADABLE/);
   await assert.rejects(clearTrialDraft({ ...store, removeItem() { throw Error('remove'); } }, raw, available), /remove/);
   assert.equal(store.getItem(TRIAL_KEY), raw);
 });

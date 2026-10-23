@@ -26,7 +26,7 @@ S1.5試讀排版：training.render將分類／保存狀態、本題牌例／作�
 
 S1.6前三課排版：learn.html／learning.css管理任務左欄與進度右欄，1000px以下按DOM順序直列。空的lesson-feedback仍保留status/live語意；不得以隱藏整區取代只移除空白樣式。按鈕選取的強制色彩邊線與內距補償仍須等值，回歸沿learning／accessibility，不新增保存格式或課程常數。見[學習頁排版](LEARNING-LAYOUT-20261018.md)。
 
-S3.3試讀續答：src/training-draft.ts管新鍵tw16:trial:v1，封套schema1存schema3作答及題號／分類，手動寫入、同版自動讀取。src/trial-record.ts是無I/O的共用格式驗證；review-trial.mjs用Node24原生型別移除直接讀它，不能加入只能編譯後讀取的執行期TS語法或瀏覽器依賴。CLI仍讀schema1／2／3，輸出reportVersion2；舊曝光未知、版本不符人工核對。Web Locks ifAvailable＋expectedRaw，保存前捕捉報告，忙碌／缺鎖／跨頁／壞檔／配額失敗不覆寫，明確清除只動此鍵。本機原檔封套與一般作答匯出不同，接收依TRIAL-REVIEW。改動驗training-draft、training-page、trial-review及e2e/trial-save；[契約與證據](S33-VALIDATION.md)。下方S1.1等段落保留當時版本，離頁防護現以本機確認保存且未修改為解除條件，下載本身不解除。
+S3.3試讀續答：src/training-draft.ts管tw16:trial:v1，封套schema1存schema3作答及題號／分類，同版自動讀取。training.ts於選項／揭示／位置變更自存，理由延後400ms；單純載入不寫。每次捕捉完整資料與位置，成功只承認該快照，忙碌期間合併最新待辦且最多一筆寫入；自存不重繪或搶焦。Web Locks ifAvailable＋expectedRaw保持，失敗取消計時器與待辦；讀取／衝突／壞檔停寫待明確復原，其他失敗可新操作或手動重試。清除／重讀確認才取消待辦；清除成功後只換位置不復活，清除等待中也只有新作答能恢復。src/trial-record.ts是無I/O共用驗證，review-trial.mjs以Node24原生型別移除讀取，不能加瀏覽器依賴或需編譯的TS語法。CLI讀schema1／2／3、reportVersion2及舊欄位保全保持；原檔封套與一般備份不同，依TRIAL-REVIEW。改動驗training-draft、training-page、trial-review及e2e/trial-save、trial-autosave；歷史[格式契約](S33-VALIDATION.md)，最新證據依HANDOFF。離頁防護包括全空修改及位置，保存匹配後才解除，下載本身不解除。
 
 S3.2：hand-review.ts從原決策快照算證據，claimResolution另對同局公開打牌／牌組／結算核對仲裁，不把after資料混進evidence。main只暫存待解釋快照，RESOLVE後暫停／開視窗，失敗不撤銷已生效動作；重載不續存待解釋，但本局局後檢討仍可用原快照與當前公開結果。hand-review-view.ts的claim視窗及靜態練習能力表，連到training.ts白名單skill參數並另開頁。存檔版本不變；改這些流程驗controller、review-claims與e2e/review-followup；[完整契約／限制](S32-VALIDATION.md)。
 
