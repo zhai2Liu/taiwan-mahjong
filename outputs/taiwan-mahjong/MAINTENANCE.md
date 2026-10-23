@@ -28,6 +28,8 @@ S1.6前三課排版：learn.html／learning.css管理任務左欄與進度右欄
 
 S3.3試讀續答：src/training-draft.ts管tw16:trial:v1，封套schema1存schema3作答及題號／分類，同版自動讀取。training.ts於選項／揭示／位置變更自存，理由延後400ms；單純載入不寫。每次捕捉完整資料與位置，成功只承認該快照，忙碌期間合併最新待辦且最多一筆寫入；自存不重繪或搶焦。Web Locks ifAvailable＋expectedRaw保持，失敗取消計時器與待辦；讀取／衝突／壞檔停寫待明確復原，其他失敗可新操作或手動重試。清除／重讀確認才取消待辦；清除成功後只換位置不復活，清除等待中也只有新作答能恢復。src/trial-record.ts是無I/O共用驗證，review-trial.mjs以Node24原生型別移除讀取，不能加瀏覽器依賴或需編譯的TS語法。CLI讀schema1／2／3、reportVersion2及舊欄位保全保持；原檔封套與一般備份不同，依TRIAL-REVIEW。改動驗training-draft、training-page、trial-review及e2e/trial-save、trial-autosave；歷史[格式契約](S33-VALIDATION.md)，最新證據依HANDOFF。離頁防護包括全空修改及位置，保存匹配後才解除，下載本身不解除。
 
+單題重練沿training.ts現有Draft與scheduleSave：只有已揭示題顯示retry-question，原生確認後清selected／reason／revealed，feedback／exposure及其他題原值保留，不另建嘗試或寫入路徑。取消不排程／重繪；確認重繪後聚焦first-choice而不選取。只在clearing期間禁用，普通保存忙碌仍可重練並合併最新快照；不解除saveBlocked。計數是目前保留的揭示進度，不是首次／累積成績。修改驗training-page及e2e/trial-retry，並保留trial-save／trial-autosave的失敗與舊檔保護。
+
 S3.2：hand-review.ts從原決策快照算證據，claimResolution另對同局公開打牌／牌組／結算核對仲裁，不把after資料混進evidence。main只暫存待解釋快照，RESOLVE後暫停／開視窗，失敗不撤銷已生效動作；重載不續存待解釋，但本局局後檢討仍可用原快照與當前公開結果。hand-review-view.ts的claim視窗及靜態練習能力表，連到training.ts白名單skill參數並另開頁。存檔版本不變；改這些流程驗controller、review-claims與e2e/review-followup；[完整契約／限制](S32-VALIDATION.md)。
 
 S3.1九題試讀：兩份TRAINING JSON負責題幹／答案／牌面／範圍；scripts/training-content.mjs負責四能力導引、固定九題允許名單與完整內容雜湊，生成器及review-trial同讀。不要直接改生成的training-data.ts。畫面分類只改瀏覽順序，drafts仍按原題位置保留，匯出必含所有題；舊schema2版本不符轉人工，schema1保留缺完整版本警告。新增分類回歸在test/e2e/training-guidance.spec.js，詳見[S3.1](S31-VALIDATION.md)。修改題量先處理允許名單／題族與舊匯出相容，不另外散落九題常數；人類資料和合成檔分開，接收見[審閱流程](TRIAL-REVIEW.md)。

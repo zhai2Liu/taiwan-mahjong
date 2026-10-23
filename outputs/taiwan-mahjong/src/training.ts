@@ -122,7 +122,7 @@ function updateDraftStatus(): void {
   const pending = (saveTimer !== undefined || saveQueued) && !saveBusy && !saveFailed && !saveBlocked && !safelySaved();
   const storageNotice = pending ? '有修改，稍後自動保存…' : saveMessage;
   if (storageStatus && storageStatus.textContent !== storageNotice) storageStatus.textContent = storageNotice;
-  for (const [id, disabled] of [['save-local', saveBusy || saveBlocked || savedRaw === undefined], ['read-local', saveBusy], ['clear-local', saveBusy || savedRaw === undefined || savedRaw === null], ['recover-local', saveBusy || typeof savedRaw !== 'string']] as const) {
+  for (const [id, disabled] of [['save-local', saveBusy || saveBlocked || savedRaw === undefined], ['read-local', saveBusy], ['clear-local', saveBusy || savedRaw === undefined || savedRaw === null], ['recover-local', saveBusy || typeof savedRaw !== 'string'], ['retry-question', clearing]] as const) {
     const control = root.querySelector<HTMLButtonElement>('#' + id); if (control) control.disabled = disabled;
   }
   const status = root.querySelector<HTMLElement>('#draft-status');
@@ -203,7 +203,7 @@ function render(focus = true): void {
   const options = el('fieldset'); options.append(el('legend', '你的選擇'));
   for (const choice of q.choices) {
     const label = el('label'), input = el('input');
-    input.type = 'checkbox'; input.value = choice.id; input.checked = draft.selected.has(choice.id); input.disabled = draft.revealed;
+    input.type = 'checkbox'; input.value = choice.id; if (choice === q.choices[0]) input.id = 'first-choice'; input.checked = draft.selected.has(choice.id); input.disabled = draft.revealed;
     input.addEventListener('change', () => { if (input.checked) draft.selected.add(choice.id); else draft.selected.delete(choice.id); scheduleSave(0); updateDraftStatus(); });
     label.append(input, el('span', choice.text)); options.append(label);
   }
@@ -229,7 +229,14 @@ function render(focus = true): void {
     for (const c of q.choices) if (q.accepted.includes(c.id)) list.append(el('li', c.text));
     answer.append(title, el('p', '成立的選項：'), list, el('p', q.derivation));
     const note = el('p', `補充：理由不會自動評閱，請自行對照推導；答對只表示本題選項相符，不是牌技評量。${q.skill === 'efficiency' ? '牌效只比較這一步的局部進牌。' : ''}`); note.className = 'muted';
-    answer.append(note);
+    // Retry resets only this question's answer; legacy feedback/exposure and the other questions stay as they are.
+    const retry = el('button', '重練本題'); retry.type = 'button'; retry.id = 'retry-question'; retry.disabled = clearing;
+    retry.addEventListener('click', () => {
+      if (clearing || !window.confirm('重練會清空本題的選項與理由，並收起答案；其他題保留。確定重練？')) return;
+      draft.selected.clear(); draft.reason = ''; draft.revealed = false; scheduleSave(0); render(false);
+      root.querySelector<HTMLElement>('#first-choice')?.focus();
+    });
+    answer.append(note, retry, el('p', '同題複習，不保留歷次作答。'));
     question.append(answer);
   }
   const nav = el('nav'); nav.setAttribute('aria-label', '題目切換');
@@ -237,8 +244,8 @@ function render(focus = true): void {
     const button = el('button', text); button.type = 'button'; button.disabled = position + delta < 0 || position + delta >= visible.length;
     button.addEventListener('click', () => { index = visible[position + delta].i; moved(); render(); }); nav.append(button);
   }
-  question.append(nav, el('p', `本頁已揭示 ${drafts.filter(d => d.revealed).length} / ${trainingQuestions.length} 題；這是閱讀進度，不是成績。`));
-  if (skill !== 'all') question.append(el('p', `本分類已揭示 ${visible.filter(({ i }) => drafts[i].revealed).length} / ${visible.length} 題；切換重點保留本頁作答，作答備份包含全部 ${trainingQuestions.length} 題。`));
+  question.append(nav, el('p', `本頁目前保留的揭示進度：${drafts.filter(d => d.revealed).length} / ${trainingQuestions.length} 題；不是成績。`));
+  if (skill !== 'all') question.append(el('p', `本分類目前保留的揭示進度：${visible.filter(({ i }) => drafts[i].revealed).length} / ${visible.length} 題；切換重點保留本頁作答，作答備份包含全部 ${trainingQuestions.length} 題。`));
   const answersDownload = el('button', '下載本頁作答備份'); answersDownload.type = 'button';
   const exportStatus = el('p'); exportStatus.setAttribute('role', 'status');
   const draftStatus = el('p'); draftStatus.id = 'draft-status'; draftStatus.setAttribute('role', 'status');
