@@ -4,9 +4,9 @@
 
 ## 當前執行與下一包
 
-2026-10-23續作：安全修補[PR#39](https://github.com/zhai2Liu/taiwan-mahjong/pull/39)已合併發布b85a9b2。決策題可靠本機自存已實作，Claude最終自測444／138通過；Codex獨立驗收與發布進行中，正式狀態依HANDOFF。下包單題重練尚未實裝。
+2026-10-23續作：安全修補[PR#39](https://github.com/zhai2Liu/taiwan-mahjong/pull/39)已合併發布b85a9b2。決策題可靠本機自存由PR#40合併發布fc3d4b7，Codex獨立與PR／main各444／138、正式三頁8資源及兩瀏覽器兩寬通過，已完整收尾，詳HANDOFF。下包單題重練尚未實裝。
 
-**2026-10-23最新順序：** 先收尾自存驗收與發布，再推進單題重練。GPT 6.1 Sol／High協助唯讀評估與獨立審查，程式沿Claude Code RD分工，Codex最後把關；每包驗收與發布只依HANDOFF，不以歷史成功代替。
+**2026-10-23最新順序：** 自存已完整收尾，接續單題重練。GPT 6.1 Sol／High協助唯讀評估與獨立審查，程式沿Claude Code RD分工，Codex最後把關；每包驗收與發布只依HANDOFF，不以歷史成功代替。
 
 前包五項快改與現行舊文字清理已由[PR#38](https://github.com/zhai2Liu/taiwan-mahjong/pull/38)合併發布2275091；獨立與PR／main各437項Node／124項瀏覽器通過，正式三頁資源及兩瀏覽器兩寬核對完成，詳HANDOFF。
 
