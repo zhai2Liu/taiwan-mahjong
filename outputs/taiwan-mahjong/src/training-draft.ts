@@ -24,13 +24,16 @@ export function decodeTrialDraft(raw: string): StoredTrial {
   return draft;
 }
 export function encodeTrialDraft(draft: StoredTrial): string { const raw = JSON.stringify(draft); decodeTrialDraft(raw); return raw; }
-// ponytail: one local pack, manual writes; cloud sync or multiple saved attempts need a separate retention/version contract.
+// ponytail: one local pack, single-flight page writes; cloud sync or multiple saved attempts need a separate retention/version contract.
 async function write(storage: StoragePort, expectedRaw: string | null, next: string | null,
   locks: Pick<LockManager, 'request'> | undefined): Promise<string | null> {
   if (!locks) throw new Error('TRIAL_LOCK_UNAVAILABLE');
   return locks.request(TRIAL_KEY, { mode: 'exclusive', ifAvailable: true }, lock => {
     if (!lock) throw new Error('TRIAL_BUSY');
-    if (storage.getItem(TRIAL_KEY) !== expectedRaw) throw new Error('TRIAL_CONFLICT');
+    let current: string | null;
+    // Named so the page stops writing instead of offering a retry over data it cannot verify.
+    try { current = storage.getItem(TRIAL_KEY); } catch { throw new Error('TRIAL_UNREADABLE'); }
+    if (current !== expectedRaw) throw new Error('TRIAL_CONFLICT');
     if (next === null) storage.removeItem(TRIAL_KEY); else storage.setItem(TRIAL_KEY, next); return next;
   });
 }
