@@ -86,11 +86,11 @@ const markers={'tw16:TW16-CLASSIC-v1:save':'game-marker','tw16:practice:v1':'pra
 const settle=async()=>{for(let i=0;i<8;i++)await new Promise(resolve=>setImmediate(resolve));};
 function trialPage({seed,search=''}={}){
  const made=[], handlers=new Set(), timers=new Map(), values=new Map(Object.entries(markers));let timerId=0,downloads=0,pageShow;
- const state={confirm:true,hold:false,busy:false,failWrites:false,failReads:false,release:undefined,writeAttempts:0,writes:0};
+ const state={confirm:true,hold:false,busy:false,noLock:false,failWrites:false,failReads:false,release:undefined,writeAttempts:0,writes:0,confirms:[],focused:undefined};
  if(seed)values.set(trainingDraft.TRIAL_KEY,seed);
  class Element {
   listeners={};textContent='';constructor(tag){this.tag=tag;made.push(this);}
-  append(){} replaceChildren(){made.length=0;} setAttribute(){} focus(){}
+  append(){} replaceChildren(){made.length=0;} setAttribute(){} focus(){state.focused=this;}
   addEventListener(type,fn){this.listeners[type]=fn;}
   querySelector(selector){return made.findLast(x=>'#'+x.id===selector);}
   click(){downloads++;}
@@ -99,14 +99,14 @@ function trialPage({seed,search=''}={}){
  const localStorage={getItem(key){if(state.failReads&&key===trainingDraft.TRIAL_KEY)throw Error('read');return values.has(key)?values.get(key):null;},
   setItem(key,value){state.writeAttempts++;if(state.failWrites)throw Error('quota');state.writes++;values.set(key,value);},removeItem:key=>values.delete(key)};
  const locks={request:async(key,options,action)=>{assert.deepEqual(options,{mode:'exclusive',ifAvailable:true});if(state.hold)await new Promise(resolve=>state.release=resolve);return action(state.busy?null:{});}};
- const draftModule={...trainingDraft,saveTrialDraft:(s,e,d)=>trainingDraft.saveTrialDraft(s,e,d,locks),clearTrialDraft:(s,e)=>trainingDraft.clearTrialDraft(s,e,locks)};
+ const draftModule={...trainingDraft,saveTrialDraft:(s,e,d)=>trainingDraft.saveTrialDraft(s,e,d,state.noLock?null:locks),clearTrialDraft:(s,e)=>trainingDraft.clearTrialDraft(s,e,state.noLock?null:locks)};
  const source=ts.transpileModule(fs.readFileSync(new URL('../src/training.ts',import.meta.url),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
  vm.runInNewContext(source,{exports:{},require:name=>name==='./training-draft.js'?draftModule:name==='./tile-face.js'?{tileFace:()=>new Element('svg')}:{trainingQuestions,trainingSkills,trainingContentRevision},Blob,localStorage,HTMLButtonElement:class{},URLSearchParams,
   // Share the Error realm with dist/training-draft.js so named save errors are recognised as in the browser.
   Error,
   URL:{createObjectURL(){return 'blob:trial';},revokeObjectURL(){}},
   setTimeout:(fn,ms)=>{timers.set(++timerId,{fn,ms});return timerId;},clearTimeout:id=>timers.delete(id),
-  window:{location:{search},confirm:()=>state.confirm,addEventListener(type,fn){if(type==='pageshow')pageShow=fn;else if(type!=='storage'){assert.equal(type,'beforeunload');handlers.add(fn);}},removeEventListener(type,fn){assert.equal(type,'beforeunload');handlers.delete(fn);}},
+  window:{location:{search},confirm:message=>{state.confirms.push(message);return state.confirm;},addEventListener(type,fn){if(type==='pageshow')pageShow=fn;else if(type!=='storage'){assert.equal(type,'beforeunload');handlers.add(fn);}},removeEventListener(type,fn){assert.equal(type,'beforeunload');handlers.delete(fn);}},
   document:{querySelector:()=>root,createElement:tag=>new Element(tag)}});
  const field=id=>root.querySelector('#'+id);
  return {state,handlers,timers,values,made,field,downloads:()=>downloads,
@@ -274,6 +274,97 @@ test('網址分類只移動續答位置：載入與pageshow不寫入也不提醒
  p.pageShow();p.runTimers();await settle();assert.equal(p.state.writeAttempts,0);assert.equal(p.handlers.size,0);assert.equal(p.values.get(trainingDraft.TRIAL_KEY),seed);
  p.click('下一題');assert.equal(p.handlers.size,1);p.runTimers();await settle();
  assert.deepEqual([p.saved().questionId,p.saved().skill],['C02','claim-cost']);assert.equal(p.saved().report.questions[0].reason,'原檔理由');assert.equal(p.handlers.size,0);
+});
+
+// Nine mixed rows: E01 revealed correct, the next two revealed wrong, one draft, the rest unanswered; every row keeps a non-default legacy feedback and all three exposures appear.
+const RETRY_CONFIRM='重練會清空本題的選項與理由，並收起答案；其他題保留。確定重練？';
+const exposures=['seen','unseen-self-report','unknown'];
+const wrongPick=q=>{const off=q.choices.filter(c=>!q.accepted.includes(c.id));return off.length?off.slice(0,1):q.choices.slice(0,1);};
+const mixedTrial=()=>seededTrial(d=>d.report.questions.forEach((r,i)=>{
+ const q=trainingQuestions[i];Object.assign(r,{feedback:`舊回饋${i} <i>原樣</i>`,exposure:exposures[i%3]});
+ if(i===0)Object.assign(r,{status:'submitted-and-revealed',selected:q.choices.filter(c=>q.accepted.includes(c.id)),reason:'正解理由'});
+ else if(i<3)Object.assign(r,{status:'submitted-and-revealed',selected:wrongPick(q),reason:`錯解理由${i}`});
+ else if(i===3)Object.assign(r,{status:'draft',selected:q.choices.slice(0,1),reason:'草稿理由'});
+}));
+const submitForm=p=>p.made.find(x=>x.tag==='form').listeners.submit({preventDefault(){}});
+const boxes=p=>p.made.filter(x=>x.tag==='input');
+
+test('重練本題：正確與錯誤揭示題皆可重練；取消零修改零排程不重畫；確認只重置本題、回選項焦點，空選不能揭示，再選可再揭示',async()=>{
+ const seed=mixedTrial(),p=trialPage({seed}),key=trainingDraft.TRIAL_KEY,original=trainingDraft.decodeTrialDraft(seed).report.questions;
+ assert.equal(p.field('answer').textContent,'答對了');assert.equal(p.field('retry-question').type,'button');
+ assert.ok(p.made.some(x=>x.tag==='p'&&x.textContent==='同題複習，不保留歷次作答。'));
+ assert.ok(p.made.some(x=>x.textContent==='本頁目前保留的揭示進度：3 / 9 題；不是成績。'));
+ const retry=p.field('retry-question');p.state.focused=retry;p.state.confirm=false;retry.listeners.click();
+ assert.deepEqual(p.state.confirms,[RETRY_CONFIRM]);assert.equal(p.field('retry-question'),retry,'取消不重畫');assert.equal(p.state.focused,retry);
+ assert.equal(p.timers.size,0);assert.equal(p.state.writeAttempts,0);assert.equal(p.values.get(key),seed);assert.equal(p.handlers.size,0);
+ assert.ok(boxes(p).every(x=>x.disabled));assert.equal(p.field('reason').value,'正解理由');
+ p.state.confirm=true;p.field('retry-question').listeners.click();
+ assert.equal(p.field('answer'),undefined);assert.equal(p.field('retry-question'),undefined);
+ assert.ok(boxes(p).every(x=>!x.disabled&&!x.checked));assert.equal(p.field('reason').value,'');assert.equal(p.field('reason').readOnly,false);
+ assert.equal(p.state.focused,p.field('first-choice'));assert.equal(p.state.focused,boxes(p)[0]);assert.equal(p.state.focused.checked,false,'只聚焦不選取');
+ assert.deepEqual([...p.timers.values()].map(t=>t.ms),[0]);assert.equal(p.handlers.size,1);
+ p.runTimers();await settle();
+ let rows=p.saved().report.questions;assert.deepEqual([p.saved().questionId,p.saved().skill],['E01','all']);
+ assert.deepEqual(rows[0],{...original[0],status:'unanswered',selected:[],reason:''});assert.deepEqual(rows.slice(1),original.slice(1));
+ for(const [k,v] of Object.entries(markers))assert.equal(p.values.get(k),v);assert.equal(p.handlers.size,0);
+ submitForm(p);assert.equal(p.field('answer'),undefined);assert.ok(p.made.some(x=>x.textContent==='請先選擇至少一項，再看答案。'));
+ p.check(0,true);submitForm(p);assert.ok(p.field('answer'));assert.ok(boxes(p).every(x=>x.disabled));assert.ok(p.field('retry-question'));
+ p.runTimers();await settle();assert.equal(p.saved().report.questions[0].status,'submitted-and-revealed');
+ p.click('下一題');assert.equal(p.field('answer').textContent,'還有選項要確認');
+ p.field('retry-question').listeners.click();assert.equal(p.state.focused,p.field('first-choice'));assert.ok(boxes(p).every(x=>!x.disabled&&!x.checked));
+ p.runTimers();await settle();rows=p.saved().report.questions;
+ assert.deepEqual(rows[1],{...original[1],status:'unanswered',selected:[],reason:''});assert.deepEqual(rows.slice(2),original.slice(2));
+ assert.deepEqual(rows.map(r=>[r.feedback,r.exposure]),original.map(r=>[r.feedback,r.exposure]),'舊回饋與三種曝光逐字保留');
+ assert.deepEqual([p.saved().questionId,p.saved().skill],[trainingQuestions[1].id,'all']);
+ const reload=trialPage({seed:p.values.get(key)});assert.match(reload.status(),/已載入/);assert.equal(reload.field('retry-question'),undefined);
+ reload.click('上一題');assert.ok(reload.field('retry-question'));
+});
+
+test('重練與保存忙碌：等待中重練再修改，舊快照完成不解除提醒，最後存最新完整快照；明確清除中禁用，清除後重練恢復自存',async()=>{
+ const seed=mixedTrial(),p=trialPage({seed}),key=trainingDraft.TRIAL_KEY,original=trainingDraft.decodeTrialDraft(seed).report.questions;
+ p.state.hold=true;p.click('下一題');p.runTimers();await settle();assert.equal(typeof p.state.release,'function');assert.equal(p.status(),'保存中…');
+ p.click('上一題');assert.equal(p.field('retry-question').disabled,false,'一般保存忙碌時仍可重練');
+ p.field('retry-question').listeners.click();p.runTimers();await settle();
+ p.check(0,true);p.input('reason','重練新理由');p.runTimers();await settle();assert.equal(p.state.writes,0);
+ const first=p.state.release;p.state.release=undefined;first();await settle();
+ assert.equal(p.state.writes,1);assert.equal(p.saved().report.questions[0].status,'submitted-and-revealed','先完成的是舊快照');
+ assert.equal(typeof p.state.release,'function');assert.equal(p.handlers.size,1,'舊快照完成不解除提醒');
+ p.state.hold=false;p.state.release();await settle();assert.equal(p.state.writes,2);
+ const rows=p.saved().report.questions;assert.equal(p.saved().questionId,'E01');
+ assert.deepEqual(rows[0],{...original[0],status:'draft',selected:[trainingQuestions[0].choices[0]],reason:'重練新理由'});assert.deepEqual(rows.slice(1),original.slice(1));
+ assert.equal(p.handlers.size,0);
+ p.click('下一題');p.runTimers();await settle();
+ p.state.hold=true;p.click('清除本機保存（保留本頁）');await settle();assert.equal(typeof p.state.release,'function');
+ const retry=p.field('retry-question');assert.equal(retry.disabled,true,'清除執行中禁用重練');
+ const attempts=p.state.writeAttempts;retry.listeners.click();assert.equal(p.field('retry-question'),retry);assert.equal(p.state.confirms.length,2,'禁用期間不詢問也不改');
+ const r=p.state.release;p.state.release=undefined;p.state.hold=false;r();await settle();
+ assert.equal(p.values.has(key),false);assert.match(p.status(),/已清除/);assert.equal(p.field('retry-question').disabled,false);
+ p.runTimers();await settle();assert.equal(p.values.has(key),false);
+ p.field('retry-question').listeners.click();p.runTimers();await settle();assert.equal(p.state.writeAttempts,attempts+1,'清除後重練屬新作答並自存');
+ assert.equal(p.saved().report.questions[1].status,'unanswered');assert.equal(p.saved().report.questions[1].feedback,original[1].feedback);assert.equal(p.handlers.size,0);
+});
+
+test('重練遇配額、缺鎖、衝突、無法讀取或壞檔：本頁可重練，原檔不被覆寫、仍停寫並保護本頁',async()=>{
+ const seed=mixedTrial(),key=trainingDraft.TRIAL_KEY,p=trialPage({seed});
+ const retryHere=()=>{p.field('retry-question').listeners.click();p.runTimers();};
+ p.state.failWrites=true;retryHere();await settle();
+ assert.match(p.status(),/保存未成功/);assert.equal(p.values.get(key),seed);assert.equal(p.handlers.size,1);assert.equal(p.timers.size,0);
+ assert.ok(boxes(p).every(x=>!x.disabled));p.state.failWrites=false;
+ p.state.noLock=true;p.click('下一題');retryHere();await settle();
+ assert.match(p.status(),/保存未成功/);assert.equal(p.values.get(key),seed);assert.equal(p.handlers.size,1);assert.ok(boxes(p).every(x=>!x.disabled));p.state.noLock=false;
+ const foreign=seededTrial(d=>{d.report.questions[8].reason='他頁理由';d.report.questions[8].status='draft';});p.values.set(key,foreign);
+ const attempts=p.state.writeAttempts;p.click('下一題');retryHere();await settle();
+ assert.match(p.status(),/停止覆寫/);assert.equal(p.values.get(key),foreign);assert.equal(p.field('save-local').disabled,true);assert.equal(p.handlers.size,1);
+ assert.ok(boxes(p).every(x=>!x.disabled));p.check(0,true);p.runTimers();await settle();p.click('保存作答到此瀏覽器');await settle();
+ assert.equal(p.state.writeAttempts,attempts,'衝突後不繞過CAS');assert.equal(p.values.get(key),foreign);
+ const unreadable=trialPage({seed});unreadable.state.failReads=true;unreadable.click('重新讀取保存');
+ const broken=trialPage({seed:'{壞檔'});
+ for(const [page,kept] of [[unreadable,seed],[broken,'{壞檔']]){
+  assert.match(page.status(),/停止覆寫/);if(!page.field('answer')){page.check(0,true);submitForm(page);}assert.ok(page.field('answer'));
+  page.field('retry-question').listeners.click();page.runTimers();await settle();page.click('保存作答到此瀏覽器');await settle();
+  assert.equal(page.values.get(key),kept);assert.equal(page.state.writeAttempts,0);assert.equal(page.handlers.size,1);assert.match(page.status(),/停止覆寫/);
+  assert.equal(page.field('save-local').disabled,true);assert.ok(boxes(page).every(x=>!x.disabled&&!x.checked));assert.equal(page.state.focused,page.field('first-choice'));
+ }
 });
 
 test('返回牌室：空白與另開分頁不阻擋，取消保留內容，確認才解除防護並離開',()=>{
