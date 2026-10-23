@@ -12,7 +12,9 @@
 
 Codex獨立447項Node、build、4項新增瀏覽器回歸通過，0skip；Chrome155.0.8059.85／Edge156.0.4314.42各1440／320四組實際流程通過：第2課摸花及完成、第7課未存／切課取消與確認、第8課未存／已存／回看圖解再續回；滑鼠、Enter與空白鍵均不重設同課、不重繪、不寫入，其他模式原文保持，0pageerror、無橫溢出，已目視窄版。獨立驗收初次捕捉到第2課完成旗標仍在非同步保存，補上等保存完成再驗導航，保留失敗紀錄，不改產品。GPT 6.1 Sol／High核對最終三個blob，前次測試問題已解，無必修。brief、原始結果、repro與獨立日誌在work/lesson-navigation-20261024/。
 
-本機驗收完成；PR／正式發布尚待核對，不以本機通過宣稱已上線。後續優先必要操作與保存復原缺口，備份匯入仍是評估候選；保留八課人工編審、手機實機／Safari與真人理解待驗，S6不啟動。
+[PR#42](https://github.com/zhai2Liu/taiwan-mahjong/pull/42)已合併發布。最終head38afd612d233b03ef5ab05508a9e7c03b05f2a69，PR Actions39994219963／build120553430892成功447／148（2.7分、0skip）、91文件821連結及audit0，PR部署正常跳過。核對新鮮head／base與mergeable clean後指定head合併為**4b7716681fc8719d870a84d2ef52ccc6d17eb170**，tree與驗收head相同。main Actions39994904068／build120555777959成功447／148（2.8分、0skip）、同一文件檢查及audit0，deploy120557632764成功。
+
+正式三頁HTML及8項唯一JS／CSS均HTTP200、SHA-256與驗收建置一致；正式Chrome／Edge各1440／320四組同課／跨課／續回流程通過，0pageerror、無橫溢出，其他模式原文保持。證據在同一work目錄live-assets.log、live-ui.log與截圖；隔離context及臨時服務已關閉。本包已完整收尾，純文件收尾不代表新runtime。後續優先必要操作與保存復原缺口，備份匯入仍是評估候選；保留八課人工編審、手機實機／Safari與真人理解待驗，S6不啟動。
 
 ## 前包：決策題單題重練
 

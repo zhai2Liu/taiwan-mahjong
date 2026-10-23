@@ -6,7 +6,7 @@
 
 2026-10-23續作：安全修補[PR#39](https://github.com/zhai2Liu/taiwan-mahjong/pull/39)已合併發布b85a9b2。決策題可靠本機自存由PR#40合併發布fc3d4b7，Codex獨立與PR／main各444／138、正式三頁8資源及兩瀏覽器兩寬通過，已完整收尾，詳HANDOFF。單題重練由PR#41合併發布c493caa，Codex獨立與PR／main各447／144、正式三頁8資源及兩瀏覽器兩寬12流程通過，已完整收尾，依HANDOFF。
 
-**2026-10-24最新順序：** 單題重練已完整收尾；使用者取消展示短片相關後續工作。已修正「重按目前課程會丟失操作」：同課保留任務，不同課確認照舊，本機驗收通過，PR／正式發布待核對，詳HANDOFF。GPT 6.1 Sol／High協助唯讀評估與獨立審查，程式沿Claude Code RD分工，Codex最後把關；每包驗收與發布只依HANDOFF，不以歷史成功代替。
+**2026-10-24最新順序：** 單題重練已完整收尾；使用者取消展示短片相關後續工作。「重按目前課程會丟失操作」由PR#42合併發布4b77166，同課保留任務、不同課確認照舊；PR／main各447／148、正式三頁資源及Chrome／Edge兩寬操作通過，已完整收尾，詳HANDOFF。GPT 6.1 Sol／High協助唯讀評估與獨立審查，程式沿Claude Code RD分工，Codex最後把關；每包驗收與發布只依HANDOFF，不以歷史成功代替。
 
 前包五項快改與現行舊文字清理已由[PR#38](https://github.com/zhai2Liu/taiwan-mahjong/pull/38)合併發布2275091；獨立與PR／main各437項Node／124項瀏覽器通過，正式三頁資源及兩瀏覽器兩寬核對完成，詳HANDOFF。
 
