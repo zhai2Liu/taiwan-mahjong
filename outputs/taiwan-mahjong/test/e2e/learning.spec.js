@@ -74,6 +74,34 @@ test('三課示範與換例、含槓組牌、提示標記、重載與舊檔隔�
   await expect.poll(async () => (await course(page)).lessons[1]).toEqual({ read: true, guided: true, independent: false });
 });
 
+test('第2課摸到花時重按目前課程（滑鼠與鍵盤）：不確認、不回圖解，可補花完成；其他紀錄不變', async ({ page }) => {
+  const dialogs = []; page.on('dialog', d => { dialogs.push(d.message()); d.dismiss(); });
+  await seededPage(page);
+  const current = page.getByRole('button', { name: '2. 摸牌、補花與打牌', exact: true });
+  await current.click();
+  await page.getByRole('button', { name: '我讀完了，開始示範', exact: true }).click();
+  await page.getByRole('button', { name: '下家', exact: true }).click();
+  await page.getByRole('button', { name: '摸一張', exact: true }).click();
+  await expect(page.locator('#lesson')).toContainText('一般手牌 16 張 · 花 1 張');
+  await expect.poll(async () => (await course(page))?.lessons[1].read).toBe(true);
+  const before = await course(page);
+  await current.click();
+  await current.focus(); await page.keyboard.press('Enter');
+  await expect(current).toBeFocused(); await expect(current).toHaveAttribute('aria-current', 'step');
+  await expect(page.locator('#lesson')).toContainText('一般手牌 16 張 · 花 1 張');
+  await expect(page.getByRole('button', { name: '我讀完了，開始示範', exact: true })).toHaveCount(0);
+  expect(await course(page)).toEqual(before);
+  await page.getByRole('button', { name: '補花', exact: true }).click();
+  await expect(page.locator('#lesson')).toContainText('一般手牌 17 張');
+  await page.getByRole('group', { name: '教學手牌' }).getByRole('button').first().focus(); await page.keyboard.press('Enter');
+  await expect(page.locator('#lesson')).toContainText('一般手牌 16 張');
+  await page.getByRole('button', { name: '下家', exact: true }).click();
+  await expect.poll(async () => (await course(page)).lessons[1]).toEqual({ read: true, guided: true, independent: false });
+  expect((await course(page)).lessons.filter((_, i) => i !== 1)).toEqual(before.lessons.filter((_, i) => i !== 1));
+  expect(await page.evaluate(keys => Object.fromEntries(keys.map(k => [k, localStorage.getItem(k)])), Object.keys(otherSaves))).toEqual(otherSaves);
+  expect(dialogs).toEqual([]);
+});
+
 test('保存失敗保留本頁、重試；壞檔清除要確認，跨頁更新不覆蓋', async ({ page, context }) => {
   await page.addInitScript(key => {
     window.__failLearningWrite = true; const set = Storage.prototype.setItem;

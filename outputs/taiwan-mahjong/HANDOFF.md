@@ -1,10 +1,20 @@
 # 現行交接入口
 
-更新：2026-10-23（Asia/Taipei）。方向依[PRODUCT-DIRECTION](PRODUCT-DIRECTION.md)，排程依[ROADMAP](ROADMAP.md)，修改位置依[MAINTENANCE](MAINTENANCE.md)。本輪以前及展開的CI證據保留[歷史交接](HANDOFF-HISTORY-20261017.md)；不要沿歷史「下一步」自動開工。
+更新：2026-10-24（Asia/Taipei）。方向依[PRODUCT-DIRECTION](PRODUCT-DIRECTION.md)，排程依[ROADMAP](ROADMAP.md)，修改位置依[MAINTENANCE](MAINTENANCE.md)。本輪以前及展開的CI證據保留[歷史交接](HANDOFF-HISTORY-20261017.md)；不要沿歷史「下一步」自動開工。
 
 以下「前包」段落保留當時的發布與待辦快照；其中六課、尚未整合或下一包等描述不代表現況。當前開放八課，交付狀態以本輪及「進度與不能代理的門檻」表為準。
 
-## 本輪：決策題單題重練
+## 本輪：新手課程導覽保留操作
+
+2026-10-24使用者取消展示短片後續工作，舊素材保留歷史，作品入口改以網站與文字路徑為主。下一包不再執行原next-showcase-brief.md。基準8a000f7，分支codex/lesson-navigation-20261024；Codex已用Chrome重現第2課摸花後點目前課會清掉操作、回到圖解。
+
+實際Claude Code會話8a2cb54d-db4b-43f1-95c2-3bff1c354948只在learning.render的go(i)增加同課立即返回，保留原DOM／任務／存檔；不同課確認、下一課、重開及讀取續學仍走原路徑。另在learning.spec與learning-round.spec新增兩個行為案例，不改教材、答案、完成條件、保存格式、規則或AI。Claude自測447項Node、build、148項瀏覽器通過，0skip；新增測試初次誤用單擊出牌，改鍵盤Enter後全數重跑通過。一次帶管線的測試命令被拒，已用原允許命令完成，未擴權或改計費。
+
+Codex獨立447項Node、build、4項新增瀏覽器回歸通過，0skip；Chrome155.0.8059.85／Edge156.0.4314.42各1440／320四組實際流程通過：第2課摸花及完成、第7課未存／切課取消與確認、第8課未存／已存／回看圖解再續回；滑鼠、Enter與空白鍵均不重設同課、不重繪、不寫入，其他模式原文保持，0pageerror、無橫溢出，已目視窄版。獨立驗收初次捕捉到第2課完成旗標仍在非同步保存，補上等保存完成再驗導航，保留失敗紀錄，不改產品。GPT 6.1 Sol／High核對最終三個blob，前次測試問題已解，無必修。brief、原始結果、repro與獨立日誌在work/lesson-navigation-20261024/。
+
+本機驗收完成；PR／正式發布尚待核對，不以本機通過宣稱已上線。後續優先必要操作與保存復原缺口，備份匯入仍是評估候選；保留八課人工編審、手機實機／Safari與真人理解待驗，S6不啟動。
+
+## 前包：決策題單題重練
 
 2026-10-23依使用者續作指示，基準af2839b、分支codex/trial-retry-20261023。沿claude-rd分工，真實Claude Code會話4f16754b-c74c-4f3e-8107-4bea0e803696實作／自測447項Node、build及144項瀏覽器一次通過（4.4分、0skip）。探索命令與帶參數測試命令曾遭拒，必要完整檢查已用原允許命令完成，未擴大權限或更改既有claude.ai Pro計費。
 
@@ -16,7 +26,7 @@ Codex獨立447項Node／build／144項瀏覽器回歸通過（4.4分、0skip）�
 
 部署後三頁HTML及8項唯一JS／CSS皆HTTP200、SHA-256與驗收建置一致；正式Chrome／Edge各1440／320的核心重練、配額失敗與衝突共12流程通過，0pageerror／無橫溢出。live-assets.log、live-ui.log與截圖留同一work目錄；隔離context與臨時服務已關閉，日常4173／使用者profile未動。本包程式、文件與發布核對完成，純文件收尾不代表新runtime。手機實機／Safari／真人理解仍待驗。
 
-程式只改training.ts，測試為training-page及新增trial-retry，規則／AI／計台、答案、保存格式／鍵、其他模式與八課保持。brief、CLI結果及獨立證據在work/trial-retry-20261023/。下包優先更新展示短片與字幕：tracked工具為outputs/taiwan-mahjong-showcase/generate-demo.mjs，舊片仍有前三課／交回字句，需同步八課、自存與重練；精簡派工稿在同一work目錄next-showcase-brief.md，尚未派工或重錄。舊素材維持歷史，教程人工編審仍依BEGINNER-LEARNING，S6不啟動。
+程式只改training.ts，測試為training-page及新增trial-retry，規則／AI／計台、答案、保存格式／鍵、其他模式與八課保持。brief、CLI結果及獨立證據在work/trial-retry-20261023/。2026-10-24使用者取消展示短片相關後續工作，原next-showcase-brief.md作廢，不再派工、重錄或更新字幕；既有素材與驗收只保留歷史，作品入口改以直接操作及文字導覽為主。接續優先查核實際操作與維護缺口，再限定最小修正包；教程人工編審仍依BEGINNER-LEARNING，S6不啟動。
 
 ## 前包：決策題可靠本機自存
 

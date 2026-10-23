@@ -783,6 +783,7 @@ function render(): void {
   if (isRound() && !roundSession && (stage === 'guided' || stage === 'transfer')) stage = 'read';
   const nav = document.querySelector<HTMLElement>('#lesson-nav')!; nav.replaceChildren();
   const go = (i: number) => {
+    if (i === index) return;
     if (roundSession && roundDirty() && !confirm(`第${roundSession.course}課有尚未保存的段落；切換課程後本頁段落不保留（已存的續學點不受影響）。確定？`)) return;
     roundSession = null; roundOwn = null; index = i; stage = 'read'; round = null; detail = ''; syncLeaveGuard(); render(); renderRoundPanel();
     say(i >= 6 ? '可跳課；第7–8課的段落可用「保存並暫停」另存續學點，其他未完成操作不續存。' : '可跳課；本頁未完成的操作不續存，已保存完成紀錄保留。', false);
