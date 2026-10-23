@@ -44,6 +44,8 @@ S2保存：[相容規格](S23-PROGRESS-COMPATIBILITY.md)保留S2.3當時六課�
 
 課程導覽：learning.render的go(i)遇到目前index直接返回，不確認、不重繪、不清除任務或寫入；aria-current課程仍可鍵盤聚焦。只有選不同課才走切課與未存段落確認，重開示範／換例、下一課與讀取續學仍用各自原入口。learning.spec及learning-round.spec保護第2課摸花後操作、第7課已存／未存段落及不同課取消／確認；不新增第1–6課中途保存，也不改完成判定。
 
+回看圖解：第1–6課的「回看本課圖解」只開原生recap、標記assisted並聚焦summary，不render、不清步驟／牌組／待確認選牌；收合後就在原任務續做。「重新開始／換例」確認後才回read並沿原start重開，取消不改任務或DOM。第7–8課回整頁圖解先assist(session)，一律同步離頁保護及續學面板，由roundDirty比較原存檔；不冒認已存或自動寫入，原已受助且存檔相符者仍為已存。回看後的完成沿既有受助公式判定，未新增持久格式。主要回歸為learning-recap.spec，learning-next原中途換例案例改用明確重開入口。
+
 S2.4：[整局教材與契約](S24-LESSON-PREPARATION.md)的src/learning-round.ts從完整144張經DEAL重播；test/learning-round-core.test.mjs逐點對照，原test/learning-round.test.mjs為獨立參考。src/learning-round-view.ts管7–8課分段任務／台項收付／實桌附錄，僅用getObservation(state,0)呈現。合法偏離只在本頁保留執行後的公開Observation，禁止保存，明確重試才回原檢查點；選過是合法停止點，均不等於完成。實際答完結算與莊位檢核才標完成，不看輸贏。
 
 src/learning-round-store.ts只有嚴格codec及可注入Storage／Locks的CAS保存／刪除，鍵tw16:learn:round:v1，四欄封套2048 bytes；內嵌512字元內的core正規原文，scriptVersion同時綁牌堆及引擎語義。learning.ts負責已讀原文、錯誤／衝突、兩區狀態與離頁保護。syncSavePanels在各類保存結束依當下busy重算兩區及按鈕；不可只恢復舊DOM參照，否則並行的v2／round保存會把新按鈕卡在disabled。freezeControls以原生inert保護課程（含summary），保留外部status可讀並復原原狀。Web Locks缺失不降級，其他頁storage及真實BFCache返回都比對原文；不要自動重載丟掉本頁。錯誤、未知原文可複製／下載，刪除需確認及鎖內CAS，只動round鍵，不動Session／其他模式。test/learning-round-store.test.mjs與test/e2e/learning-round.spec.js為主要回歸，真實BFCache必須persisted＋同文件marker，不能因未還原改成skip。

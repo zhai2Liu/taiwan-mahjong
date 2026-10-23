@@ -826,7 +826,11 @@ function render(): void {
         save: () => { void saveRound(); }, saveBlocked: roundSaveBlocked, saveStatus: roundSaveStatus,
       });
     } catch { activity.append(node('p', 'learn-note', '示例操作未能套用，沒有記為完成。請重開此示例再試；正常牌局與原進度不受影響。')); }
-    activity.append(button('回到本課圖解', 'learn-back', () => { stage = 'read'; render(); say('本段保留在本頁，可按「繼續本段」回來；尚未保存的段落離頁不保留。', false); }, ''));
+    activity.append(button('回到本課圖解', 'learn-back', () => {
+      // Reading the full explanation is help, like the recap; an already stored checkpoint changes only on an explicit save.
+      assist(session); syncLeaveGuard(); stage = 'read'; render(); renderRoundPanel();
+      say('本段保留在本頁，可按「繼續本段」回來；已看圖解，本次完成將列提示下完成。尚未保存的段落離頁不保留。', false);
+    }, ''));
     root.append(activity);
     // Keep the reader near the next action instead of jumping to the top on every step.
     const target = activity.querySelector<HTMLElement>('[data-round-focus]') ?? taskTitle;
@@ -842,7 +846,16 @@ function render(): void {
     if (detail && index !== 5) activity.append(node('p', 'learn-note', detail));
     if (index === 0) renderRecognition(activity); else if (index === 1) renderRound(activity); else if (index === 2) renderComposition(activity);
     else if (index === 3) renderClaims(activity); else if (index === 4) renderWaits(activity); else renderSettlement(activity);
-    activity.append(button('回到本課圖解', 'learn-back', () => { stage = 'read'; round = null; detail = ''; render(); say('未完成操作已回到起點，已保存紀錄保留。', false); }, ''));
+    // Looking back only opens the recap above; the unfinished task stays as it is (no re-render).
+    const back = node('div', 'lesson-actions');
+    back.append(button('回看本課圖解', 'learn-recap', () => {
+      recap.open = true; assisted = true; say('已展開上方圖解，本次完成將列提示下完成；收合圖解後就在原任務續做。', false);
+      summary.focus({ preventScroll: true }); recap.scrollIntoView({ block: 'start' });
+    }, ''), button('重新開始／換例', 'learn-restart', () => {
+      if (!confirm('重新開始或換例會放棄本次未完成的操作，已保存完成紀錄保留。確定？')) return;
+      stage = 'read'; round = null; detail = ''; render(); say('未完成操作已回到起點，已保存紀錄保留。', false);
+    }, ''));
+    activity.append(back);
     root.append(activity); taskTitle.focus(); taskTitle.scrollIntoView({ block: 'start' }); return;
   }
   heading.focus();

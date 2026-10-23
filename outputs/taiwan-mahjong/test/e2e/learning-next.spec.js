@@ -166,7 +166,7 @@ test('第4–5課打牌沿用單擊選牌、同張雙擊或Enter／空白鍵打�
   await page.keyboard.down('Enter'); await page.keyboard.down('Enter'); await page.keyboard.up('Enter');
   await expect(note).toContainText('碰後打完了'); await expect(lesson).toContainText('三家都提出要這張時，誰取得？');
   // Space submits on the transfer, and keyboard use is not counted as help.
-  await click(page, '回到本課圖解'); await click(page, '換例自己試');
+  page.once('dialog', d => d.accept()); await click(page, '重新開始／換例'); await click(page, '換例自己試');
   await pick(page, ['一筒＋三筒', '三筒＋四筒']); await click(page, '吃（用三筒、四筒）');
   await tile('打出東').focus(); await page.keyboard.press(' ');
   await expect.poll(async () => (await course(page))?.lessons[3]).toEqual({ read: true, guided: false, independent: true });
