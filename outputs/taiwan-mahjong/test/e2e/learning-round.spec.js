@@ -517,6 +517,36 @@ test('切課與重開前有未存段落要確認；取消則留在原段落', as
   await expect(lesson(page)).toContainText('第8課：換一局，自己試');
 });
 
+test('重按目前課程（滑鼠與鍵盤）不確認、不丟段落、不改續學點；切到別課仍要確認', async ({ page }) => {
+  const dialogs = []; let answer = 'dismiss';
+  page.on('dialog', d => { dialogs.push(d.message()); return answer === 'accept' ? d.accept() : d.dismiss(); });
+  await seeded(page);
+  await click(page, '7. 帶你打一局'); await click(page, '我讀完了，開始示範'); await l7Opening(page);
+  await click(page, '保存並暫停');
+  const stored = saved(7, 'guided', 7, 'flower', true);
+  await expect.poll(() => read(page, ROUND_KEY)).toBe(stored);
+  await click(page, '繼續');
+  const current = button(page, '7. 帶你打一局');
+  await current.click();
+  await expect(button(page, '補花：從牌尾補一張')).toBeVisible();
+  await l7AfterFlower(page);
+  await expect(panel(page)).toContainText('本段尚未保存');
+  await current.click();
+  await current.focus(); await page.keyboard.press('Enter');
+  await expect(current).toBeFocused(); await expect(current).toHaveAttribute('aria-current', 'step');
+  await expect(lesson(page)).toContainText('剛打出的二萬是誰打的？');
+  expect(dialogs).toEqual([]);
+  expect(await read(page, ROUND_KEY)).toBe(stored);
+  await click(page, '8. 換一局，自己試');
+  expect(dialogs).toHaveLength(1); expect(dialogs[0]).toContain('尚未保存的段落');
+  await expect(lesson(page)).toContainText('剛打出的二萬是誰打的？');
+  answer = 'accept'; await click(page, '8. 換一局，自己試');
+  await expect(lesson(page)).toContainText('第8課：換一局，自己試');
+  expect(dialogs).toHaveLength(2);
+  expect(await read(page, ROUND_KEY)).toBe(stored);
+  expect(await others(page)).toEqual(otherSaves);
+});
+
 for (const first of ['v2', 'round']) test(`兩把鎖並行（先放${first === 'v2' ? '完成旗標' : '續學點'}）：等待中停用、兩者結束後兩個保存區都恢復，各寫一次`, async ({ page }) => {
   await page.addInitScript(([round, learn]) => {
     window.__writes = { [round]: 0, [learn]: 0 }; window.__counting = false; const set = Storage.prototype.setItem;
