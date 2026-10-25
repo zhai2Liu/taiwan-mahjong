@@ -2,15 +2,15 @@
 
 # M0與早期階段交接歷史
 
-**M3.1歷史入口：M3.1已完成，下一階段M3.2維護文件整理。先讀[M3.1-HANDOFF.md](../taiwan-mahjong/M3.1-HANDOFF.md)。185項測試及建置通過，操作改為雙擊、牌河集中、結算彈窗；以下為歷史紀錄。**
+**M3.1歷史入口：M3.1已完成，下一階段M3.2維護文件整理。先讀[M3.1-HANDOFF.md](../taiwan-mahjong/docs/archive/M3.1-HANDOFF.md)。185項測試及建置通過，操作改為雙擊、牌河集中、結算彈窗；以下為歷史紀錄。**
 
-**M3歷史狀態：M3已完成（2026-10-05），173項測試與正式建置通過。先讀 [M3-HANDOFF.md](../taiwan-mahjong/M3-HANDOFF.md)。使用者試玩回饋後新增發布前修正與文件整理；後續順序以[ROADMAP.md](../taiwan-mahjong/ROADMAP.md)為準，尚未開始新階段。以下為歷史完成紀錄。**
+**M3歷史狀態：M3已完成（2026-10-05），173項測試與正式建置通過。先讀 [M3-HANDOFF.md](../taiwan-mahjong/docs/archive/M3-HANDOFF.md)。使用者試玩回饋後新增發布前修正與文件整理；後續順序以[ROADMAP.md](../taiwan-mahjong/ROADMAP.md)為準，尚未開始新階段。以下為歷史完成紀錄。**
 
-**M2歷史基線：** [M2-HANDOFF.md](../taiwan-mahjong/M2-HANDOFF.md)，當時149項測試通過，網頁可在本機遊玩。
+**M2歷史基線：** [M2-HANDOFF.md](../taiwan-mahjong/docs/archive/M2-HANDOFF.md)，當時149項測試通過，網頁可在本機遊玩。
 
 ## M1歷史進度：已完成
 
-2026-10-04：使用者已啟動下一階段，M1 純規則引擎完成。**現在請接讀 [M1-HANDOFF.md](../taiwan-mahjong/M1-HANDOFF.md)**，再依下一次使用者指示進入 M2。以下 M0 紀錄保留作歷史，不代表目前仍未建立程式專案。
+2026-10-04：使用者已啟動下一階段，M1 純規則引擎完成。**現在請接讀 [M1-HANDOFF.md](../taiwan-mahjong/docs/archive/M1-HANDOFF.md)**，再依下一次使用者指示進入 M2。以下 M0 紀錄保留作歷史，不代表目前仍未建立程式專案。
 
 - 專案：`../taiwan-mahjong/`，入口 README.md、驗收 VALIDATION.md。
 - 最終125項測試全過；1,000局、42完整將、138,708步、2,419次存檔還原通過。

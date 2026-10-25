@@ -9,7 +9,7 @@ import { chiFixture } from './chi-fixtures.mjs';
 import * as L from '../dist/learning-fixtures.js';
 import { teachingStep, resolveTeachingDiscard } from '../dist/learning-model.js';
 
-// Fixed teaching examples, not normal-play AI or an assessment bank. IDs match S23-LESSON-PREPARATION.md.
+// Fixed teaching examples, not normal-play AI or an assessment bank. IDs match docs/archive/S23-LESSON-PREPARATION.md.
 // Runtime lessons use dist/learning-fixtures.js; the tests at the end prove those states equal these prepared cases.
 const has = (s, seat, type) => legalActions(s, seat).some(a => a.type === type);
 const ownKinds = a => a.ownTiles.map(kindOf).sort().join(',');

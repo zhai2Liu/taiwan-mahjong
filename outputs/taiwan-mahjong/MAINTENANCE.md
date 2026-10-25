@@ -1,14 +1,14 @@
-> L2-A已接真人動作後記錄；review:v2獨立鍵與Web Locks。修改保存前看[L2-A3驗收](L2A3-RECORDING-VALIDATION.md)及[L2-A2契約](L2A2-DECISION-SNAPSHOT.md)。
+> L2-A已接真人動作後記錄；review:v2獨立鍵與Web Locks。修改保存前看[L2-A3驗收](docs/archive/L2A3-RECORDING-VALIDATION.md)及[L2-A2契約](docs/archive/L2A2-DECISION-SNAPSHOT.md)。
 
-> L1-B已新增[decision-evidence契約](L1B-EVIDENCE-CONTRACT.md)，內部Observation封裝已驗，不是載入驗證器；改牌效／安全語義需評估analyzerVersion升版。
+> L1-B已新增[decision-evidence契約](docs/archive/L1B-EVIDENCE-CONTRACT.md)，內部Observation封裝已驗，不是載入驗證器；改牌效／安全語義需評估analyzerVersion升版。
 
-> 2026-10-09：產品及新訓練契約見[方向決議](PRODUCT-DIRECTION.md)與[L0-L1方案](L0-L1-PLAN.md)。以下為維護基準；新快照已接線，詳見本文件首段的L2-A契約與驗收。
+> 2026-10-09：產品及新訓練契約見[方向決議](docs/archive/PRODUCT-DIRECTION.md)與[L0-L1方案](docs/archive/L0-L1-PLAN.md)。以下為維護基準；新快照已接線，詳見本文件首段的L2-A契約與驗收。
 
 # 維護指南
 
 2026-10-22操作命名：六步彈窗稱「操作說明」，八課入口稱「新手課程」。對戰／帶原局的練習以原生「選擇玩法」連結回首頁，沿用main的beforeunload未存保護。學習的次要工具用details及既有preserveDetails保留開合；警告、重試、有效接續與舊檔救援不藏進工具。修改重繪時須保留工具焦點與錯誤自動展開，驗收見learning／play-save瀏覽器案例。
 
-2026-10-06建立，隨後續維護更新。此文件說明實作與修改路徑；目前進度見[HANDOFF](HANDOFF.md)，現行範圍見[產品方向](PRODUCT-DIRECTION.md)，完整規格與歷史證據從[文件索引](DOCUMENTATION.md)查找。文中具日期的維護記錄保留當時契約，後續變更以最新對應規格為準。
+2026-10-06建立，隨後續維護更新。此文件說明實作與修改路徑；目前進度見[HANDOFF](HANDOFF.md)，現行範圍見[產品方向](docs/archive/PRODUCT-DIRECTION.md)，完整規格與歷史證據從[文件索引](DOCUMENTATION.md)查找。文中具日期的維護記錄保留當時契約，後續變更以最新對應規格為準。
 
 ## 文件各自負責什麼
 
@@ -18,47 +18,47 @@ README是使用與開發總入口；[DOCUMENTATION](DOCUMENTATION.md)維護全�
 
 名稱與返回導引：顯示名稱在view.header、三頁HTML及現行README／產品方向／企畫／發布草稿／展示生成腳本；只改固定文字，沒有新增品牌設定模組。網址、package名稱、存檔鍵與題庫版本不隨顯示名改動。歷史驗收、影片及VTT保留當時名稱，展示README註明版本。renderPractice的hasGame直接讀目前session是否存在，只決定「返回首頁／返回對戰」標籤，不改game命令、保存與暫停行為。
 
-S1.4首頁：view.header／home及style.css首頁區段管理品牌、三路入口和有存檔時的優先續玩。淺色按鈕／焦點／保存工具限定`.home-shell`；不要改成全域顏色而影響深色牌桌、練習或body上的dialog。保留home-entry焦點、UICommand、舊存檔確認及learn／training網址；`test/e2e/home.spec.js`驗三路鍵盤、教學回焦、320px／強制色彩、續玩和取消新局。詳[首頁重設計](HOME-REDESIGN-20261018.md)，不用替配色新增算法測試。
+S1.4首頁：view.header／home及style.css首頁區段管理品牌、三路入口和有存檔時的優先續玩。淺色按鈕／焦點／保存工具限定`.home-shell`；不要改成全域顏色而影響深色牌桌、練習或body上的dialog。保留home-entry焦點、UICommand、舊存檔確認及learn／training網址；`test/e2e/home.spec.js`驗三路鍵盤、教學回焦、320px／強制色彩、續玩和取消新局。詳[首頁重設計](docs/archive/HOME-REDESIGN-20261018.md)，不用替配色新增算法測試。
 
-S1.5試讀排版：training.render將分類／保存狀態、本題牌例／作答及本機保存分區；DOM依牌例→作答→推導→換題→本機保存／備份排列，900px以下直列。交回區已撤下。`test/e2e/trial-layout.spec.js`巡覽九題／320px，原有trial-save／training-guidance／core保護狀態契約。歷史排版見[試讀工作區](TRIAL-WORKSPACE-20261018.md)；調排版不能改題目／內容版本、標準答案或保存語義。
+S1.5試讀排版：training.render將分類／保存狀態、本題牌例／作答及本機保存分區；DOM依牌例→作答→推導→換題→本機保存／備份排列，900px以下直列。交回區已撤下。`test/e2e/trial-layout.spec.js`巡覽九題／320px，原有trial-save／training-guidance／core保護狀態契約。歷史排版見[試讀工作區](docs/archive/TRIAL-WORKSPACE-20261018.md)；調排版不能改題目／內容版本、標準答案或保存語義。
 
-試讀保存焦點：training.restoreStorageFocus在saveLocal／clearLocal結束時，只於焦點仍body且原控制未因換題被移除才回焦，若原按鈕已停用則回管理summary。等待期間的新焦點不搶回；同步重讀仍依新題標題。trial-save.spec.js含鍵盤成功／失敗、延後鎖與清除的回歸；首頁綠底小標籤另沿既有muted色，限定驗收見[S42](S42-ACCESSIBILITY.md)。
+試讀保存焦點：training.restoreStorageFocus在saveLocal／clearLocal結束時，只於焦點仍body且原控制未因換題被移除才回焦，若原按鈕已停用則回管理summary。等待期間的新焦點不搶回；同步重讀仍依新題標題。trial-save.spec.js含鍵盤成功／失敗、延後鎖與清除的回歸；首頁綠底小標籤另沿既有muted色，限定驗收見[S42](docs/archive/S42-ACCESSIBILITY.md)。
 
-S1.6前三課排版：learn.html／learning.css管理任務左欄與進度右欄，1000px以下按DOM順序直列。空的lesson-feedback仍保留status/live語意；不得以隱藏整區取代只移除空白樣式。按鈕選取的強制色彩邊線與內距補償仍須等值，回歸沿learning／accessibility，不新增保存格式或課程常數。見[學習頁排版](LEARNING-LAYOUT-20261018.md)。
+S1.6前三課排版：learn.html／learning.css管理任務左欄與進度右欄，1000px以下按DOM順序直列。空的lesson-feedback仍保留status/live語意；不得以隱藏整區取代只移除空白樣式。按鈕選取的強制色彩邊線與內距補償仍須等值，回歸沿learning／accessibility，不新增保存格式或課程常數。見[學習頁排版](docs/archive/LEARNING-LAYOUT-20261018.md)。
 
-S3.3試讀續答：src/training-draft.ts管tw16:trial:v1，封套schema1存schema3作答及題號／分類，同版自動讀取。training.ts於選項／揭示／位置變更自存，理由延後400ms；單純載入不寫。每次捕捉完整資料與位置，成功只承認該快照，忙碌期間合併最新待辦且最多一筆寫入；自存不重繪或搶焦。Web Locks ifAvailable＋expectedRaw保持，失敗取消計時器與待辦；讀取／衝突／壞檔停寫待明確復原，其他失敗可新操作或手動重試。清除／重讀確認才取消待辦；清除成功後只換位置不復活，清除等待中也只有新作答能恢復。src/trial-record.ts是無I/O共用驗證，review-trial.mjs以Node24原生型別移除讀取，不能加瀏覽器依賴或需編譯的TS語法。CLI讀schema1／2／3、reportVersion2及舊欄位保全保持；原檔封套與一般備份不同，依TRIAL-REVIEW。改動驗training-draft、training-page、trial-review及e2e/trial-save、trial-autosave；歷史[格式契約](S33-VALIDATION.md)，最新證據依HANDOFF。離頁防護包括全空修改及位置，保存匹配後才解除，下載本身不解除。
+S3.3試讀續答：src/training-draft.ts管tw16:trial:v1，封套schema1存schema3作答及題號／分類，同版自動讀取。training.ts於選項／揭示／位置變更自存，理由延後400ms；單純載入不寫。每次捕捉完整資料與位置，成功只承認該快照，忙碌期間合併最新待辦且最多一筆寫入；自存不重繪或搶焦。Web Locks ifAvailable＋expectedRaw保持，失敗取消計時器與待辦；讀取／衝突／壞檔停寫待明確復原，其他失敗可新操作或手動重試。清除／重讀確認才取消待辦；清除成功後只換位置不復活，清除等待中也只有新作答能恢復。src/trial-record.ts是無I/O共用驗證，review-trial.mjs以Node24原生型別移除讀取，不能加瀏覽器依賴或需編譯的TS語法。CLI讀schema1／2／3、reportVersion2及舊欄位保全保持；原檔封套與一般備份不同，依TRIAL-REVIEW。改動驗training-draft、training-page、trial-review及e2e/trial-save、trial-autosave；歷史[格式契約](docs/archive/S33-VALIDATION.md)，最新證據依HANDOFF。離頁防護包括全空修改及位置，保存匹配後才解除，下載本身不解除。
 
 單題重練沿training.ts現有Draft與scheduleSave：只有已揭示題顯示retry-question，原生確認後清selected／reason／revealed，feedback／exposure及其他題原值保留，不另建嘗試或寫入路徑。取消不排程／重繪；確認重繪後聚焦first-choice而不選取。只在clearing期間禁用，普通保存忙碌仍可重練並合併最新快照；不解除saveBlocked。計數是目前保留的揭示進度，不是首次／累積成績。修改驗training-page及e2e/trial-retry，並保留trial-save／trial-autosave的失敗與舊檔保護。
 
-S3.2：hand-review.ts從原決策快照算證據，claimResolution另對同局公開打牌／牌組／結算核對仲裁，不把after資料混進evidence。main只暫存待解釋快照，RESOLVE後暫停／開視窗，失敗不撤銷已生效動作；重載不續存待解釋，但本局局後檢討仍可用原快照與當前公開結果。hand-review-view.ts的claim視窗及靜態練習能力表，連到training.ts白名單skill參數並另開頁。存檔版本不變；改這些流程驗controller、review-claims與e2e/review-followup；[完整契約／限制](S32-VALIDATION.md)。
+S3.2：hand-review.ts從原決策快照算證據，claimResolution另對同局公開打牌／牌組／結算核對仲裁，不把after資料混進evidence。main只暫存待解釋快照，RESOLVE後暫停／開視窗，失敗不撤銷已生效動作；重載不續存待解釋，但本局局後檢討仍可用原快照與當前公開結果。hand-review-view.ts的claim視窗及靜態練習能力表，連到training.ts白名單skill參數並另開頁。存檔版本不變；改這些流程驗controller、review-claims與e2e/review-followup；[完整契約／限制](docs/archive/S32-VALIDATION.md)。
 
-S3.1九題試讀：兩份TRAINING JSON負責題幹／答案／牌面／範圍；scripts/training-content.mjs負責四能力導引、固定九題允許名單與完整內容雜湊，生成器及review-trial同讀。不要直接改生成的training-data.ts。畫面分類只改瀏覽順序，drafts仍按原題位置保留，匯出必含所有題；舊schema2版本不符轉人工，schema1保留缺完整版本警告。新增分類回歸在test/e2e/training-guidance.spec.js，詳見[S3.1](S31-VALIDATION.md)。修改題量先處理允許名單／題族與舊匯出相容，不另外散落九題常數；人類資料和合成檔分開，接收見[審閱流程](TRIAL-REVIEW.md)。
+S3.1九題試讀：兩份TRAINING JSON負責題幹／答案／牌面／範圍；scripts/training-content.mjs負責四能力導引、固定九題允許名單與完整內容雜湊，生成器及review-trial同讀。不要直接改生成的training-data.ts。畫面分類只改瀏覽順序，drafts仍按原題位置保留，匯出必含所有題；舊schema2版本不符轉人工，schema1保留缺完整版本警告。新增分類回歸在test/e2e/training-guidance.spec.js，詳見[S3.1](docs/archive/S31-VALIDATION.md)。修改題量先處理允許名單／題族與舊匯出相容，不另外散落九題常數；人類資料和合成檔分開，接收見[審閱流程](docs/archive/TRIAL-REVIEW.md)。
 
-S2新手課：learn.html／src/learning.ts與learning.css為獨立頁；learning-model.ts管八課文字及前三課操作，learning-fixtures.ts為4–6課教材，learning-progress.ts管v2完成旗標及唯讀v1明確帶入。第7–8課依下段專用模組，內容與保存契約見[BEGINNER-LEARNING](BEGINNER-LEARNING.md)，最新驗收／發布只查HANDOFF。改完成條件先定版本與對照，不能因擴課判舊紀錄壞。三頁HTML全部preload／JS／CSS均須驗，不假定固定資源數。
+S2新手課：learn.html／src/learning.ts與learning.css為獨立頁；learning-model.ts管八課文字及前三課操作，learning-fixtures.ts為4–6課教材，learning-progress.ts管v2完成旗標及唯讀v1明確帶入。第7–8課依下段專用模組，內容與保存契約見[BEGINNER-LEARNING](docs/archive/BEGINNER-LEARNING.md)，最新驗收／發布只查HANDOFF。改完成條件先定版本與對照，不能因擴課判舊紀錄壞。三頁HTML全部preload／JS／CSS均須驗，不假定固定資源數。
 
-玩家回饋收集已依2026-10-22指示撤下：learn.html／learning.ts不再有回饋表單、TXT、report草稿或其離頁判斷；lesson-feedback仍是答題狀態，不可一起刪。training.ts不再呈現意見／曝光自陳控制、意見TXT與交回邀請；舊Draft／TrialRecord中的feedback及exposure仍須讀寫原值以保護舊檔，不升版、不清除。JSON僅置於本機工具作個人備份／原檔復原；下載不解除未存或跨頁保護。test/e2e/learning-feedback.spec.js改驗撤下入口及課程保護，training-page／training-guidance／trial-save保護舊欄位、完整備份與錯誤回退；[試用紀錄](BEGINNER-TRIAL.md)只留歷史維護參考。
+玩家回饋收集已依2026-10-22指示撤下：learn.html／learning.ts不再有回饋表單、TXT、report草稿或其離頁判斷；lesson-feedback仍是答題狀態，不可一起刪。training.ts不再呈現意見／曝光自陳控制、意見TXT與交回邀請；舊Draft／TrialRecord中的feedback及exposure仍須讀寫原值以保護舊檔，不升版、不清除。JSON僅置於本機工具作個人備份／原檔復原；下載不解除未存或跨頁保護。test/e2e/learning-feedback.spec.js改驗撤下入口及課程保護，training-page／training-guidance／trial-save保護舊欄位、完整備份與錯誤回退；[試用紀錄](docs/archive/BEGINNER-TRIAL.md)只留歷史維護參考。
 
-S2.3教材：[S23教材](S23-LESSON-PREPARATION.md)供4–6課文字、示範、換例與回饋；learning-fixtures.ts只配置固定教學局面，所有動作仍交凍結引擎並assertState。test/learning-next.test.mjs保留26具名牌例，另比對runtime示例及實際操作。結算只讀settlement.score／delta與scoreLines，不重付；下一局莊位應以本局門風標示原座位，避免用下一局門風把接莊者一律寫成東門。禁打給原因，打牌手勢須與摸打課及正常對戰一致。
+S2.3教材：[S23教材](docs/archive/S23-LESSON-PREPARATION.md)供4–6課文字、示範、換例與回饋；learning-fixtures.ts只配置固定教學局面，所有動作仍交凍結引擎並assertState。test/learning-next.test.mjs保留26具名牌例，另比對runtime示例及實際操作。結算只讀settlement.score／delta與scoreLines，不重付；下一局莊位應以本局門風標示原座位，避免用下一局門風把接莊者一律寫成東門。禁打給原因，打牌手勢須與摸打課及正常對戰一致。
 
-S2保存：[相容規格](S23-PROGRESS-COMPATIBILITY.md)保留S2.3當時六課的C01–C12驗收；現行v2仍八筆／4KiB、beginner-1-8-v1，S2.4開放7–8，前六課原值保持。有效v2不依賴v1；未知原文保留，缺v2才預覽舊版。帶入以v1→v2固定鎖順序、鎖內原文／不存在核對，只寫一次v2；缺鎖不降級，失敗保留本頁。只重建v2須確認及核對原文，不能順便刪續學點或其他存檔。不建立通用遷移器或同步／備份鍵。
+S2保存：[相容規格](docs/archive/S23-PROGRESS-COMPATIBILITY.md)保留S2.3當時六課的C01–C12驗收；現行v2仍八筆／4KiB、beginner-1-8-v1，S2.4開放7–8，前六課原值保持。有效v2不依賴v1；未知原文保留，缺v2才預覽舊版。帶入以v1→v2固定鎖順序、鎖內原文／不存在核對，只寫一次v2；缺鎖不降級，失敗保留本頁。只重建v2須確認及核對原文，不能順便刪續學點或其他存檔。不建立通用遷移器或同步／備份鍵。
 
 課程導覽：learning.render的go(i)遇到目前index直接返回，不確認、不重繪、不清除任務或寫入；aria-current課程仍可鍵盤聚焦。只有選不同課才走切課與未存段落確認，重開示範／換例、下一課與讀取續學仍用各自原入口。learning.spec及learning-round.spec保護第2課摸花後操作、第7課已存／未存段落及不同課取消／確認；不新增第1–6課中途保存，也不改完成判定。
 
 回看圖解：第1–6課的「回看本課圖解」只開原生recap、標記assisted並聚焦summary，不render、不清步驟／牌組／待確認選牌；收合後就在原任務續做。「重新開始／換例」確認後才回read並沿原start重開，取消不改任務或DOM。第7–8課回整頁圖解先assist(session)，一律同步離頁保護及續學面板，由roundDirty比較原存檔；不冒認已存或自動寫入，原已受助且存檔相符者仍為已存。回看後的完成沿既有受助公式判定，未新增持久格式。主要回歸為learning-recap.spec，learning-next原中途換例案例改用明確重開入口。
 
-S2.4：[整局教材與契約](S24-LESSON-PREPARATION.md)的src/learning-round.ts從完整144張經DEAL重播；test/learning-round-core.test.mjs逐點對照，原test/learning-round.test.mjs為獨立參考。src/learning-round-view.ts管7–8課分段任務／台項收付／實桌附錄，僅用getObservation(state,0)呈現。合法偏離只在本頁保留執行後的公開Observation，禁止保存，明確重試才回原檢查點；選過是合法停止點，均不等於完成。實際答完結算與莊位檢核才標完成，不看輸贏。
+S2.4：[整局教材與契約](docs/archive/S24-LESSON-PREPARATION.md)的src/learning-round.ts從完整144張經DEAL重播；test/learning-round-core.test.mjs逐點對照，原test/learning-round.test.mjs為獨立參考。src/learning-round-view.ts管7–8課分段任務／台項收付／實桌附錄，僅用getObservation(state,0)呈現。合法偏離只在本頁保留執行後的公開Observation，禁止保存，明確重試才回原檢查點；選過是合法停止點，均不等於完成。實際答完結算與莊位檢核才標完成，不看輸贏。
 
 src/learning-round-store.ts只有嚴格codec及可注入Storage／Locks的CAS保存／刪除，鍵tw16:learn:round:v1，四欄封套2048 bytes；內嵌512字元內的core正規原文，scriptVersion同時綁牌堆及引擎語義。learning.ts負責已讀原文、錯誤／衝突、兩區狀態與離頁保護。syncSavePanels在各類保存結束依當下busy重算兩區及按鈕；不可只恢復舊DOM參照，否則並行的v2／round保存會把新按鈕卡在disabled。freezeControls以原生inert保護課程（含summary），保留外部status可讀並復原原狀。Web Locks缺失不降級，其他頁storage及真實BFCache返回都比對原文；不要自動重載丟掉本頁。錯誤、未知原文可複製／下載，刪除需確認及鎖內CAS，只動round鍵，不動Session／其他模式。test/learning-round-store.test.mjs與test/e2e/learning-round.spec.js為主要回歸，真實BFCache必須persisted＋同文件marker，不能因未還原改成skip。
 
-S4.2牌面語意／選取：[限定驗收](S42-ACCESSIBILITY.md)。共用view.tile以role=img呈現名稱，裝飾牌及他家暗手維持隱藏；不能為可及性把暗槓未知牌種填回DOM。learning.css在forced-colors用雙線框，保持內距／邊框總尺寸及獨立焦點；對應test/e2e/accessibility.spec.js，含light／dark、暗槓遮罩與未推進牌局。
+S4.2牌面語意／選取：[限定驗收](docs/archive/S42-ACCESSIBILITY.md)。共用view.tile以role=img呈現名稱，裝飾牌及他家暗手維持隱藏；不能為可及性把暗槓未知牌種填回DOM。learning.css在forced-colors用雙線框，保持內距／邊框總尺寸及獨立焦點；對應test/e2e/accessibility.spec.js，含light／dark、暗槓遮罩與未推進牌局。
 
 S4.2重讀保留：learning.loadProgress先驗候選原文才替換記憶體，讀取錯誤／壞檔／未知版保留progress及dirty離頁提醒並blocked；不在重讀按鈕先清空。learning.spec.js核對三種故障、取消離頁與修復後重讀；詳同一份S42限定驗收，沒有改三課格式或把未知檔套為有效進度。
 
-S4.2遊玩離頁：main.syncSaveLeaveGuard以saveFailed／practiceSaveFailed／reviews.status().pending啟閉原生beforeunload，paint及檢討非同步通知都須同步。不能只在目前模式保存成功就解除其他類未存內容，也不在離頁中改寫資料。play-save.spec.js驗三類失敗、真實取消重載、明確重試／解除與各鍵隔離；限制與重現見[S42](S42-ACCESSIBILITY.md)。
+S4.2遊玩離頁：main.syncSaveLeaveGuard以saveFailed／practiceSaveFailed／reviews.status().pending啟閉原生beforeunload，paint及檢討非同步通知都須同步。不能只在目前模式保存成功就解除其他類未存內容，也不在離頁中改寫資料。play-save.spec.js驗三類失敗、真實取消重載、明確重試／解除與各鍵隔離；限制與重現見[S42](docs/archive/S42-ACCESSIBILITY.md)。
 
-S1.3：結算固定底部用scroll-padding保護焦點，新增控制時先重新驗高度；結算回歸含320px命中檢查。該包四條共八項，最新範圍以README及當輪驗收為準；可選已安裝Chrome／Edge。`npm run benchmark:browser -- chrome`／msedge只作同場景量測，方法與支援界線見[S13](S13-VALIDATION.md)。不為較慢單筆直接引入worker／全域快取。
+S1.3：結算固定底部用scroll-padding保護焦點，新增控制時先重新驗高度；結算回歸含320px命中檢查。該包四條共八項，最新範圍以README及當輪驗收為準；可選已安裝Chrome／Edge。`npm run benchmark:browser -- chrome`／msedge只作同場景量測，方法與支援界線見[S13](docs/archive/S13-VALIDATION.md)。不為較慢單筆直接引入worker／全域快取。
 
-S1.2b：`test/e2e/core.spec.js`與`playwright.config.js`管理真實瀏覽器核心路徑，後續另擴練習、教學與分類。改出牌解釋、結算／續局或試讀匯出／離頁時，用`npm run test:browser`核對正式建置；首次安裝Chromium，最初步驟／隔離／未涵蓋範圍見[S12B](S12B-VALIDATION.md)，最新範圍見README。CI在既有build內執行，不改Pages權限；失敗證據保留七天。新合法動作／故障仍依原規則與控制器測試，不將端到端檢查當完整覆蓋。
+S1.2b：`test/e2e/core.spec.js`與`playwright.config.js`管理真實瀏覽器核心路徑，後續另擴練習、教學與分類。改出牌解釋、結算／續局或試讀匯出／離頁時，用`npm run test:browser`核對正式建置；首次安裝Chromium，最初步驟／隔離／未涵蓋範圍見[S12B](docs/archive/S12B-VALIDATION.md)，最新範圍見README。CI在既有build內執行，不改Pages權限；失敗證據保留七天。新合法動作／故障仍依原規則與控制器測試，不將端到端檢查當完整覆蓋。
 
 | 需求 | 先看位置 | 必要驗證 |
 |---|---|---|
@@ -91,9 +91,9 @@ getObservation遮蔽其他玩家暗手、暗槓牌種、牌牆順序、洗牌種
 
 ## 共用牌效分析（M5.1）
 
-`src/risk-evidence.ts`在自家Observation合法DISCARD上提供對手別安全證據與零台放槍付款底線，沿用safety/publicPool/settlePayments；不直接選牌或回報機率。驗證用risk-evidence.test.mjs與scripts/research-risk.mjs，結果與限制見[RISK-EVIDENCE-VALIDATION](RISK-EVIDENCE-VALIDATION.md)。
+`src/risk-evidence.ts`在自家Observation合法DISCARD上提供對手別安全證據與零台放槍付款底線，沿用safety/publicPool/settlePayments；不直接選牌或回報機率。驗證用risk-evidence.test.mjs與scripts/research-risk.mjs，結果與限制見[RISK-EVIDENCE-VALIDATION](docs/archive/RISK-EVIDENCE-VALIDATION.md)。
 
-公開容量證明：`src/safety.ts`只回傳本次普通放槍的充分安全證明與尚未排除的局部成形路徑，輸入為自家publicPool與持有牌種。B1僅在ai.ts原牌效／加分完全並列且全為捨牌時，以此證明選安全子集；無證明保留原順序與亂數。不能將possibleUses數量當放槍率，也不排除自摸／花胡或保證阻莊。驗證用`test/safety.test.mjs`及`test/ai.test.mjs`，本機／正式狀態依[驗收文件§9](AI-CLAIM-TUNING-20261020.md)與HANDOFF。保留安全張的牌效案例仍用`node scripts/research-reserve.mjs`，先check；相對風險、攻守、人格及新保存策略需另行驗收，未接正式AI。
+公開容量證明：`src/safety.ts`只回傳本次普通放槍的充分安全證明與尚未排除的局部成形路徑，輸入為自家publicPool與持有牌種。B1僅在ai.ts原牌效／加分完全並列且全為捨牌時，以此證明選安全子集；無證明保留原順序與亂數。不能將possibleUses數量當放槍率，也不排除自摸／花胡或保證阻莊。驗證用`test/safety.test.mjs`及`test/ai.test.mjs`，本機／正式狀態依[驗收文件§9](docs/archive/AI-CLAIM-TUNING-20261020.md)與HANDOFF。保留安全張的牌效案例仍用`node scripts/research-reserve.mjs`，先check；相對風險、攻守、人格及新保存策略需另行驗收，未接正式AI。
 
 src/analysis.ts是AI、練習與教練的共用來源；不要解析AI的reason字串。createAnalyzer接牌池，analyze接自家暗手牌種與完整副露；只分析等效E16／E17。E17捨牌比較先走discards，傳入實際合法牌種；analyzeObservation只接引擎產生的單一玩家觀察，吃碰採該觀察合法候選及engine共用discardBan。
 
@@ -105,7 +105,7 @@ exactPool只接剩餘一般牌的唯一實體ID；publicPool扣自家牌、公�
 
 ## 存檔與相容性
 
-2026-10-07維護：main.ts以saveFailed／practiceSaveFailed記最近一次保存失敗，透過canRetrySave顯示「重試儲存」。retry-save只保存目前模式並paint，不advance或refresh；保留選牌、暫停、速度及既有timer。成功清除提示；失敗仍保留進度。failed／practiceBlocked時禁止重試，不能覆蓋他頁。結算modal內也要有按鈕，成功移除後回焦點入口。見[AUDIT-2026-10-07](AUDIT-2026-10-07.md)。
+2026-10-07維護：main.ts以saveFailed／practiceSaveFailed記最近一次保存失敗，透過canRetrySave顯示「重試儲存」。retry-save只保存目前模式並paint，不advance或refresh；保留選牌、暫停、速度及既有timer。成功清除提示；失敗仍保留進度。failed／practiceBlocked時禁止重試，不能覆蓋他頁。結算modal內也要有按鈕，成功移除後回焦點入口。見[AUDIT-2026-10-07](docs/archive/AUDIT-2026-10-07.md)。
 
 本機鍵：`tw16:TW16-CLASSIC-v1:save`，位於main.ts。Session schemaVersion=1，內容為GameState與3位AI的亂數；GameState另有schemaVersion=1及rulesVersion。UI選牌、暫停與速度不是持久牌局格式。
 
@@ -131,7 +131,7 @@ exactPool只接剩餘一般牌的唯一實體ID；publicPool扣自家牌、公�
 | npm run simulate -- --hands 1000 --matches 3 --seed 20261004 | M1測試策略長模擬，輸出SIMULATION.json；不是正式AI策略驗收 |
 | node scripts/verify-m3.mjs M5.1-SIMULATION.json | 正式策略3完整將驗證，需先check；指定輸出檔名以保留歷史；省略時更新M3-SIMULATION.json，非每次修改必跑 |
 
-Playwright預設使用lockfile對應Chromium；TW16_BROWSER_CHANNEL可選已安裝channel，TW16_BROWSER_PATH可明確指定執行檔（設定時以此路徑為準）。覆寫結果需記瀏覽器來源，不保證版本相容；CI維持不設覆寫。以退出碼及實際通過數驗收，啟動失敗不得算通過。npm run stats:ai為正式AI四家合成對局統計，calls是仲裁成立、proposals是提案；全桌胡法組成不是單一策略捨牌放槍率，詳[吃碰門檻驗收](AI-CLAIM-TUNING-20261020.md)。
+Playwright預設使用lockfile對應Chromium；TW16_BROWSER_CHANNEL可選已安裝channel，TW16_BROWSER_PATH可明確指定執行檔（設定時以此路徑為準）。覆寫結果需記瀏覽器來源，不保證版本相容；CI維持不設覆寫。以退出碼及實際通過數驗收，啟動失敗不得算通過。npm run stats:ai為正式AI四家合成對局統計，calls是仲裁成立、proposals是提案；全桌胡法組成不是單一策略捨牌放槍率，詳[吃碰門檻驗收](docs/archive/AI-CLAIM-TUNING-20261020.md)。
 
 test/browser.html與test/runner.html為開發來源工具；browser-fixtures、chi-fixtures、layout-fixtures提供續局、吃法、長牌河與結算場景。使用前先看對應test及scripts，不把測試頁上線；fixture會寫測試來源存檔，測試完成後關閉該來源頁面／伺服器。
 
@@ -139,7 +139,7 @@ test/browser.html與test/runner.html為開發來源工具；browser-fixtures、c
 
 發布工具回歸在`test/release-check.test.mjs`，隨`npm test`執行；可單跑`node --test test/release-check.test.mjs`。複製真實CLI到work/內獨立生成目錄、以合成三頁／資源及本機HTTP驗子路徑、共用資源只取一次、內容不同／非200／轉址與錯誤參數；不依賴先有site或外網。清理前核對生成目錄仍在work/，子程序有逾時，原遊戲／正式網址／玩家資料不會被測試改寫。
 
-`scripts/browser-history.mjs`重用既有fixture與保存編碼，在具名Chrome／Edge核對BFCache返回；需實際persisted=true，未進快取即非零退出。其他分頁更新後，舊對戰／練習停止操作，課程／試讀可明確重讀，四類鍵逐一比對。詳[S42](S42-ACCESSIBILITY.md)。預設headless shell的結果不能代替此項；不為此自動安裝或替換日常瀏覽器，CI仍沿原設定。
+`scripts/browser-history.mjs`重用既有fixture與保存編碼，在具名Chrome／Edge核對BFCache返回；需實際persisted=true，未進快取即非零退出。其他分頁更新後，舊對戰／練習停止操作，課程／試讀可明確重讀，四類鍵逐一比對。詳[S42](docs/archive/S42-ACCESSIBILITY.md)。預設headless shell的結果不能代替此項；不為此自動安裝或替換日常瀏覽器，CI仍沿原設定。
 
 行為修改跑受影響測試，跨模組或正式交付再跑全套及build；只有AI／回合／續局改動需要相應完整牌局驗證，不反覆長模擬消耗額度。測試失敗先保存重現資料；simulate會把seed、狀態與動作記至工作區work/taiwan-mahjong/。
 
@@ -149,7 +149,7 @@ test/browser.html與test/runner.html為開發來源工具；browser-fixtures、c
 
 main推送後由GitHub Actions發布，正式網址與回復步驟見DEPLOYMENT；確認該次workflow成功。site/是發布產物，src/才是修改來源；不要直接編輯site/或dist/。
 
-S1.2a：所有指向main的PR（含純文件）共用build檢查，npm test已涵蓋TypeScript，不另加重複型別job。PR不上傳Pages artifact、不執行deploy；只有非PR的main能發布。PR按編號分組，main按ref序列。當輪雲端驗收見[S12A](S12A-VALIDATION.md)；未設定分支保護，不把CI存在等同強制合併門檻。M0 cases.json被scoring測試匯入，與RULES.md一起加入main的觸發覆蓋。
+S1.2a：所有指向main的PR（含純文件）共用build檢查，npm test已涵蓋TypeScript，不另加重複型別job。PR不上傳Pages artifact、不執行deploy；只有非PR的main能發布。PR按編號分組，main按ref序列。當輪雲端驗收見[S12A](docs/archive/S12A-VALIDATION.md)；未設定分支保護，不把CI存在等同強制合併門檻。M0 cases.json被scoring測試匯入，與RULES.md一起加入main的觸發覆蓋。
 
 
 ## 純練習模式（M5.2）
@@ -203,8 +203,8 @@ src/tutorial-view.ts只接root，不接Session、getObservation、localStorage�
 L2-B1：src/hand-review.ts只讀已驗證封套，挑最近三筆可比較決策並合併相同牌種實體候選。已發布的局後畫面守已結算本局入口，不把此函式直接當存檔驗證器；見L2B1-HAND-REVIEW.md。
 
 
-2026-10-13：對戰提示已分 on/off/after，偏好鍵不變。事後捨牌解釋只在成功提交後建立暫存快照並暫停；共用 hand-review.ts 的 buildDecisionReview 與 hand-review-view.ts decision 畫面。不可把此入口改為出牌前預覽；不得因分析失敗重新執行 advance。詳細範圍、保存失敗及驗收見 [AFTER-DISCARD-VALIDATION](AFTER-DISCARD-VALIDATION.md)。
+2026-10-13：對戰提示已分 on/off/after，偏好鍵不變。事後捨牌解釋只在成功提交後建立暫存快照並暫停；共用 hand-review.ts 的 buildDecisionReview 與 hand-review-view.ts decision 畫面。不可把此入口改為出牌前預覽；不得因分析失敗重新執行 advance。詳細範圍、保存失敗及驗收見 [AFTER-DISCARD-VALIDATION](docs/archive/AFTER-DISCARD-VALIDATION.md)。
 
-2026-10-13：玩家用詞依 [LOCAL-TERMS](LOCAL-TERMS.md)，白話聽牌距離由 src/terms.ts 共用；內部牌種/API不改名。題庫生成器加完整九題 contentRevision，試讀匯出 schema 2，本機 review-trial 仍讀 schema 1；改題或牌面會改版本，舊資料不靜默重評。
+2026-10-13：玩家用詞依 [LOCAL-TERMS](docs/archive/LOCAL-TERMS.md)，白話聽牌距離由 src/terms.ts 共用；內部牌種/API不改名。題庫生成器加完整九題 contentRevision，試讀匯出 schema 2，本機 review-trial 仍讀 schema 1；改題或牌面會改版本，舊資料不靜默重評。
 
-2026-10-13 S1.1：src/training.ts 在有頁內內容時註冊 beforeunload、清空未提交內容時解除；返回牌室原生 dialog 的確認按鈕才解除並導航，取消／Escape回焦點且不改草稿。pageshow 先重判防護，再於表單還原後依自有草稿重繪；不得把瀏覽器單獨還原的欄位猜成題目作答，也不把快取當持久保存。作答／回饋各存頁內最近下載快照，修改提示不重繪題目；下載失敗不更新快照，發起下載不代表落盤，不解除防護。無新的存檔鍵或匯出格式，測試在 training-page.test.mjs，證據見 [S0.1–S1.1](S01-S11-VALIDATION.md)。完整課程仍在S2；產品／排程改動先同步 PRODUCT-DIRECTION、ROADMAP 及根目錄作品 README。
+2026-10-13 S1.1：src/training.ts 在有頁內內容時註冊 beforeunload、清空未提交內容時解除；返回牌室原生 dialog 的確認按鈕才解除並導航，取消／Escape回焦點且不改草稿。pageshow 先重判防護，再於表單還原後依自有草稿重繪；不得把瀏覽器單獨還原的欄位猜成題目作答，也不把快取當持久保存。作答／回饋各存頁內最近下載快照，修改提示不重繪題目；下載失敗不更新快照，發起下載不代表落盤，不解除防護。無新的存檔鍵或匯出格式，測試在 training-page.test.mjs，證據見 [S0.1–S1.1](docs/archive/S01-S11-VALIDATION.md)。完整課程仍在S2；產品／排程改動先同步 PRODUCT-DIRECTION、ROADMAP 及根目錄作品 README。

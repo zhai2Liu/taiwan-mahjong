@@ -5,7 +5,7 @@ import { kindOf } from '../dist/tiles.js';
 import { scoreLines } from '../dist/view.js';
 import { fixture, run, discard, resolve, effective } from './fixtures.mjs';
 
-// S24-LESSON-PREPARATION.md: fixed teaching scripts, never a normal-play AI policy.
+// docs/archive/S24-LESSON-PREPARATION.md: fixed teaching scripts, never a normal-play AI policy.
 function lessonRound(transfer) {
   const dealer = transfer ? 0 : 1;
   const allocation = fixture({ dealer, turn: dealer, hands: {
