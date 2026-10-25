@@ -1,5 +1,14 @@
 # 現行交接入口
 
+## v1.0 收尾
+改了什麼：功能凍結；範圍重定、BACKLOG與驗證分級，依2026-10-26最新指示。
+PR：本輪PR1；後續各包連結與驗收結果記於各PR描述。
+結果：版本定為v1.0.0、MIT（2026 zhaizhaiLiu）、不格式化；v1.0後維護模式。
+未驗證：正式評量、真人／實機與人工教材編審移至未來方向，不阻擋v1.0。
+下一步：僅依ROADMAP所列PR2–PR4與Release收尾；完成後等候使用者指定BACKLOG項目。
+
+以下為既有交付與歷史快照；舊分工、驗收流程及待辦均不得覆蓋本輪規範，PR2會完整歸檔。
+
 更新：2026-10-24（Asia/Taipei）。方向依[PRODUCT-DIRECTION](PRODUCT-DIRECTION.md)，排程依[ROADMAP](ROADMAP.md)，修改位置依[MAINTENANCE](MAINTENANCE.md)。本輪以前及展開的CI證據保留[歷史交接](HANDOFF-HISTORY-20261017.md)；不要沿歷史「下一步」自動開工。
 
 以下「前包」段落保留當時的發布與待辦快照；其中六課、尚未整合或下一包等描述不代表現況。當前開放八課，交付狀態以本輪及「進度與不能代理的門檻」表為準。
@@ -26,7 +35,7 @@ Codex獨立447項Node、build、4項新增瀏覽器回歸通過，0skip；Chrome
 
 [PR#42](https://github.com/zhai2Liu/taiwan-mahjong/pull/42)已合併發布。最終head38afd612d233b03ef5ab05508a9e7c03b05f2a69，PR Actions39994219963／build120553430892成功447／148（2.7分、0skip）、91文件821連結及audit0，PR部署正常跳過。核對新鮮head／base與mergeable clean後指定head合併為**4b7716681fc8719d870a84d2ef52ccc6d17eb170**，tree與驗收head相同。main Actions39994904068／build120555777959成功447／148（2.8分、0skip）、同一文件檢查及audit0，deploy120557632764成功。
 
-正式三頁HTML及8項唯一JS／CSS均HTTP200、SHA-256與驗收建置一致；正式Chrome／Edge各1440／320四組同課／跨課／續回流程通過，0pageerror、無橫溢出，其他模式原文保持。證據在同一work目錄live-assets.log、live-ui.log與截圖；隔離context及臨時服務已關閉。本包已完整收尾，純文件收尾不代表新runtime。後續優先必要操作與保存復原缺口，備份匯入仍是評估候選；保留八課人工編審、手機實機／Safari與真人理解待驗，S6不啟動。
+正式三頁HTML及8項唯一JS／CSS均HTTP200、SHA-256與驗收建置一致；正式Chrome／Edge各1440／320四組同課／跨課／續回流程通過，0pageerror、無橫溢出，其他模式原文保持。證據在同一work目錄live-assets.log、live-ui.log與截圖；隔離context及臨時服務已關閉。本包已完整收尾，純文件收尾不代表新runtime。保留八課人工編審、手機實機／Safari與真人理解待驗，S6不啟動。
 
 ## 前包：決策題單題重練
 
@@ -40,7 +49,7 @@ Codex獨立447項Node／build／144項瀏覽器回歸通過（4.4分、0skip）�
 
 部署後三頁HTML及8項唯一JS／CSS皆HTTP200、SHA-256與驗收建置一致；正式Chrome／Edge各1440／320的核心重練、配額失敗與衝突共12流程通過，0pageerror／無橫溢出。live-assets.log、live-ui.log與截圖留同一work目錄；隔離context與臨時服務已關閉，日常4173／使用者profile未動。本包程式、文件與發布核對完成，純文件收尾不代表新runtime。手機實機／Safari／真人理解仍待驗。
 
-程式只改training.ts，測試為training-page及新增trial-retry，規則／AI／計台、答案、保存格式／鍵、其他模式與八課保持。brief、CLI結果及獨立證據在work/trial-retry-20261023/。2026-10-24使用者取消展示短片相關後續工作，原next-showcase-brief.md作廢，不再派工、重錄或更新字幕；既有素材與驗收只保留歷史，作品入口改以直接操作及文字導覽為主。接續優先查核實際操作與維護缺口，再限定最小修正包；教程人工編審仍依BEGINNER-LEARNING，S6不啟動。
+程式只改training.ts，測試為training-page及新增trial-retry，規則／AI／計台、答案、保存格式／鍵、其他模式與八課保持。brief、CLI結果及獨立證據在work/trial-retry-20261023/。2026-10-24使用者取消展示短片相關後續工作，原next-showcase-brief.md作廢，不再派工、重錄或更新字幕；既有素材與驗收只保留歷史，作品入口改以直接操作及文字導覽為主。教程人工編審仍依BEGINNER-LEARNING，S6不啟動。
 
 ## 前包：決策題可靠本機自存
 
@@ -54,7 +63,7 @@ Codex獨立444項Node／build／138項瀏覽器回歸通過（3.9分、0skip）�
 
 部署後三頁HTML與8項唯一JS／CSS皆HTTP200、SHA-256與驗收建置一致；正式Chrome／Edge各1440／320完成自存、重載續答、揭示鎖定、清除不復活、新作答恢復與其他鍵保全，0pageerror／無橫溢出。live-assets.log、live-ui.log及截圖留同一work目錄；隔離context與臨時服務已關閉，日常4173／使用者profile未動。本包程式、文件、發布及正式驗收完成；純文件收尾不代表新runtime。五小時額度最後檢查98%已用，先完成交接；後包尚未派工。
 
-派工、原始結果、獨立日誌及續作入口在work/trial-autosave-20261023/；此目錄被忽略，正式狀態以本節為準。下包為單題重練，精簡派工稿與runner在work/trial-retry-20261023/，未派工／實裝；教程人工編審依BEGINNER-LEARNING，S6及新收集服務不啟動。
+派工、原始結果、獨立日誌及續作入口在work/trial-autosave-20261023/；此目錄被忽略，正式狀態以本節為準。教程人工編審依BEGINNER-LEARNING，S6及新收集服務不啟動。
 
 ## 前包：Vite 安全修補
 
@@ -64,7 +73,6 @@ Codex獨立444項Node／build／138項瀏覽器回歸通過（3.9分、0skip）�
 
 Claude自測437項Node／build／124項瀏覽器通過、0skip。第一次安裝誤在repo根目錄留下三個被忽略的npm產物，清理命令未獲工具授權；Codex已核對建立時間、內容及絕對路徑，把它們移入work/vite-security-20261023/mistaken-root-install隔離，沒有刪除既有遊戲資料。另兩次探索命令遭拒，必要更新及檢查皆已執行，沒有擴大Claude權限。Codex在正確目錄乾淨npm ci、鎖檔雜湊不變，獨立完整audit為0，437項Node及build通過；其餘驗收／發布補記於本節。brief／原始audit／結果及獨立檢查在work/vite-security-20261023/。
 
-下一包優先「決策題可靠本機自存」，GPT 6.1 Sol／High已唯讀核對現存手動保存與Web Locks／原文衝突保護。最小範圍為選項／揭示／理由與續答位置，保存狀態直接可見、不中斷作答；忙碌期間合併最新快照，失敗不無限重試，清除／重讀取消待存，舊欄位及其他模式保持。方案在同一work目錄next-autosave-brief.md，尚未派工或實裝；單題重練其後。既有解釋返回暫停牌桌已有明確繼續，順位較低。人工教材編審仍依BEGINNER-LEARNING，不自動啟動S6、改答案或新增上傳。
 
 Codex獨立124項瀏覽器回歸通過（2.4分、0skip，含真BFCache），程式／測試／CI無修改。鎖檔20個套件項目全部屬指定依賴鏈，無新增／移除項目；本機Chrome／Edge於1440／320四組入口、原局往返、教學鍵盤收合與答題鎖定通過、0pageerror／無橫溢出，已目視窄版牌桌與桌面課程。91份文件822本機連結及差異空白檢查通過。新建置JS雜湊有變，正式發布後須重新核對，不沿用PR#38產物。帳戶檢查點五小時已用51%，為共用帳戶快照，後續先收斂發布與交接。
 
@@ -182,12 +190,9 @@ Codex檢視四個實作檔、確認原斷言未弱化，獨立重跑408項Node�
 | S2.1／S2.2 | 前三課與獨立進度已發布；選填TXT／回饋表單依本次指示撤下，最新驗收與發布見本輪。[T0–T5歷史任務](BEGINNER-TRIAL.md)只留維護參考，真人理解仍待驗 |
 | S2.3／S2.4 | [4–6課互動及v2相容](S23-INTEGRATION-VALIDATION.md)及[7–8課整局互動／獨立續學](S24-LESSON-PREPARATION.md)均已完成；八課正式來源56c1063，437項Node／120項瀏覽器與正式站驗收通過。實桌附錄及正常對戰入口已接線，真人理解仍待驗 |
 | S3.1–S3.3 | 九題四類導引、同類練習、吃碰事後解釋與同版續答已發布；自存與單題重練均已發布並完成正式核對，依上節。曝光自陳與意見控制已撤下，舊欄位原值相容保留；不自動上傳 |
-| S3.4 | [人工錨點／缺口／流程](S34-ASSESSMENT-PREPARATION.md)已備；13題／12題族、四候選不進試讀、assessmentFamilies空；真人題族／難度／內容及正式放行待驗 |
-| S4 | 限定技術檢查已完成；[人工回饋清單](HUMAN-FEEDBACK-CHECKLIST.md)中的手機／Safari／輔具／理解仍待，程式或模型不能代填 |
-| S5 | 現行名稱展示刷新PR#31已合併，11檔公開內容與合併來源核對完成，詳[S5.1驗收](S51-DEMO-VALIDATION.md)。[發布技術準備](S52-RELEASE-PREPARATION.md)及草稿同步完成。LICENSE、tag／Release、另擬履歷摘要仍待本人決定 |
-| S6 | 人格AI僅離線研究，使用者未授權實裝，需另行啟動 |
+| S5 | 現行名稱展示刷新PR#31已合併，11檔公開內容與合併來源核對完成，詳[S5.1驗收](S51-DEMO-VALIDATION.md)。[發布技術準備](S52-RELEASE-PREPARATION.md)及草稿同步完成。v1.0授權與版本已決定；tag／Release依本輪完成條件，另擬履歷摘要屬BACKLOG候選 |
 
-分工本人已確認「本人負責需求、方向與操作回饋；AI協助規格、程式、測試、發布與文件」，不重問、不推定手寫比例／個人技能。玩家回饋收集已停用；[TRIAL-REVIEW](TRIAL-REVIEW.md)只留舊檔相容與維護工具，不代填真人結果或自行公開原資料。其他新重現操作／維護缺口可獨立修，不代表必須停工或放行上述功能。
+分工本人已確認「本人負責需求、方向與操作回饋；AI協助規格、程式、測試、發布與文件」，不重問、不推定手寫比例／個人技能。玩家回饋收集已停用；[TRIAL-REVIEW](TRIAL-REVIEW.md)只留舊檔相容與維護工具，不代填真人結果或自行公開原資料。
 
 ## 必須保留的資料與規則界線
 
