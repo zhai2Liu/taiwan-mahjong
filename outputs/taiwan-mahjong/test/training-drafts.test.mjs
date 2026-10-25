@@ -22,7 +22,12 @@ test('題庫草案識別、答案集合、來源與題族隔離：未審核不�
     assert.equal(new Set(c.choices.map(o=>o.id)).size,c.choices.length);
     assert.ok(c.accepted.length); assert.equal(new Set(c.accepted).size,c.accepted.length);
     assert.ok(c.accepted.every(id=>c.choices.some(o=>o.id===id)));
-    for(const ref of c.references)assert.ok(fs.existsSync(new URL(`../${ref.split(':')[0]}`,import.meta.url)),ref);
+    for(const ref of c.references){
+      const path=ref.split(':')[0];
+      // The frozen question bank retains historical document IDs; evidence now lives in the archive.
+      const location=path.endsWith('.md')&&!path.includes('/')?`docs/archive/${path}`:path;
+      assert.ok(fs.existsSync(new URL(`../${location}`,import.meta.url)),ref);
+    }
   }
   assert.ok(bank.assessmentFamilies.every(f=>!trainingFamilies.has(f)));
   assert.equal(byId('C01').familyId,byId('C02').familyId,'同一134遇2的答案曝光不可拆成陌生題族');

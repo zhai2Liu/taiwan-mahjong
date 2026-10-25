@@ -3,7 +3,7 @@ import { DECK, isFlower, kindOf } from './tiles.js';
 import type { GameState, Intent, MeldKind, Seat } from './model.js';
 import { teachingStep } from './learning-model.js';
 
-// Fixed teaching examples for lessons 4–6 (IDs follow S23-LESSON-PREPARATION.md). Every move goes through the
+// Fixed teaching examples for lessons 4–6 (IDs follow docs/archive/S23-LESSON-PREPARATION.md). Every move goes through the
 // shared engine; this file only places tiles. Never reads or writes a normal Session or feeds normal AI.
 export const kinds = (text: string): string[] => (text.match(/[1-9]+[mpsz]|f[1-8]/g) ?? [])
   .flatMap(t => t[0] === 'f' ? [t] : [...t.slice(0, -1)].map(n => n + t.at(-1)));

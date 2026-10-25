@@ -1,4 +1,4 @@
-> 2026-10-17現況：對戰／練習v1、檢討review:v2、新手learn:v1及試讀trial:v1皆已有獨立保存，最新發布依HANDOFF。指定032bc1c／4bb87cd的同源回退→前進、五鍵保留及結算不重付演練已通過，流程與限制見[S5.2準備](S52-RELEASE-PREPARATION.md)。2026-10-09的L0不推送研究包仍為歷史決議，不代表L2尚未實裝；人格AI未另行啟動。
+> 2026-10-17現況：對戰／練習v1、檢討review:v2、新手learn:v1及試讀trial:v1皆已有獨立保存，最新發布依HANDOFF。指定032bc1c／4bb87cd的同源回退→前進、五鍵保留及結算不重付演練已通過，流程與限制見[S5.2準備](docs/archive/S52-RELEASE-PREPARATION.md)。2026-10-09的L0不推送研究包仍為歷史決議，不代表L2尚未實裝；人格AI未另行啟動。
 
 # GitHub Pages發布與回復
 
@@ -18,15 +18,15 @@
 
 初始化／上傳時只明確加入上述專案來源、文件、lockfile及workflow；不加入node_modules、dist、site、work、其他專案檔案或個人資料。遊戲資料夾現有.gitignore排除三份生成目錄。若接到既有repository，先檢查內容及分支再整合，不覆寫既有歷史。
 
-流程在main推送遊戲來源／測試／建置設定／workflow修改、M0 cases.json／RULES.md變更或手動執行時啟動。遊戲根目錄Markdown、JPG截圖、*SIMULATION.json維護證據仍排除；M0 RULES.md是明確例外。src／public內素材仍觸發，勿把發布素材放在被排除路徑。使用GitHub原生paths，不另寫判定程式；符合[官方路徑篩選](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#onpushpull_requestpull_request_targetpathspaths-ignore)。執行：lockfile安裝 → npm run check:docs → npm test（已含型別檢查） → build → 上傳site → 部署；測試／建置失敗不發布。測試數與當輪來源依HANDOFF。
+流程在main推送遊戲來源／測試／建置設定／workflow修改、M0 cases.json／RULES.md變更或手動執行時啟動。遊戲根目錄Markdown、JPG截圖、*SIMULATION.json及docs/**歸檔維護證據排除；M0 RULES.md是明確例外。src／public內素材仍觸發，勿把發布素材放在被排除路徑。使用GitHub原生paths，不另寫判定程式；符合[官方路徑篩選](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#onpushpull_requestpull_request_targetpathspaths-ignore)。執行：lockfile安裝 → npm run check:docs → npm test（已含型別檢查） → build → 上傳site → 部署；測試／建置失敗不發布。測試數與當輪來源依HANDOFF。
 
-S1.2a新增指向main的pull_request檢查，不設PR路徑排除，文件PR也取得build結果；此名稱供日後設定required status check。PR跳過Pages artifact／deploy，非main手動分支亦僅檢查。全域contents:read，checkout不保留憑證，只有受main條件保護的deploy取得Pages／OIDC權限。各PR的群組與main分開；PR新提交可取消過期檢查，main維持序列發布。見[S1.2a驗收](S12A-VALIDATION.md)。目前未配置分支保護，本包不改合併門檻。
+S1.2a新增指向main的pull_request檢查，不設PR路徑排除，文件PR也取得build結果；此名稱供日後設定required status check。PR跳過Pages artifact／deploy，非main手動分支亦僅檢查。全域contents:read，checkout不保留憑證，只有受main條件保護的deploy取得Pages／OIDC權限。各PR的群組與main分開；PR新提交可取消過期檢查，main維持序列發布。見[S1.2a驗收](docs/archive/S12A-VALIDATION.md)。目前未配置分支保護，本包不改合併門檻。
 
 Vite保留`base: './'`與`outDir: 'site'`，建置資源使用相對路徑，支援帶repository子路徑的首頁；沒有前端路由或深層網址。dist是測試編譯，不能誤作發布產物。
 
 根目錄`.gitattributes`僅固定三個入口HTML為`text eol=lf`；本機實測CRLF經現用Vite可產生部分CRCRLF，與Linux產物有換行差異。Git屬性讓Windows與雲端checkout沿相同LF，[官方eol說明](https://git-scm.com/docs/gitattributes#_eol)為依據；不重寫其他來源或全域Git設定。該檔亦列入main發布觸發。舊checkout的現存CRLF檔需在確認無本機未存編輯後換成LF，再建置；不要強制重置整個工作區。
 
-S1.2b在共同build內先安裝Chromium（CI含系統依賴），建置後執行核心瀏覽器回歸，再允許main上傳Pages及部署。檢查失敗時保留test-results的截圖／trace七天；這是測試證據artifact，PR仍不產生Pages artifact或取得Pages／OIDC權限。首次下載瀏覽器需要網路，失敗時不得跳過回歸發布。正式site只含index.html／training.html／learn.html與assets，測試範例由Node端注入隔離瀏覽器，不發布。見[S1.2b驗收](S12B-VALIDATION.md)。
+S1.2b在共同build內先安裝Chromium（CI含系統依賴），建置後執行核心瀏覽器回歸，再允許main上傳Pages及部署。檢查失敗時保留test-results的截圖／trace七天；這是測試證據artifact，PR仍不產生Pages artifact或取得Pages／OIDC權限。首次下載瀏覽器需要網路，失敗時不得跳過回歸發布。正式site只含index.html／training.html／learn.html與assets，測試範例由Node端注入隔離瀏覽器，不發布。見[S1.2b驗收](docs/archive/S12B-VALIDATION.md)。
 
 ## 官方Action來源固定（2026-10-18）
 

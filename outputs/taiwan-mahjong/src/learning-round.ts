@@ -3,7 +3,7 @@ import { kindOf } from './tiles.js';
 import type { GameState, Intent, Seat } from './model.js';
 import { act, discardKind, lessonFixture, settleClaims } from './learning-fixtures.js';
 
-// S2.4a: pure core for the fixed lesson 7–8 rounds (S24-LESSON-PREPARATION.md). No storage, DOM, timers, network or
+// S2.4a: pure core for the fixed lesson 7–8 rounds (docs/archive/S24-LESSON-PREPARATION.md). No storage, DOM, timers, network or
 // normal AI; every move goes through the shared engine.
 // ponytail: only the two fixed chi pairs (13/34), lesson 8 giving up the 7s self-draw so the lower seat wins, and a
 // legal PASS on the chi (a teaching stop, not a completion). Any other legal move is outside this package: the UI must

@@ -11,6 +11,7 @@ on:
       - 'outputs/taiwan-mahjong/**'
       # Root Markdown, screenshots and simulation reports are maintenance evidence, not site inputs.
       - '!outputs/taiwan-mahjong/*.md'
+      - '!outputs/taiwan-mahjong/docs/**'
       - '!outputs/taiwan-mahjong/*.jpg'
       - '!outputs/taiwan-mahjong/*SIMULATION.json'
       - 'outputs/taiwan-mahjong-m0/cases.json'
