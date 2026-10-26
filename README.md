@@ -1,6 +1,6 @@
 # 從零到一百的麻將路
 
-一款免登入的台灣十六張麻將學習網站，結合三位電腦陪打、八課互動教學與決策練習。
+一款免登入的台灣十六張麻將學習網站，結合三位電腦陪打、八課互動教學與決策練習。[v1.0.0 作品集版本](https://github.com/zhai2Liu/taiwan-mahjong/releases/tag/v1.0.0)已發布。
 
 ![專案合成牌例：中央海底、手牌與吃碰選項](outputs/taiwan-mahjong-showcase/01-table.jpg)
 

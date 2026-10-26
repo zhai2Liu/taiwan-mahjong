@@ -2,17 +2,17 @@
 
 ## 現況
 
-從零到一百的麻將路已上線，正封存為 v1.0.0 作品集版本；Release 建立前須取得使用者對 notes 的確認。
+從零到一百的麻將路已發布 [v1.0.0](https://github.com/zhai2Liu/taiwan-mahjong/releases/tag/v1.0.0) 作品集版本，現為維護模式。
 正常對戰、三位公平電腦、逐條計台、本機續局、牌效練習與局後檢討可用。
 八課互動、第7–8課獨立續學、九題自動保存及單題重練已發布；最近功能交付為[PR #43](https://github.com/zhai2Liu/taiwan-mahjong/pull/43)。
 玩家回饋收集及展示短片後續已取消。
 
 ## v1.0 收尾交接
-改了什麼：完成 v1.0.0 文件歸檔、作品 README 與 MIT 授權；套件版本同步，功能凍結。
-PR：[範圍 #44](https://github.com/zhai2Liu/taiwan-mahjong/pull/44)、[歸檔 #45](https://github.com/zhai2Liu/taiwan-mahjong/pull/45)、[README #46](https://github.com/zhai2Liu/taiwan-mahjong/pull/46)及本授權PR；驗收結果記於PR描述。
-結果：app保留原位置，資料與執行行為保持；不做一次性格式化。
+改了什麼：完成 v1.0.0 發布、文件狀態同步與 MIT 授權；功能凍結。
+PR：[範圍 #44](https://github.com/zhai2Liu/taiwan-mahjong/pull/44)、[歸檔 #45](https://github.com/zhai2Liu/taiwan-mahjong/pull/45)、[README #46](https://github.com/zhai2Liu/taiwan-mahjong/pull/46)、[授權 #47](https://github.com/zhai2Liu/taiwan-mahjong/pull/47)及本發布文件PR；驗收結果記於PR描述。
+結果：[Release](https://github.com/zhai2Liu/taiwan-mahjong/releases/tag/v1.0.0)與annotated tag已建立；app保留原位置。
 未驗證：手機／Safari、真人輔具、理解與學習成效；均不屬v1.0放行門檻。
-下一步：僅等候 Release notes 確認，再建立 tag／Release並標記發布；之後維護模式。
+下一步：維護模式，等候指定項目。
 
 ## 已知限制
 

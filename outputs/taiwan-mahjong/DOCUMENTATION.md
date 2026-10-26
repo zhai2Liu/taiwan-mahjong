@@ -1,6 +1,6 @@
 # 文件索引
 
-v1.0以現行入口說明已交付功能與維護規則。歷史驗收、研究、提案及舊排程集中歸檔；其中測試數、下一步與分工只代表當時版本，不構成目前工作授權。
+[v1.0.0](https://github.com/zhai2Liu/taiwan-mahjong/releases/tag/v1.0.0)已發布並進入維護模式；現行入口說明已交付功能與維護規則。歷史驗收、研究、提案及舊排程集中歸檔；其中測試數、下一步與分工只代表當時版本，不構成目前工作授權。
 
 ## 現行入口
 
@@ -18,7 +18,7 @@ v1.0以現行入口說明已交付功能與維護規則。歷史驗收、研究�
 ## 固定規則與既有展示來源
 
 - [M0 資料與操作契約](../taiwan-mahjong-m0/CONTRACTS.md)
-- [> 歷史交接：本檔保留M0及早期階段紀錄。接續工作只讀[現行HANDOFF](../taiwan-mahjong/HANDOFF.md)與[ROADMAP](../taiwan-mahjong/ROADMAP.md)；完整分類見[文件索引](../taiwan-mahjong/DOCUMENTATION.md)。以下各階段的進度、用量及下一步均為當時快照。](../taiwan-mahjong-m0/HANDOFF.md)
+- [M0歷史交接（早期階段）](../taiwan-mahjong-m0/HANDOFF.md)
 - [第一階段 M0：台灣麻將規格與案例](../taiwan-mahjong-m0/README.md)
 - [TW16-CLASSIC-v1 固定桌規](../taiwan-mahjong-m0/RULES.md)
 - [M0 資料一致性驗證](../taiwan-mahjong-m0/VALIDATION.md)

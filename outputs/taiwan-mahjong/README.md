@@ -1,14 +1,14 @@
 # 從零到一百的麻將路｜台灣十六張麻將學習與決策練習
 
-2026-10-13：S0.1採納新手／進階兩條學習路線。完整對戰、純練習、六步操作導覽與局後檢討已發布；八課入門在S2、正式陌生題評量與真人成效仍待驗證。使用與開發方式在本文；第一次認識作品請讀[作品介紹與三個案例](../../README.md)。
+2026-10-26：[v1.0.0](https://github.com/zhai2Liu/taiwan-mahjong/releases/tag/v1.0.0)作品集版本已發布，進入維護模式。完整對戰、純練習、六步操作導覽、局後檢討、八課互動與九題決策練習可用；現行範圍依[ROADMAP](ROADMAP.md)，只處理使用者指定或勾選的[BACKLOG](BACKLOG.md)。使用與開發方式在本文；第一次認識作品請讀[作品介紹](../../README.md)。
 
-1真人＋3位本地公平電腦，採固定桌規TW16-CLASSIC-v1。可在本機網頁遊玩完整牌局；M0–M5.4已完成，正式網站已上線：[立即遊玩](https://zhai2liu.github.io/taiwan-mahjong/)。純練習與可關閉的對戰教練已完成，後續按試玩回饋維護。對戰選牌可預覽離聽牌多遠、依可見牌計的有效進牌比例與拆法，吃碰各有合法捨牌後比較。
+1真人＋3位本地公平電腦，採固定桌規TW16-CLASSIC-v1。[正式網站](https://zhai2liu.github.io/taiwan-mahjong/)已上線。對戰選牌可預覽離聽牌多遠、依可見牌計的有效進牌比例與拆法，吃碰各有合法捨牌後比較。
 
 ## 入口
 
 - [完整文件分類索引](DOCUMENTATION.md)：全部正式Markdown依用途分類，含現行規格、候選研究及歷史證據。
 
-- [目前交接與發布狀態](HANDOFF.md)：最新完成、驗證範圍與下一包。
+- [目前交接與發布狀態](HANDOFF.md)：現況、已知限制與接手順序。
 - [電腦吃碰門檻與引擎可讀性調整](docs/archive/AI-CLAIM-TUNING-20261020.md)：修正後統計、引擎等價驗證、舊檔續玩語意及建議處置；最新CI／發布依HANDOFF。
 - [首頁三路入口](docs/archive/HOME-REDESIGN-20261018.md)、[試讀工作區](docs/archive/TRIAL-WORKSPACE-20261018.md)與[前三課畫面](docs/archive/LEARNING-LAYOUT-20261018.md)：最新分組、續玩位置與排版回歸契約；正式狀態依HANDOFF。
 - [人工驗證與本人決定事項](docs/archive/HUMAN-FEEDBACK-CHECKLIST.md)：維護者的理解／實機驗證界線與後續決定；玩家回饋收集流程已撤下。
@@ -17,7 +17,7 @@
 - [局後下一步與吃碰回應後解釋](docs/archive/S32-VALIDATION.md)：仲裁後才顯示取得／未取得，關閉保持暫停；同類練習另開分頁，發布狀態依HANDOFF。
 - [產品方向](docs/archive/PRODUCT-DIRECTION.md)、[全面強化企畫](docs/archive/MASTER-IMPROVEMENT-PLAN.md)、[工作包路線](ROADMAP.md)：已採納範圍、依賴與完成條件。
 - [維護指南](MAINTENANCE.md)、[發布與回復](DEPLOYMENT.md)：資料流、修改位置及驗證。
-- [發布草稿／來源盤點／回復演練](docs/archive/S52-RELEASE-PREPARATION.md)：五種本機資料的指定版本回退與前進證據，已選定MIT與v1.0.0；Release notes須先經本人確認。
+- [發布草稿／來源盤點／回復演練](docs/archive/S52-RELEASE-PREPARATION.md)：五種本機資料的指定版本回退與前進證據，MIT v1.0.0已發布；歷史盤點與演練保留。
 - [固定桌規](../taiwan-mahjong-m0/RULES.md)、[台灣用詞](docs/archive/LOCAL-TERMS.md)：規則與玩家文字的權威。
 
 - [決策題試讀](https://zhai2liu.github.io/taiwan-mahjong/training.html)：9題草案，牌效／吃碰取捨／安全牌／莊家連莊四類導引；作答與位置自動保存在此瀏覽器，下次同版續答，先作答再看推導，可單題重練，不計牌技總分；備份與原檔復原放在本機保存工具內，不要求交回。歷史[續答格式](docs/archive/S33-VALIDATION.md)、[內容版本](docs/archive/S31-VALIDATION.md)、[最初驗收](docs/archive/L3B0-TRIAL-VALIDATION.md)。
@@ -86,11 +86,11 @@ npm run build
 
 `npm run check:docs`檢查Git追蹤文件中的本機行內連結及圖片路徑，包含大小寫與目標是否追蹤；新增文件／圖片先加入Git索引再執行。需在Git checkout中使用，不影響下載原始碼後的遊戲建置。CI亦執行；範圍與限制見[維護指南](MAINTENANCE.md)。
 
-發布成功後，用`npm run verify:release -- https://zhai2liu.github.io/taiwan-mahjong/`比對同一來源建置的site/與正式三頁HTML、全部引用JS／CSS的SHA-256。只讀取公開網站，不操作存檔；失敗會非零退出。先確認指定提交的Actions／部署成功，這項核對不取代受影響操作驗收；步驟見[發布指南](DEPLOYMENT.md)。
+任務明確要求資源比對時，可用`npm run verify:release -- https://zhai2liu.github.io/taiwan-mahjong/`比對同一來源建置的site/與正式三頁HTML、全部引用JS／CSS的SHA-256。只讀取公開網站，不操作存檔；失敗會非零退出。先確認指定提交的Actions／部署成功，這項核對不取代受影響操作驗收；步驟見[發布指南](DEPLOYMENT.md)。
 
 有已安裝Chrome／Edge時，可跑`npm run test:history -- chrome`或`msedge`，另驗四種保存的真正快取返回與跨頁更新；不是一般CI的重載檢查。方法、結果與限制見[S4.2](docs/archive/S42-ACCESSIBILITY.md)。
 
-瀏覽器核心回歸：首次 `npx playwright install chromium`，再執行 `npm run test:browser`。目前test/e2e案例在桌面／390px各驗一次，結算、練習、分類與檢討另驗320px，使用正式建置、隔離本機4226來源與合成資料；不取代手機／Safari實機或真人試用。CI亦執行，失敗證據機制見[S1.2b](docs/archive/S12B-VALIDATION.md)；範圍見[S2.1](docs/archive/S21-VALIDATION.md)、[S3.1](docs/archive/S31-VALIDATION.md)、[S3.2](docs/archive/S32-VALIDATION.md)、[S3.3](docs/archive/S33-VALIDATION.md)及[S4.2可及性／重讀保留](docs/archive/S42-ACCESSIBILITY.md)，最新項目數及指定提交結果只記[HANDOFF](HANDOFF.md)，不在此重複維護計數；歷史效能基準見[S1.3](docs/archive/S13-VALIDATION.md)。
+瀏覽器核心回歸：首次 `npx playwright install chromium`，再執行 `npm run test:browser`。目前test/e2e案例在桌面／390px各驗一次，結算、練習、分類與檢討另驗320px，使用正式建置、隔離本機4226來源與合成資料；不取代手機／Safari實機或真人試用。CI亦執行，失敗證據機制見[S1.2b](docs/archive/S12B-VALIDATION.md)；範圍見[S2.1](docs/archive/S21-VALIDATION.md)、[S3.1](docs/archive/S31-VALIDATION.md)、[S3.2](docs/archive/S32-VALIDATION.md)、[S3.3](docs/archive/S33-VALIDATION.md)及[S4.2可及性／重讀保留](docs/archive/S42-ACCESSIBILITY.md)，最新項目數及指定提交結果記於對應PR描述，不在此重複維護計數；歷史效能基準見[S1.3](docs/archive/S13-VALIDATION.md)。
 
 歷史[練習易用性驗收](docs/archive/M5.2-UX-VALIDATION.md)：集中手牌與預覽、清楚指標、候選點選及窄畫面流程。
 
