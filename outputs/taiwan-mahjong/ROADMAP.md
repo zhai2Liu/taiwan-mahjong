@@ -2,6 +2,8 @@
 
 ## v1.0 完成條件
 
+**已完成：PR1–PR4均通過CI並合併，main建置與部署成功，使用者確認notes後已發布 [v1.0.0](https://github.com/zhai2Liu/taiwan-mahjong/releases/tag/v1.0.0)，三個正式入口可開啟。專案現為維護模式。**
+
 2026-10-26決定：封存現況為 **v1.0.0**，取代 S5.2 的預覽版草稿名稱。授權採 MIT（2026 zhaizhaiLiu），不做一次性格式化；**v1.0 後進入維護模式**。
 
 1. PR1：範圍重定、BACKLOG、工作規範與驗證分級。
@@ -28,6 +30,6 @@
 
 ## 維護模式
 
-v1.0完成後等候使用者指定或勾選[BACKLOG](BACKLOG.md)，不再由代理安排新工作包。
+v1.0已完成，等候使用者指定或勾選[BACKLOG](BACKLOG.md)，不再由代理安排新工作包。
 驗證依[AGENTS](../../AGENTS.md)分級，P0先回報使用者決定，其餘只記一行候選。
 原始排程及階段證據完整保留於[歷史路線](docs/archive/ROADMAP-HISTORY-20261025.md)，不作為現行待完成清單。

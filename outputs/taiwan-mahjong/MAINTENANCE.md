@@ -6,13 +6,15 @@
 
 # 維護指南
 
+[v1.0.0](https://github.com/zhai2Liu/taiwan-mahjong/releases/tag/v1.0.0)已發布，現為維護模式。驗證及合併條件以[AGENTS](../../AGENTS.md)的高風險／一般／純文件分級為準；下列工具依指定任務選用，不構成新增工作授權。
+
 2026-10-22操作命名：六步彈窗稱「操作說明」，八課入口稱「新手課程」。對戰／帶原局的練習以原生「選擇玩法」連結回首頁，沿用main的beforeunload未存保護。學習的次要工具用details及既有preserveDetails保留開合；警告、重試、有效接續與舊檔救援不藏進工具。修改重繪時須保留工具焦點與錯誤自動展開，驗收見learning／play-save瀏覽器案例。
 
-2026-10-06建立，隨後續維護更新。此文件說明實作與修改路徑；目前進度見[HANDOFF](HANDOFF.md)，現行範圍見[產品方向](docs/archive/PRODUCT-DIRECTION.md)，完整規格與歷史證據從[文件索引](DOCUMENTATION.md)查找。文中具日期的維護記錄保留當時契約，後續變更以最新對應規格為準。
+2026-10-06建立，隨後續維護更新。此文件說明實作與修改路徑；目前進度見[HANDOFF](HANDOFF.md)，現行範圍見[ROADMAP](ROADMAP.md)，原始產品方向保留於[歷史文件](docs/archive/PRODUCT-DIRECTION.md)，完整規格與歷史證據從[文件索引](DOCUMENTATION.md)查找。文中具日期的維護記錄保留當時契約，後續變更以最新對應規格為準。
 
 ## 文件各自負責什麼
 
-README是使用與開發總入口；[DOCUMENTATION](DOCUMENTATION.md)維護全部正式Markdown的分類與用途；HANDOFF只記目前進度、風險與下一步，已完成前包的展開紀錄收進既有歷史交接；ROADMAP管理階段。RULES是凍結桌規唯一來源，cases.json是人工牌例；CONTRACTS為概念契約，實際型別以src/model.ts為準。各階段VALIDATION保留歷史證據，不能把舊測試數量當現況。新增文件時同步索引，保留歷史日期與驗證限制。
+README是使用與開發總入口；[DOCUMENTATION](DOCUMENTATION.md)維護全部正式Markdown的分類與用途；HANDOFF只記現況、限制及接手順序，每包最多五行；CI結果與測試數記於PR描述，歷史交接保留原證據；ROADMAP標示已完成範圍與未來方向，BACKLOG只列使用者可選的候選。RULES是凍結桌規唯一來源，cases.json是人工牌例；CONTRACTS為概念契約，實際型別以src/model.ts為準。各階段VALIDATION保留歷史證據，不能把舊測試數量當現況。新增文件時同步索引，保留歷史日期與驗證限制。
 
 ## 修改位置
 
@@ -34,7 +36,7 @@ S3.2：hand-review.ts從原決策快照算證據，claimResolution另對同局�
 
 S3.1九題試讀：兩份TRAINING JSON負責題幹／答案／牌面／範圍；scripts/training-content.mjs負責四能力導引、固定九題允許名單與完整內容雜湊，生成器及review-trial同讀。不要直接改生成的training-data.ts。畫面分類只改瀏覽順序，drafts仍按原題位置保留，匯出必含所有題；舊schema2版本不符轉人工，schema1保留缺完整版本警告。新增分類回歸在test/e2e/training-guidance.spec.js，詳見[S3.1](docs/archive/S31-VALIDATION.md)。修改題量先處理允許名單／題族與舊匯出相容，不另外散落九題常數；人類資料和合成檔分開，接收見[審閱流程](docs/archive/TRIAL-REVIEW.md)。
 
-S2新手課：learn.html／src/learning.ts與learning.css為獨立頁；learning-model.ts管八課文字及前三課操作，learning-fixtures.ts為4–6課教材，learning-progress.ts管v2完成旗標及唯讀v1明確帶入。第7–8課依下段專用模組，內容與保存契約見[BEGINNER-LEARNING](docs/archive/BEGINNER-LEARNING.md)，最新驗收／發布只查HANDOFF。改完成條件先定版本與對照，不能因擴課判舊紀錄壞。三頁HTML全部preload／JS／CSS均須驗，不假定固定資源數。
+S2新手課：learn.html／src/learning.ts與learning.css為獨立頁；learning-model.ts管八課文字及前三課操作，learning-fixtures.ts為4–6課教材，learning-progress.ts管v2完成旗標及唯讀v1明確帶入。第7–8課依下段專用模組，內容與保存契約見[BEGINNER-LEARNING](docs/archive/BEGINNER-LEARNING.md)，最新驗收／發布只查HANDOFF。改完成條件先定版本與對照，不能因擴課判舊紀錄壞。若任務要求正式資源比對，涵蓋三頁HTML全部preload／JS／CSS，不假定固定資源數；一般驗證分級依[AGENTS](../../AGENTS.md)。
 
 玩家回饋收集已依2026-10-22指示撤下：learn.html／learning.ts不再有回饋表單、TXT、report草稿或其離頁判斷；lesson-feedback仍是答題狀態，不可一起刪。training.ts不再呈現意見／曝光自陳控制、意見TXT與交回邀請；舊Draft／TrialRecord中的feedback及exposure仍須讀寫原值以保護舊檔，不升版、不清除。JSON僅置於本機工具作個人備份／原檔復原；下載不解除未存或跨頁保護。test/e2e/learning-feedback.spec.js改驗撤下入口及課程保護，training-page／training-guidance／trial-save保護舊欄位、完整備份與錯誤回退；[試用紀錄](docs/archive/BEGINNER-TRIAL.md)只留歷史維護參考。
 
@@ -145,7 +147,7 @@ test/browser.html與test/runner.html為開發來源工具；browser-fixtures、c
 
 ## 提交工作包與發布
 
-每個工作包完成後更新受影響說明、測試證據及HANDOFF；已知限制以ponytail註解寫清上限與升級條件。優先平台與現有依賴，不新增通用玩法框架。開發由6.1 Sol主導，需要時Luna協助限定任務；遊戲內AI不呼叫模型。
+每個工作包完成後更新受影響說明、測試證據及HANDOFF；已知限制以ponytail註解寫清上限與升級條件。優先平台與現有依賴，不新增通用玩法框架。分工與驗證分級依[AGENTS](../../AGENTS.md)，只執行使用者指定或勾選的項目；遊戲內AI不呼叫模型。
 
 main推送後由GitHub Actions發布，正式網址與回復步驟見DEPLOYMENT；確認該次workflow成功。site/是發布產物，src/才是修改來源；不要直接編輯site/或dist/。
 

@@ -3,8 +3,9 @@
 ## v1.0.0 發布狀態（2026-10-26）
 
 使用者已選定 **v1.0.0**、**MIT**（Copyright (c) 2026 zhaizhaiLiu），不做一次性格式化。標準條款見[LICENSE](../../../../LICENSE)，套件保留 private。
-**尚未建立 tag 或 GitHub Release；等待 PR1–PR4 合併、main CI／部署成功後，先由使用者確認 Release notes。**
-發布後進入維護模式，僅執行使用者指定或勾選的 BACKLOG 項目；功能與資料格式凍結。
+**已發布：[v1.0.0 GitHub Release](https://github.com/zhai2Liu/taiwan-mahjong/releases/tag/v1.0.0)；annotated tag 見[版本來源](https://github.com/zhai2Liu/taiwan-mahjong/tree/v1.0.0)。**
+使用者已於2026-10-26確認 Release notes 並授權發布，PR1–PR4已通過CI並合併、main建置與部署成功，三個正式入口可開啟；驗收結果見[授權與發布PR #47](https://github.com/zhai2Liu/taiwan-mahjong/pull/47)。
+專案進入維護模式，僅執行使用者指定或勾選的 BACKLOG 項目；功能與資料格式凍結。
 舊草稿名稱 `v0.1.0-learning-preview.1` 已由 v1.0.0 取代。下方保留原始盤點及演練內容，其中「待選授權／版本」、正式資源比對及待辦皆為歷史背景，現行流程依[ROADMAP](../../ROADMAP.md)及[工作規範](../../../../AGENTS.md)。
 
 ## 歷史準備紀錄

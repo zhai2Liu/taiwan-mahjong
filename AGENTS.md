@@ -1,6 +1,6 @@
 # 維護規範
 
-本專案封存為 v1.0.0 作品集版本後進入維護模式。現況先讀[HANDOFF](outputs/taiwan-mahjong/HANDOFF.md)，範圍依[ROADMAP](outputs/taiwan-mahjong/ROADMAP.md)，文件查[DOCUMENTATION](outputs/taiwan-mahjong/DOCUMENTATION.md)。使用者當次指示優先於歷史工作包。
+本專案已發布 [v1.0.0](https://github.com/zhai2Liu/taiwan-mahjong/releases/tag/v1.0.0) 作品集版本，現為維護模式。現況先讀[HANDOFF](outputs/taiwan-mahjong/HANDOFF.md)，範圍依[ROADMAP](outputs/taiwan-mahjong/ROADMAP.md)，文件查[DOCUMENTATION](outputs/taiwan-mahjong/DOCUMENTATION.md)。使用者當次指示優先於歷史工作包。
 
 ## 工作啟動與功能凍結
 
