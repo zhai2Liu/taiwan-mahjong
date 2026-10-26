@@ -67,4 +67,4 @@ PR CI 執行文件連結、型別、Node 測試、建置與瀏覽器回歸；mai
 
 ## 授權
 
-授權方案已確定採 MIT（2026 zhaizhaiLiu），標準授權條款於 v1.0 授權 PR 補齊。
+[MIT](LICENSE) · Copyright (c) 2026 zhaizhaiLiu
