@@ -1,5 +1,14 @@
 # S5.2：發布草稿、來源盤點與版本回復演練
 
+## v1.0.0 發布狀態（2026-10-26）
+
+使用者已選定 **v1.0.0**、**MIT**（Copyright (c) 2026 zhaizhaiLiu），不做一次性格式化。標準條款見[LICENSE](../../../../LICENSE)，套件保留 private。
+**尚未建立 tag 或 GitHub Release；等待 PR1–PR4 合併、main CI／部署成功後，先由使用者確認 Release notes。**
+發布後進入維護模式，僅執行使用者指定或勾選的 BACKLOG 項目；功能與資料格式凍結。
+舊草稿名稱 `v0.1.0-learning-preview.1` 已由 v1.0.0 取代。下方保留原始盤點及演練內容，其中「待選授權／版本」、正式資源比對及待辦皆為歷史背景，現行流程依[ROADMAP](../../ROADMAP.md)及[工作規範](../../../../AGENTS.md)。
+
+## 歷史準備紀錄
+
 2026-10-20更新發布草稿與來源盤點。**技術準備與指定舊版回復演練完成；尚未建立GitHub Release或tag，公開授權由專案擁有者決定。** 最新提交與PR依[HANDOFF](../../HANDOFF.md)。本包只整理可審閱交付，不改runtime或重部署正常網站。
 
 2026-10-17歷史準備：來源d8e8701，[PR#10](https://github.com/zhai2Liu/taiwan-mahjong/pull/10)指定head Actions39020532423成功365／26（Linux33.7秒），合併b265a83；純Markdown沒有新Pages部署。當時正式三頁及全部4／3／4份JS／CSS相符，runtime為4bb87cd（work/s52-live-unchanged.log）。以下回復演練仍只對該指定版本成立；不能當作新版已重新演練。無外部真人程式審查、未改分支保護。

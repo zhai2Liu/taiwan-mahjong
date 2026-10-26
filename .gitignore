@@ -3,6 +3,7 @@
 !/.gitattributes
 !/AGENTS.md
 !/README.md
+!/LICENSE
 !/.github/
 !/outputs/
 /outputs/*

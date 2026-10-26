@@ -8,11 +8,11 @@
 玩家回饋收集及展示短片後續已取消。
 
 ## v1.0 收尾交接
-改了什麼：歸檔階段文件與維護素材、修正連結、精簡入口；功能凍結。
-PR：[範圍與規範 #44](https://github.com/zhai2Liu/taiwan-mahjong/pull/44)及本歸檔PR；驗收結果記於PR描述。
-結果：app仍在outputs/taiwan-mahjong，建置JSON與m0資料位置保持；歷史主文完整保留。
+改了什麼：完成 v1.0.0 文件歸檔、作品 README 與 MIT 授權；套件版本同步，功能凍結。
+PR：[範圍 #44](https://github.com/zhai2Liu/taiwan-mahjong/pull/44)、[歸檔 #45](https://github.com/zhai2Liu/taiwan-mahjong/pull/45)、[README #46](https://github.com/zhai2Liu/taiwan-mahjong/pull/46)及本授權PR；驗收結果記於PR描述。
+結果：app保留原位置，資料與執行行為保持；不做一次性格式化。
 未驗證：手機／Safari、真人輔具、理解與學習成效；均不屬v1.0放行門檻。
-下一步：僅完成已指定的README、MIT授權與Release流程；完成後進入維護模式。
+下一步：僅等候 Release notes 確認，再建立 tag／Release並標記發布；之後維護模式。
 
 ## 已知限制
 

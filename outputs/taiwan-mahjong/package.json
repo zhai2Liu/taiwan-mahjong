@@ -1,6 +1,6 @@
 {
   "name": "taiwan-mahjong",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -22,5 +22,6 @@
     "@playwright/test": "1.64.0",
     "typescript": "~5.9.3",
     "vite": "8.3.5"
-  }
+  },
+  "license": "MIT"
 }
